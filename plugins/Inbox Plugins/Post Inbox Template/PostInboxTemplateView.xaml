@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Licensed Materials - Property of IBM
+
+5725E28, 5725I03
+
+© Copyright IBM Corp. 2016, 2016
+US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+-->
+
+<ContentView 
+	xmlns="http://xamarin.com/schemas/2014/forms"
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+	x:Class="Sample.PostInboxTemplateView"
+    xmlns:ffimageloading="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
+	xmlns:local="clr-namespace:Sample;assembly=Sample"
+	Grid.Row="1" Grid.Column="0">
+	<StackLayout Padding="5" x:Name="VerticalLayout">
+		<StackLayout Orientation="Horizontal" x:Name="HeaderLayout" HeightRequest="44">
+			<Image x:Name="HeaderImage" WidthRequest="44" HeightRequest="44" Aspect="AspectFill" />
+			<StackLayout>
+				<Label x:Name="Header" />
+				<Label x:Name="SubHeader" />
+			</StackLayout>
+		</StackLayout>
+		<ffimageloading:CachedImage x:Name="ContentImage" Aspect="AspectFit" HorizontalOptions="FillAndExpand" />
+		<local:VideoPlayer x:Name="ContentVideo" VerticalOptions="StartAndExpand" HorizontalOptions="FillAndExpand" />
+		<Label x:Name="ContentText" />
+
+		<StackLayout Orientation="Horizontal" x:Name="Actions" HorizontalOptions="FillAndExpand">
+			<Button x:Name="LeftAction" HorizontalOptions="CenterAndExpand" />
+			<Button x:Name="CenterAction" HorizontalOptions="CenterAndExpand" />
+			<Button x:Name="RightAction" HorizontalOptions="CenterAndExpand" />
+		</StackLayout>
+
+	</StackLayout>
+</ContentView>

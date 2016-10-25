@@ -1,0 +1,13 @@
+﻿{
+    "baseUrl": "https://api.ibm.xtify.com/3.0/",
+    "appKey": {
+        "dev":"INSERT DEV APPKEY HERE",
+        "prod":"INSERT PROD APPKEY HERE"
+    },
+    "appDelegateClass": "AppDelegate",
+    "autoInitializeFlag": true,
+    "sessionTimeout": 20,
+    "metricTimeInterval": 180,
+    "loglevel": "error",
+    "logfile": false
+}

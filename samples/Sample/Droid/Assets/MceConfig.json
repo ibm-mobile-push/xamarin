@@ -1,0 +1,12 @@
+﻿{
+    "baseUrl": "https://iqaapi.ibm.xtify.com/3.0", 
+    "appKey": {
+        "prod":"gc9zB96GP3"
+    },
+    "senderId": "977418869386",
+    "sessionsEnabled": true,
+    "sessionTimeout": 20,
+    "metricTimeInterval": 30,
+    "loglevel": "verbose",
+    "logfile": false
+}

@@ -1,0 +1,22 @@
+﻿<Properties StartupItem="iOS/SegmentedControl.iOS.csproj">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneSimulatorTarget.IPhone6s.9.3" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Android/SegmentedControlRenderer.cs">
+    <Files>
+      <File FileName="Android/SegmentedControlRenderer.cs" Line="1" Column="1" />
+      <File FileName="iOS/SegmentedControlRenderer.cs" Line="19" Column="19" />
+      <File FileName="SegmentedControl/SegmentedControl.cs" Line="1" Column="1" />
+      <File FileName="iOS/AppDelegate.cs" Line="1" Column="1" />
+      <File FileName="iOS/Entitlements.plist" />
+      <File FileName="iOS/Info.plist" />
+      <File FileName="iOS/Main.cs" Line="1" Column="1" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore>
+      <Breakpoint file="/Users/chris/Documents/Custom/Xamarin.Forms.Controls/SegmentedControl/iOS/SegmentedControlRenderer.cs" line="31" column="39" />
+      <Breakpoint file="/Users/chris/Documents/Custom/Xamarin.Forms.Controls/SegmentedControl/Android/SegmentedControlRenderer.cs" line="37" column="38" />
+      <Breakpoint file="/Users/chris/Documents/Custom/Xamarin.Forms.Controls/SegmentedControl/SegmentedControl/SegmentedControl.cs" line="26" column="1" />
+    </BreakpointStore>
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>

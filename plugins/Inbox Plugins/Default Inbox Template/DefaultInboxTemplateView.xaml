@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Licensed Materials - Property of IBM
+
+5725E28, 5725I03
+
+© Copyright IBM Corp. 2016, 2016
+US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+-->
+
+<ContentView
+		xmlns="http://xamarin.com/schemas/2014/forms" 
+		xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+		x:Class="Sample.DefaultInboxTemplateView"
+		Grid.Row="1" Grid.Column="0">
+
+	<Grid>
+		<Grid.RowDefinitions>
+		    <RowDefinition Height="Auto" />
+		    <RowDefinition Height="1" />
+		    <RowDefinition Height="*" />
+	    </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+		</Grid.ColumnDefinitions>
+		<StackLayout Padding="5"
+            Grid.Row="0" Grid.Column="0">
+			<Label x:Name="Subject" />
+			<Label x:Name="Date" />
+		</StackLayout>
+
+		<BoxView HeightRequest="1" Color="#CCC"
+			Grid.Row="1" Grid.Column="0" />
+		
+		<WebView x:Name="Content"
+			Grid.Row="2" Grid.Column="0" />
+
+	</Grid>
+</ContentView>

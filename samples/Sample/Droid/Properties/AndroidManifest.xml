@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+Licensed Materials - Property of IBM
+
+5725E28, 5725I03
+
+© Copyright IBM Corp. 2016, 2016
+US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+-->
+
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" 
+	android:versionCode="1" 
+	android:versionName="1.0" 
+	package="com.xtify.sample">
+	<permission android:name="com.xtify.sample.permission.C2D_MESSAGE" android:protectionLevel="signature" />
+	<uses-permission android:name="com.xtify.sample.permission.C2D_MESSAGE" />
+	<uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+	<uses-permission android:name="android.permission.INTERNET" />
+	<uses-permission android:name="android.permission.WAKE_LOCK" />
+	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+	<uses-permission android:name="android.permission.CALL_PHONE" />
+	<uses-sdk android:minSdkVersion="15" />
+	<application android:label="Sample">
+
+	    <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <provider
+            android:name="com.ibm.mce.sdk.db.Provider"
+            android:authorities="com.xtify.sample.MCE_PROVIDER"
+            android:exported="false" />
+
+        <receiver android:name="com.ibm.mce.sdk.gcm.GcmBroadcastReceiver" android:priority="999">
+        <intent-filter android:permission="com.google.android.c2dm.permission.SEND" >
+            <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+
+            <category android:name="com.xtify.sample" />
+        </intent-filter>
+        <intent-filter android:permission="com.google.android.c2dm.permission.SEND" android:priority="999">
+            <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+
+            <category android:name="com.xtify.sample" />
+        </intent-filter>
+        </receiver>
+        <receiver android:name=".SampleGcmBroadcastReceiver" android:priority="1">
+            <intent-filter android:permission="com.google.android.c2dm.permission.SEND" >
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+
+                <category android:name="com.xtify.sample" />
+            </intent-filter>
+            <intent-filter android:permission="com.google.android.c2dm.permission.SEND" android:priority="1">
+                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
+
+                <category android:name="com.xtify.sample" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name="com.ibm.mce.sdk.notification.NotifActionReceiver" />
+        <receiver android:name="com.ibm.mce.sdk.wi.AlarmReceiver" >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_REPLACED" />
+
+                <data android:scheme="package" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.LOCALE_CHANGED" />
+            </intent-filter>
+        </receiver>
+
+        <service android:name="com.ibm.mce.sdk.gcm.GcmIntentService" />
+        <service android:name="com.ibm.mce.sdk.events.EventsAlarmListener" />
+        <service android:name="com.ibm.mce.sdk.registration.PhoneHomeIntentService" />
+        <service android:name="com.ibm.mce.sdk.registration.RegistrationIntentService" />
+        <service android:name="com.ibm.mce.sdk.attributes.AttributesQueueConsumer" />
+	</application>
+</manifest>
