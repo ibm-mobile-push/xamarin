@@ -25,8 +25,7 @@ namespace Sample
 			if (template == null) {
 				return;
 			}
-			var richContent = SDK.Instance.FetchRichContent (inboxMessage.RichContentId);
-			MessageCell = template.MessageCell (inboxMessage, richContent) as InboxTemplateCell;
+			MessageCell = template.MessageCell (inboxMessage) as InboxTemplateCell;
 			View = MessageCell.View;
 			Height = MessageCell.Height;
 		}
@@ -34,7 +33,8 @@ namespace Sample
 		override protected void OnDisappearing()
 		{
 			base.OnDisappearing();
-			MessageCell.CellDisappearing ();
+			if(MessageCell != null)
+				MessageCell.CellDisappearing ();
 		}
 	}
 }

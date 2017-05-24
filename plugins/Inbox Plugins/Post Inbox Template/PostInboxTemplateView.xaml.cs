@@ -12,21 +12,19 @@ namespace Sample
 		static Dictionary<string, double> VideoHeightCache = new Dictionary<string, double>();
 		static Dictionary<string, Size> ImageHeightCache = new Dictionary<string, Size>();
 		InboxMessage InboxMessage;
-		RichContent RichContent;
 
-		public PostInboxTemplateView (InboxMessage message, RichContent content, ViewCell viewCell)
+		public PostInboxTemplateView (InboxMessage message, ViewCell viewCell)
 		{
 			InboxMessage = message;
-			RichContent = content;
 			InitializeComponent ();
 
-			var headerImage = RichContent.Content ["headerImage"];
-			var header = RichContent.Content ["header"];
-			var subHeader = RichContent.Content ["subHeader"];
-			var contentText = RichContent.Content ["contentText"];
-			var actions = RichContent.Content ["actions"];
-			var contentVideo = RichContent.Content ["contentVideo"];
-			var contentImage = RichContent.Content ["contentImage"];
+			var headerImage = message.Content ["headerImage"];
+			var header = message.Content ["header"];
+			var subHeader = message.Content ["subHeader"];
+			var contentText = message.Content ["contentText"];
+			var actions = message.Content ["actions"];
+			var contentVideo = message.Content ["contentVideo"];
+			var contentImage = message.Content ["contentImage"];
 
 			if (headerImage != null) {
 				var headerImageUri = new Uri (headerImage.ToString ());
@@ -136,7 +134,7 @@ namespace Sample
 			else
 			{
 				var attributes = new Dictionary<string, string>() {
-							{"richContentId", content.RichContentId},
+							{"richContentId", message.RichContentId},
 							{"inboxMessageId", message.InboxMessageId}
 						};
 
@@ -144,19 +142,19 @@ namespace Sample
 				if (actions [0] != null) {
 					CenterAction.Text = actions [0]["name"].ToString();
 					CenterAction.Clicked += (object sender, EventArgs e) => {
-						SDK.Instance.ExecuteInboxAction(actions[0], message.Attribution, attributes);
+						SDK.Instance.ExecuteInboxAction(actions[0], message.Attribution, message.MailingId, attributes);
 					};
 				}
 				if (actions [1] != null) {
 					LeftAction.Text = actions [1]["name"].ToString();
 					LeftAction.Clicked += (object sender, EventArgs e) => {
-						SDK.Instance.ExecuteInboxAction(actions[1], message.Attribution, attributes);
+						SDK.Instance.ExecuteInboxAction(actions[1], message.Attribution, message.MailingId, attributes);
 					};
 				}
 				if (actions [2] != null) {
 					RightAction.Text = actions [2]["name"].ToString();
 					RightAction.Clicked += (object sender, EventArgs e) => {
-						SDK.Instance.ExecuteInboxAction(actions[2], message.Attribution, attributes);
+						SDK.Instance.ExecuteInboxAction(actions[2], message.Attribution, message.MailingId, attributes);
 					};
 				}
 			}
@@ -169,14 +167,14 @@ namespace Sample
 		{
 			var height = HeaderLayout.HeightRequest + VerticalLayout.Spacing + VerticalLayout.Spacing;
 
-			if (RichContent.Content ["contentVideo"] != null) {
+			if (InboxMessage.Content ["contentVideo"] != null) {
 				height += VerticalLayout.Spacing;
 				if (VideoHeightCache.ContainsKey (InboxMessage.InboxMessageId))
 					height += VideoHeightCache [InboxMessage.InboxMessageId];
 				else
 					height += 200;
 			}
-			else if (RichContent.Content ["contentImage"] != null) {
+			else if (InboxMessage.Content ["contentImage"] != null) {
 				height += VerticalLayout.Spacing;
 				if (ImageHeightCache.ContainsKey (InboxMessage.InboxMessageId)) {
 					var size = SDK.Instance.ScreenSize ();

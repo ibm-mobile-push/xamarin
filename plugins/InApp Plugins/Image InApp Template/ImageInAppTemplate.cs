@@ -53,7 +53,7 @@ namespace Sample
 					_ContentImage = new Image ();
 					var tapGesture = new TapGestureRecognizer ();
 					tapGesture.Tapped += (object sender, EventArgs e) => {
-						SDK.Instance.ExecuteInAppAction(Message.Content["action"], Message.Attribution);
+						SDK.Instance.ExecuteInAppAction(Message.Content["action"], Message.MailingId, Message.Attribution);
 						SDK.Instance.DeleteInAppMessage(Message);
 						Dismiss(null, EventArgs.Empty);
 					};

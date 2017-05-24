@@ -22,26 +22,26 @@ namespace Sample
 
 			SendClient.Tapped += (object sender, EventArgs e) => {
 				SendClient.Status = RightStatus.Sending;
-				SDK.Instance.AddEvent("appOpened", "simpleNotification", DateTimeOffset.Now, "SendClient", new Dictionary<string, object>(), (success, name, type, timestamp, attribution, attributes) => {
+				SDK.Instance.AddEvent("appOpened", "simpleNotification", DateTimeOffset.Now, "SendClient", "SendClient", new Dictionary<string, object>(), (success, name, type, timestamp, attribution, mailingId, attributes) => {
 					SendClient.Status = success ? RightStatus.Received : RightStatus.Failed;
 				});
 			};
 			SendQueue.Tapped += (object sender, EventArgs e) => {
 				SendQueue.Status = RightStatus.Sending;
-				SDK.Instance.QueueAddEvent("appOpened", "simpleNotification", DateTimeOffset.Now, "SendQueue", new Dictionary<string, object>(), true);
+				SDK.Instance.QueueAddEvent("appOpened", "simpleNotification", DateTimeOffset.Now, "SendQueue", "SendQueue", new Dictionary<string, object>(), true);
 			};
 			QueueEvent.Tapped += (object sender, EventArgs e) => {
 				QueueEvent.Status = RightStatus.Queued;
-				SDK.Instance.QueueAddEvent("appOpened", "simpleNotification", DateTimeOffset.Now, "QueueEvent", new Dictionary<string, object>(), false);
+				SDK.Instance.QueueAddEvent("appOpened", "simpleNotification", DateTimeOffset.Now, "QueueEvent", "QueueEvent", new Dictionary<string, object>(), false);
 			};
 			FlushQueue.Tapped += (object sender, EventArgs e) => {
 				FlushQueue.Status = RightStatus.Sending;
-				SDK.Instance.QueueAddEvent("appOpened", "simpleNotification", DateTimeOffset.Now, "FlushQueue", new Dictionary<string, object>(), false);
+				SDK.Instance.QueueAddEvent("appOpened", "simpleNotification", DateTimeOffset.Now, "FlushQueue", "FlushQueue", new Dictionary<string, object>(), false);
 				SDK.Instance.FlushEventQueue();
 			};
 		}
 
-		public void QueueCallback(bool success, string name, string type, DateTimeOffset timestamp, string attribution, Dictionary<string,object> attributes)
+		public void QueueCallback(bool success, string name, string type, DateTimeOffset timestamp, string attribution, string mailingId, Dictionary<string,object> attributes)
 		{
 			switch (attribution) {
 			case "SendQueue":

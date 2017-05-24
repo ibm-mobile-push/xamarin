@@ -25,14 +25,14 @@ namespace Sample
 			return true;
 		}
 
-		public ViewCell MessageCell (InboxMessage message, RichContent content)
+		public ViewCell MessageCell (InboxMessage message)
 		{
-			return new PostInboxViewCell (message, content);
+			return new PostInboxViewCell (message);
 		}
 
-		public View MessageView (InboxMessage message, RichContent content)
+		public View MessageView (InboxMessage message)
 		{
-			return new ScrollView () { Content = new PostInboxTemplateView (message, content, null) };
+			return new ScrollView () { Content = new PostInboxTemplateView (message, null) };
 		}
 	}
 
@@ -40,9 +40,9 @@ namespace Sample
 	{
 		PostInboxTemplateView PostView;
 
-		public PostInboxViewCell(InboxMessage message, RichContent content)
+		public PostInboxViewCell(InboxMessage message)
 		{
-			PostView = new PostInboxTemplateView (message, content, this);
+			PostView = new PostInboxTemplateView (message, this);
 			View = PostView;
 		}
 

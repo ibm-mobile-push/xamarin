@@ -26,11 +26,11 @@ namespace Sample
 			InitializeComponent ();
 
 			Name.Text = storage.Name;
-			Name.Completed += (object sender, EventArgs e) => {
+			Name.TextChanged += (object sender, EventArgs e) => {
 				storage.Name = Name.Text;
 			};
 			Value.Text = storage.Value;
-			Value.Completed += (object sender, EventArgs e) => {
+			Value.TextChanged += (object sender, EventArgs e) => {
 				storage.Value = Value.Text;
 			};
 			Action.SelectedValue = storage.Action;

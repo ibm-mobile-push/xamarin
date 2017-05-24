@@ -18,11 +18,11 @@ namespace Sample
 		public NormalEntryCell ()
 		{
 			InitializeComponent ();
-			TextEntry.Completed += (object sender, EventArgs e) => {
+			TextEntry.TextChanged += (sender, e) => {
 				Text = ((Entry) sender).Text;
-				if(Completed != null)
+				if(TextChanged != null)
 				{
-					Completed(sender, e);
+					TextChanged(sender, e);
 				}
 			};
 			View.SizeChanged += (object sender, EventArgs e) => {
@@ -33,8 +33,8 @@ namespace Sample
 			};
 		}
 			
-		public delegate void CompletedDelegate(object sender, EventArgs e);
-		public CompletedDelegate Completed { get; set; }
+		public delegate void ChangedDelegate(object sender, EventArgs e);
+		public ChangedDelegate TextChanged { get; set; }
 
 		string text;
 		public string Text { get { return text; } set { text = value; TextEntry.Text = text; } }

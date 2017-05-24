@@ -16,15 +16,15 @@ namespace Sample
 {
 	public partial class DefaultInboxTemplateView : ContentView
 	{
-		public DefaultInboxTemplateView(InboxMessage message, RichContent content)
+		public DefaultInboxTemplateView(InboxMessage message)
 		{
 			InitializeComponent ();
 
-			var messagePreview = content.Content["messagePreview"];
-			var messageDetails = content.Content["messageDetails"];
+			var messagePreview = message.Content["messagePreview"];
+			var messageDetails = message.Content["messageDetails"];
 			var subject = messagePreview ["subject"];
 			var richContent = messageDetails ["richContent"];
-			var actions = content.Content ["actions"];
+			var actions = message.Content ["actions"];
 
 			Content.Source = new HtmlWebViewSource () { Html = richContent.ToString() };
 			Content.Navigating += (object sender, WebNavigatingEventArgs e) => {
@@ -35,10 +35,10 @@ namespace Sample
 					if(action != null)
 					{
 						var attributes = new Dictionary<string, string>() { 
-							{"richContentId", content.RichContentId},
+							{"richContentId", message.RichContentId},
 							{"inboxMessageId", message.InboxMessageId}
 						};
-						SDK.Instance.ExecuteInboxAction(action, message.Attribution, attributes);
+						SDK.Instance.ExecuteInboxAction(action, message.Attribution, message.MailingId, attributes);
 					}
 					e.Cancel = true;
 				}

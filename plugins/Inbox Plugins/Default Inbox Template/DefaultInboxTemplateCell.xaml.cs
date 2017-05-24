@@ -17,10 +17,10 @@ namespace Sample
 {
 	public partial class DefaultInboxTemplateCell : InboxTemplateCell
 	{
-		public DefaultInboxTemplateCell (InboxMessage message, RichContent content)
+		public DefaultInboxTemplateCell (InboxMessage message)
 		{
 			InitializeComponent ();
-			var messagePreview = content.Content["messagePreview"];
+			var messagePreview = message.Content["messagePreview"];
 			var subject = messagePreview ["subject"];
 			var previewContent = messagePreview ["previewContent"];
 

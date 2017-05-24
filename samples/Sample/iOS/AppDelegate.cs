@@ -16,6 +16,9 @@ using IBMMobilePush.iOS;
 using IBMMobilePush.Forms;
 using IBMMobilePush.Forms.iOS;
 using FFImageLoading.Forms.Touch;
+using UserNotifications;
+using Xamarin.Forms;
+using Xamarin;
 
 namespace Sample.iOS
 {
@@ -28,7 +31,11 @@ namespace Sample.iOS
 			Environment.SetEnvironmentVariable("MONO_XMLSERIALIZER_THS", "no");
 			CachedImageRenderer.Init();
 
-			global::Xamarin.Forms.Forms.Init ();
+			Forms.Init ();
+			FormsMaps.Init();
+
+			App.ScreenWidth = UIScreen.MainScreen.Bounds.Width;
+			App.ScreenHeight = UIScreen.MainScreen.Bounds.Height;
 
 			LoadApplication (new App ());
 
@@ -36,7 +43,22 @@ namespace Sample.iOS
 			MCESdk.SharedInstance ().HandleApplicationLaunch ();
 
 			// Setup Push Message Permission
-			if (UIDevice.CurrentDevice.CheckSystemVersion(8,0))
+			if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0))
+			{
+				Logging.Verbose("iOS > 10");
+
+				UNUserNotificationCenter.Current.Delegate = MCENotificationDelegate.SharedInstance();
+				UNUserNotificationCenter.Current.RequestAuthorization(UNAuthorizationOptions.Alert | UNAuthorizationOptions.Badge | UNAuthorizationOptions.CarPlay | UNAuthorizationOptions.Sound, (approved, err) =>
+				{
+					InvokeOnMainThread(() =>
+					{
+						UIApplication.SharedApplication.RegisterForRemoteNotifications();
+					});
+				});
+
+
+			}
+			else if (UIDevice.CurrentDevice.CheckSystemVersion(8,0))
 			{
 				Logging.Verbose ("iOS > 8");
 				var settings = UIUserNotificationSettings.GetSettingsForTypes (UIUserNotificationType.Sound |
@@ -93,20 +115,35 @@ namespace Sample.iOS
 		public override void DidReceiveRemoteNotification (UIApplication application, NSDictionary userInfo, Action<UIBackgroundFetchResult> completionHandler)
 		{
 			Utility.ProcessInApp (userInfo);
-			MCESdk.SharedInstance().PresentDynamicCategoryNotification(userInfo, completionHandler);
+			MCESdk.SharedInstance().PresentDynamicCategoryNotification(userInfo);
 		}
 
 		// IBMMobilePush Integration
 		public override void HandleAction (UIApplication application, String actionIdentifier, NSDictionary remoteNotificationInfo, Action completionHandler)
 		{
 			Utility.ProcessInApp (remoteNotificationInfo);
-			MCESdk.SharedInstance ().ProcessCategoryNotification (remoteNotificationInfo, actionIdentifier, completionHandler);
+			MCESdk.SharedInstance ().ProcessCategoryNotification (remoteNotificationInfo, actionIdentifier);
 		}
 
 		// IBMMobilePush Integration
 		public override void HandleAction (UIApplication application, String actionIdentifier, UILocalNotification localNotification, Action completionHandler)
 		{
-			MCESdk.SharedInstance ().ProcessDynamicCategoryNotification (localNotification.UserInfo, actionIdentifier, completionHandler);
+			MCESdk.SharedInstance ().ProcessDynamicCategoryNotification (localNotification.UserInfo, actionIdentifier, null);
+		}
+
+		public override void HandleAction(UIApplication application, string actionIdentifier, NSDictionary remoteNotificationInfo, NSDictionary responseInfo, Action completionHandler)
+		{
+			Utility.ProcessInApp(remoteNotificationInfo);
+			
+		}
+
+		public override void HandleAction(UIApplication application, string actionIdentifier, UILocalNotification localNotification, NSDictionary responseInfo, Action completionHandler)
+		{
+			Utility.ProcessInApp(localNotification.UserInfo);
+			NSString response = null;
+			if(responseInfo.ContainsKey(UIUserNotificationAction.ResponseTypedTextKey))
+				response = (NSString)responseInfo.ObjectForKey(UIUserNotificationAction.ResponseTypedTextKey);
+			MCESdk.SharedInstance().ProcessDynamicCategoryNotification(localNotification.UserInfo, actionIdentifier, response);
 		}
 	}
 }

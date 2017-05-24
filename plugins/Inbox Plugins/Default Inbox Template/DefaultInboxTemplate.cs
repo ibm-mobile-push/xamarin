@@ -24,14 +24,14 @@ namespace Sample
 			return true;
 		}
 
-		public ViewCell MessageCell (InboxMessage message, RichContent content)
+		public ViewCell MessageCell (InboxMessage message)
 		{
-			return new DefaultInboxTemplateCell (message, content);
+			return new DefaultInboxTemplateCell (message);
 		}
 
-		public View MessageView (InboxMessage message, RichContent content)
+		public View MessageView (InboxMessage message)
 		{
-			return new DefaultInboxTemplateView (message, content);
+			return new DefaultInboxTemplateView (message);
 		}
 	}
 }

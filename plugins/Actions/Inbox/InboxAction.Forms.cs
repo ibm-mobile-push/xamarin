@@ -14,13 +14,20 @@ using Newtonsoft.Json.Linq;
 
 namespace Sample
 {
+	public interface IOpenAppAction
+	{
+		void OpenApp();
+	}
+
 	public class InboxAction : PushAction
 	{
-		public InboxAction ()
+		IOpenAppAction openApp;
+		public InboxAction()
 		{
+			openApp = DependencyService.Get<IOpenAppAction>();
 		}
 
-		public override void HandleAction (JObject action, JObject payload, string attribution, int id)
+		public override void HandleAction (JObject action, JObject payload, string attribution, string mailingId, int id)
 		{
 			var richContentId = action["value"].ToString();
 			SDK.Instance.FetchInboxMessageWithRichContentId (richContentId, (message) => {

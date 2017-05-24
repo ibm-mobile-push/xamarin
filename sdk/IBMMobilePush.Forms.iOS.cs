@@ -19,6 +19,7 @@ using IBMMobilePush.iOS;
 using UIKit;
 using Foundation;
 using ObjCRuntime;
+using CoreLocation;
 
 using Newtonsoft.Json.Linq;
 
@@ -33,9 +34,61 @@ namespace IBMMobilePush.Forms.iOS
 	{
 		public IBMMobilePushImpl()
 		{
+			NSNotificationCenter.DefaultCenter.AddObserver(new NSString("EnteredGeofence"), (note) =>
+			{
+				CLCircularRegion region = note.UserInfo["region"] as CLCircularRegion;
+				if (GeofenceEntered != null)
+				{
+					var geofence = new Geofence(region.Center.Latitude, region.Center.Longitude, region.Radius, region.Identifier);
+					GeofenceEntered(geofence);
+				}
+			});
+
+			NSNotificationCenter.DefaultCenter.AddObserver(new NSString("ExitedGeofence"), (note) =>
+			{
+				CLCircularRegion region = note.UserInfo["region"] as CLCircularRegion;
+				if (GeofenceExited != null)
+				{
+					var geofence = new Geofence(region.Center.Latitude, region.Center.Longitude, region.Radius, region.Identifier);
+					GeofenceExited(geofence);
+				}
+			});
+
+			NSNotificationCenter.DefaultCenter.AddObserver(new NSString("EnteredBeacon"), (note) =>
+			{
+				if (BeaconEntered != null)
+				{
+					var major = note.UserInfo["major"] as NSNumber;
+					var minor = note.UserInfo["minor"] as NSNumber;
+					var locationId = note.UserInfo["locationId"] as NSString;
+					var beaconRegion = new BeaconRegion(major.Int32Value, minor.Int32Value, locationId);
+					BeaconEntered(beaconRegion);
+				}
+			});
+
+			NSNotificationCenter.DefaultCenter.AddObserver(new NSString("ExitedBeacon"), (note) =>
+			{
+				if (BeaconExited != null)
+				{
+					var major = note.UserInfo["major"] as NSNumber;
+					var minor = note.UserInfo["minor"] as NSNumber;
+					var locationId = note.UserInfo["locationId"] as NSString;
+					var beaconRegion = new BeaconRegion(major.Int32Value, minor.Int32Value, locationId);
+					BeaconExited(beaconRegion);
+				}
+			});
+
 			NSNotificationCenter.DefaultCenter.AddObserver (new NSString("RegistrationChangedNotification"), RegistrationUpdatedNotification);
 			NSNotificationCenter.DefaultCenter.AddObserver (new NSString("RegisteredNotification"), RegistrationUpdatedNotification);
 		
+			NSNotificationCenter.DefaultCenter.AddObserver(new NSString("LocationDatabaseUpdated"), (note) =>
+			{
+				if (LocationsUpdated != null)
+				{
+					LocationsUpdated();
+				}
+			});
+
 			NSNotificationCenter.DefaultCenter.AddObserver (new NSString("SetUserAttributesSuccess"), (note) => {
 				AttributeQueueResultNotification(AttributeOperation.SetUserAttributes, true, note);
 			});
@@ -100,11 +153,23 @@ namespace IBMMobilePush.Forms.iOS
 			});
 
 		}
+		
+        public void OnResume()
+        {
+            
+        }
+
+		public GeofenceDelegate GeofenceEntered { set; get; }
+		public GeofenceDelegate GeofenceExited { set; get; }
+		public BeaconDelegate BeaconExited { set; get; }
+		public BeaconDelegate BeaconEntered { set; get; }
+		
 
 		public RegistrationUpdatedDelegate RegistrationUpdated { set; get; }
 		public AttributeResultsDelegate AttributeQueueResults { set; get; }
 		public EventResultsDelegate EventQueueResults { set; get; }
-		public InboxResultsDelegate InboxMessagesUpdate { set; get; }
+		public GenericDelegate InboxMessagesUpdate { set; get; }
+		public GenericDelegate LocationsUpdated { get; set; }
 
 		public void AttributeQueueResultNotification (AttributeOperation operation, bool success, NSNotification note)
 		{
@@ -244,9 +309,9 @@ namespace IBMMobilePush.Forms.iOS
 			MCEAttributesQueueManager.SharedInstance ().DeleteChannelAttributes (new NSObject[] { (NSString) key } );
 		}
 
-		public void QueueAddEvent (string name, string type, DateTimeOffset timestamp, string attribution, Dictionary<string,object> attributes, bool flush)
+		public void QueueAddEvent (string name, string type, DateTimeOffset timestamp, string attribution, string mailingId, Dictionary<string,object> attributes, bool flush)
 		{
-			var apiEvent = GenerateEvent (name, type, timestamp, attribution, attributes);
+			var apiEvent = GenerateEvent (name, type, timestamp, attribution, mailingId, attributes);
 			MCEEventService.SharedInstance ().AddEvent (apiEvent, flush);
 		}
 
@@ -279,7 +344,7 @@ namespace IBMMobilePush.Forms.iOS
 			return defaultValue;
 		}
 
-		MCEEvent GenerateEvent<T>(string name, string type, DateTimeOffset timestamp, string attribution, Dictionary<string,T> attributes)
+		MCEEvent GenerateEvent<T>(string name, string type, DateTimeOffset timestamp, string attribution, string mailingId, Dictionary<string,T> attributes)
 		{
 			var apiEvent = new MCEEvent ();
 			apiEvent.Name = name;
@@ -292,6 +357,9 @@ namespace IBMMobilePush.Forms.iOS
 			if (attribution != null)
 				apiEvent.Attribution = attribution;
 
+			if (mailingId != null)
+				apiEvent.MailingId = mailingId;
+
 			if (attributes != null) {
 				var mutableAttributes = new NSMutableDictionary ();
 				foreach (KeyValuePair<string, T> attribute in attributes) {
@@ -303,11 +371,11 @@ namespace IBMMobilePush.Forms.iOS
 			return apiEvent;
 		}
 
-		public void AddEvent(string name, string type, DateTimeOffset timestamp, string attribution, Dictionary<string,object> attributes, EventResultsDelegate callback)
+		public void AddEvent(string name, string type, DateTimeOffset timestamp, string attribution, string mailingId, Dictionary<string,object> attributes, EventResultsDelegate callback)
 		{
-			var apiEvent = GenerateEvent (name, type, timestamp, attribution, attributes);
+			var apiEvent = GenerateEvent (name, type, timestamp, attribution, mailingId, attributes);
 			EventClient.SendEvents (new NSObject[] { apiEvent }, delegate(NSError error) {
-				callback(error == null, name, type, timestamp, attribution, attributes);
+				callback(error == null, name, type, timestamp, attribution, mailingId, attributes);
 			});
 		}
 
@@ -332,6 +400,7 @@ namespace IBMMobilePush.Forms.iOS
 
 					DateTimeOffset timestamp = ConvertDate (apiEvent.Timestamp, default(DateTimeOffset));
 					string attribution = apiEvent.Attribution;
+					string mailingId = apiEvent.MailingId;
 					Dictionary<string,object> attributes = new Dictionary<string, object> ();
 
 					NSDictionary attributesDict = apiEvent.Attributes;
@@ -348,7 +417,7 @@ namespace IBMMobilePush.Forms.iOS
 						}
 					}
 
-					EventQueueResults(success, name, type, timestamp, attribution, attributes);
+					EventQueueResults(success, name, type, timestamp, attribution, mailingId, attributes);
 				}
 
 			}
@@ -399,9 +468,13 @@ namespace IBMMobilePush.Forms.iOS
 			public void HandleAction(NSDictionary action, NSDictionary payload)
 			{
 				string attribution = null;
+				string mailingId = null;
 				NSDictionary mce = (NSDictionary) payload["mce"];
 				if (mce != null) {
-					attribution = (NSString)mce ["attribution"];
+					if (mce.ContainsKey(new NSString("attribution")))
+						attribution = (NSString)mce ["attribution"];
+					if (mce.ContainsKey(new NSString("mailingId")))
+						mailingId = (NSString)mce["mailingId"];
 				}
 				NSError error = null;
 				var jsonPayloadData = NSJsonSerialization.Serialize (payload, NSJsonWritingOptions.PrettyPrinted, out error);
@@ -412,7 +485,7 @@ namespace IBMMobilePush.Forms.iOS
 				var jsonActionString = NSString.FromData (jsonActionData, NSStringEncoding.UTF8);
 				var jsonActionObject = JObject.Parse (jsonActionString);
 
-				Handler.HandleAction (jsonActionObject, jsonPayloadObject, attribution, 0);
+				Handler.HandleAction (jsonActionObject, jsonPayloadObject, attribution, mailingId, 0);
 			}
 		}
 
@@ -429,20 +502,6 @@ namespace IBMMobilePush.Forms.iOS
 			MCEInboxQueueManager.SharedInstance ().SyncInbox ();
 		}
 
-		public RichContent FetchRichContent (string richContentId)
-		{
-			var richContent = MCEInboxDatabase.SharedInstance ().FetchRichContentId (richContentId);
-
-			NSError error = null;
-			var jsonData = NSJsonSerialization.Serialize (richContent.Content, NSJsonWritingOptions.PrettyPrinted, out error);
-			var jsonString = NSString.FromData (jsonData, NSStringEncoding.UTF8);
-
-			return new RichContent () {
-				RichContentId = richContent.RichContentId,
-				Content = JObject.Parse(jsonString)
-			};
-		}
-
 		public static InboxMessage Convert(MCEInboxMessage inboxMessage)
 		{
 			DateTimeOffset expirationDate = ConvertDate(inboxMessage.ExpirationDate, DateTimeOffset.MaxValue);
@@ -453,36 +512,41 @@ namespace IBMMobilePush.Forms.iOS
 				sendDate = reference.AddSeconds(inboxMessage.SendDate.SecondsSinceReferenceDate);
 			}
 
+			NSError error = null;
+			var contentString = new NSString(inboxMessage.ContentData, NSStringEncoding.UTF8);
+			var content = JObject.Parse(contentString);
+
 			return new InboxMessage () {
 				InboxMessageId = inboxMessage.InboxMessageId,
 				RichContentId = inboxMessage.RichContentId,
 				ExpirationDate = expirationDate,
 				SendDate = sendDate,
 				TemplateName = inboxMessage.Template,
-				Attribution=inboxMessage.Attribution,
+				Attribution = inboxMessage.Attribution,
+				MailingId = inboxMessage.MailingId,
 				IsRead=inboxMessage.IsRead,
-				IsDeleted=inboxMessage.IsDeleted
+				IsDeleted=inboxMessage.IsDeleted,
+				Content = content
 			};
 		}
 
 		public void FetchInboxMessage (string inboxMessageId, InboxMessageResultsDelegate callback)
 		{
-			MCEInboxDatabase.SharedInstance ().FetchInboxMessageId (inboxMessageId, (MCEInboxMessage inboxMessage, NSError error) => {
+			MCEInboxMessage inboxMessage = MCEInboxDatabase.SharedInstance().InboxMessageWithInboxMessageId(inboxMessageId);
 
-				if(error != null)
-					callback(null);
+			if(inboxMessage == null)
+				callback(null);
 
-				callback(Convert(inboxMessage));
-			});
-		}
+			callback(Convert(inboxMessage));
+ 		}
 
-		public void ExecuteAction(JToken action, string attribution, string source, Dictionary<string, string> attributes)
+		public void ExecuteAction(JToken action, string attribution, string mailingId, string source, Dictionary<string, string> attributes)
 		{
 			var actionString = action.ToString ();
 			var actionData = NSData.FromString (actionString);
 			NSError error = null;
 			var actionDict = (NSDictionary) NSJsonSerialization.Deserialize(actionData, 0, out error);
-			var payload = new NSDictionary ("mce", new NSDictionary ("attribution", attribution));
+			var payload = new NSDictionary ("mce", new NSDictionary ("attribution", attribution, "mailingId", mailingId));
 
 			var attributesDict = new NSMutableDictionary();
 			foreach (KeyValuePair<string, string> entry in attributes)
@@ -494,35 +558,35 @@ namespace IBMMobilePush.Forms.iOS
 
 		public void DeleteInboxMessage(InboxMessage message)
 		{
-			MCEInboxDatabase.SharedInstance ().SetDeletedForInboxMessageId (message.InboxMessageId);
+			message.IsDeleted = true;
+			MCEInboxMessage inboxMessage = MCEInboxDatabase.SharedInstance().InboxMessageWithInboxMessageId(message.InboxMessageId);
+			inboxMessage.IsDeleted = true;
 		}
 
 		public void ReadInboxMessage (InboxMessage message)
 		{
-			MCEInboxDatabase.SharedInstance ().SetReadForInboxMessageId (message.InboxMessageId);
+			message.IsRead = true;
+			MCEInboxMessage inboxMessage = MCEInboxDatabase.SharedInstance().InboxMessageWithInboxMessageId(message.InboxMessageId);
+			inboxMessage.IsRead = true;
 		}
 
 		InboxMessageResultsDelegate fetchCallback;
 		string richContentIdCallback;
 		public void FetchInboxMessageWithRichContentId(string richContentId, InboxMessageResultsDelegate callback)
 		{
-			MCEInboxDatabase.SharedInstance ().FetchInboxMessageViaRichContentId (richContentId, (MCEInboxMessage inboxMessage, NSError error) => {
+			MCEInboxMessage inboxMessage = MCEInboxDatabase.SharedInstance().InboxMessageWithRichContentId(richContentId);
 
-				if(error != null && !error.Domain.Equals("Inbox message not in storage"))
-					callback(null);
-
-				if (inboxMessage == null)
-				{
-					richContentIdCallback = richContentId;
-					fetchCallback = callback;
-					InboxMessagesUpdate += CallbackFetchInboxMessageWithRichContentId;
-					SyncInboxMessages();
-				}
-				else
-				{
-					callback(Convert(inboxMessage));
-				}
-			});
+			if (inboxMessage == null)
+			{
+				richContentIdCallback = richContentId;
+				fetchCallback = callback;
+				InboxMessagesUpdate += CallbackFetchInboxMessageWithRichContentId;
+				SyncInboxMessages();
+			}
+			else
+			{
+				callback(Convert(inboxMessage));
+			}
 
 		}
 
@@ -539,15 +603,14 @@ namespace IBMMobilePush.Forms.iOS
 
 		public void FetchInboxMessages (Action<InboxMessage[]> completion, bool ascending)
 		{
-			MCEInboxDatabase.SharedInstance().FetchInboxMessages((messages, error) => {
-				var messageList = new List<InboxMessage>();
-				for(nuint i=0;i< messages.Count; i++)
-				{
-					var message = messages.GetItem<MCEInboxMessage>(i);
-					messageList.Add(Convert(message));
-				}
-				completion(messageList.ToArray());
-			}, ascending);
+			NSMutableArray messages = MCEInboxDatabase.SharedInstance().InboxMessagesAscending(ascending);
+			var messageList = new List<InboxMessage>();
+			for(nuint i=0;i< messages.Count; i++)
+			{
+				var message = messages.GetItem<MCEInboxMessage>(i);
+				messageList.Add(Convert(message));
+			}
+			completion(messageList.ToArray());
 		}
 
 		public float StatusBarHeight()
@@ -573,10 +636,59 @@ namespace IBMMobilePush.Forms.iOS
 			return connection;
 		}
 
-		public void ExecuteAction(JObject action, JObject payload, string attribution, int id)
+		public void ExecuteAction(JObject action, JObject payload, string attribution, string mailingId, int id)
 		{
 			// only used in Android
 		}
+
+		public bool GeofenceEnabled()
+		{
+			return MCESdk.SharedInstance().Config.GeofenceEnabled();
+		}
+		
+		public ISet<Geofence> GeofencesNear(double latitude, double longitude)
+		{
+            CLLocationCoordinate2D coords = new CLLocationCoordinate2D(latitude, longitude);
+            var cl_geofences = MCELocationDatabase.SharedInstance().GeofencesNear(coords, 10000);
+			var geofences = new HashSet<Geofence>();
+			foreach (MCEGeofence region in cl_geofences)
+			{
+                geofences.Add(new Geofence(region.Coordinate.Latitude, region.Coordinate.Longitude, region.Radius, region.LocationId));
+			}
+			return geofences;
+		}
+
+		public void SyncGeofences()
+		{
+			new MCELocationClient().ScheduleSync();
+		}
+
+		public ISet<BeaconRegion> BeaconRegions()
+		{
+			var beaconRegions = MCELocationDatabase.SharedInstance().BeaconRegions();
+			var beacons = new HashSet<BeaconRegion>();
+			foreach(CLBeaconRegion beaconRegion in beaconRegions)
+			{
+				beacons.Add(new BeaconRegion(beaconRegion.Major.Int32Value, null, beaconRegion.Identifier));
+			}
+			return beacons;
+		}
+
+		public bool BeaconEnabled()
+		{
+			return MCESdk.SharedInstance().Config.BeaconEnabled();
+		}
+
+		public Guid? BeaconUUID()
+		{
+			var uuid = MCESdk.SharedInstance().Config.BeaconUUID();
+			if (uuid != null)
+			{
+				return new Guid(MCESdk.SharedInstance().Config.BeaconUUID().AsString());
+			}
+			return null;
+		}
+
 	}
 
 	static class Utility

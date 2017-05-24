@@ -27,7 +27,7 @@ namespace Sample
 			snooze = DependencyService.Get<ISnoozeAction> ();
 		}
 
-		public override void HandleAction (JObject action, JObject payload, string attribution, int id)
+		public override void HandleAction (JObject action, JObject payload, string attribution, string mailingId, int id)
 		{
 			var minutes = int.Parse (action ["value"].ToString ());
 			snooze.Snooze (payload, minutes, id, attribution);

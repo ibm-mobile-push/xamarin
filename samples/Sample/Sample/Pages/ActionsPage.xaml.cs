@@ -38,13 +38,13 @@ namespace Sample
 			};
 
 			StandardName.Text = storage.StandardName;
-			StandardName.Completed += (object sender, EventArgs e) => {
+			StandardName.TextChanged += (object sender, EventArgs e) => {
 				storage.StandardName = StandardName.Text;
 				UpdateStandardJSON ();
 			};
 
 			StandardValue.Text = storage.StandardValue;
-			StandardValue.Completed += (object sender, EventArgs e) => {
+			StandardValue.TextChanged += (object sender, EventArgs e) => {
 				storage.StandardValue = StandardValue.Text;
 				UpdateStandardJSON ();
 			};
@@ -52,19 +52,19 @@ namespace Sample
 			UpdateStandardJSON ();
 
 			CustomType.Text = storage.CustomType;
-			CustomType.Completed += (object sender, EventArgs e) => {
+			CustomType.TextChanged += (object sender, EventArgs e) => {
 				storage.CustomType = CustomType.Text;
 				UpdateCustomJSON ();
 			};
 
 			CustomName.Text = storage.CustomName;
-			CustomName.Completed += (object sender, EventArgs e) => {
+			CustomName.TextChanged += (object sender, EventArgs e) => {
 				storage.CustomName = CustomName.Text;
 				UpdateCustomJSON ();
 			};
 
 			CustomValue.Text = storage.CustomValue;
-			CustomValue.Completed += (object sender, EventArgs e) => {
+			CustomValue.TextChanged += (object sender, EventArgs e) => {
 				storage.CustomValue = CustomValue.Text;
 				UpdateCustomJSON ();
 			};
@@ -72,14 +72,14 @@ namespace Sample
 			UpdateCustomJSON ();
 		}
 
-		string ConstructJSON(string type, string name, string value)
+		string ConstructJSON(string type,  string name, string value)
 		{
 			try
 			{
 				var jsonValue = JsonConvert.DeserializeObject<Object>(value);
 				return JsonConvert.SerializeObject(new { type = type, name = name, value = jsonValue });
 			}
-			catch(Exception ex) {
+			catch(JsonReaderException ex) {
 				if(value == null)
 					return JsonConvert.SerializeObject(new { type = type, name = name });
 				else

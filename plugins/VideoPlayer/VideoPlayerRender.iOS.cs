@@ -81,11 +81,14 @@ namespace Sample.iOS
 				Player.AddObserver (this, "currentItem.presentationSize", NSKeyValueObservingOptions.OldNew, IntPtr.Zero);
 			}
 
-			Element.SizeChanged += (object sender, EventArgs sizeElement) => {
-				UpdateFrame();
-			};
-
-			LoadVideo ();
+			if (Element != null)
+			{
+				Element.SizeChanged += (object sender, EventArgs sizeElement) =>
+				{
+					UpdateFrame();
+				};
+				LoadVideo();
+			}
 		}
 
 		public void Play(object sender, EventArgs e)

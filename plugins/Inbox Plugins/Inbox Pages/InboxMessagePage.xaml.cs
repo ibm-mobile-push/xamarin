@@ -43,8 +43,7 @@ namespace Sample
 			var handler = SDK.Instance.RegisteredInboxTemplate(message.TemplateName);
 			if(handler != null && handler.ShouldDisplayInboxMessage(message))
 			{
-				var content = SDK.Instance.FetchRichContent(message.RichContentId);
-				var view = handler.MessageView(message, content);
+				var view = handler.MessageView(message);
 				Layout.Children.Add (view, 0, 1);
 			}
 
@@ -79,7 +78,7 @@ namespace Sample
 							{"richContentId", message.RichContentId},
 							{"inboxMessageId", message.InboxMessageId}
 						};
-			SDK.Instance.QueueAddEvent("messageOpened", "inbox", DateTimeOffset.Now, message.Attribution, attributes, true);
+			SDK.Instance.QueueAddEvent("messageOpened", "inbox", DateTimeOffset.Now, message.Attribution, message.MailingId, attributes, true);
 		}
 	}
 }

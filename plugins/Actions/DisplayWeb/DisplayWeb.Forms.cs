@@ -20,7 +20,7 @@ namespace Sample
 		{
 		}
 
-		public override void HandleAction (JObject action, JObject payload, string attribution, int id)
+		public override void HandleAction (JObject action, JObject payload, string attribution, string mailingId, int id)
 		{
 			var page = new ContentPage ();
 			var dismiss = new Button () {

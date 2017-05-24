@@ -103,7 +103,7 @@ namespace Sample
 
 					var tapGesture = new TapGestureRecognizer ();
 					tapGesture.Tapped += (object sender, EventArgs e) => {
-						SDK.Instance.ExecuteInAppAction(Message.Content["action"], Message.Attribution);
+						SDK.Instance.ExecuteInAppAction(Message.Content["action"], Message.Attribution, Message.MailingId);
 						SDK.Instance.DeleteInAppMessage(Message);
 						Dismiss(null, EventArgs.Empty);
 					};

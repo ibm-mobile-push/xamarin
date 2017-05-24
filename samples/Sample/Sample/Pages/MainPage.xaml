@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 
 <!--
 Licensed Materials - Property of IBM
@@ -35,6 +35,8 @@ US Government Users Restricted Rights - Use, duplication or disclosure restricte
 		      		<TextCell Text="Push Actions" Tapped="OpenPage" StyleId="Actions" />
 		      		<TextCell Text="Send Test Events" Tapped="OpenPage" StyleId="Events" />
 		      		<TextCell Text="Send User Attributes" Tapped="OpenPage" StyleId="Attributes" />
+		      		<TextCell Text="Geofences" Tapped="OpenPage" StyleId="Geofences" />
+		      		<TextCell Text="iBeacons" Tapped="OpenPage" StyleId="iBeacons" />
 		        </TableSection>
 		    </TableRoot>
 		</TableView>

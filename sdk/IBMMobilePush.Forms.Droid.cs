@@ -1,4 +1,4 @@
-﻿/*
+﻿﻿/*
  * Licensed Materials - Property of IBM
  *
  * 5725E28, 5725I03
@@ -16,11 +16,14 @@ using System.Threading;
 
 using IBMMobilePush.Forms;
 using IBMMobilePush.Droid.API;
+using IBMMobilePush.Droid.API.Broadcast;
 using IBMMobilePush.Droid.API.Attribute;
 using IBMMobilePush.Droid.Notification;
 using IBMMobilePush.Droid.API.Notification;
 using IBMMobilePush.Droid.API.Event;
 using IBMMobilePush.Droid.Plugin.Inbox;
+using IBMMobilePush.Droid.Location;
+using IBMMobilePush.Droid.Beacons;
 
 using Java.Util;
 
@@ -30,7 +33,11 @@ using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
+using Android.Bluetooth;
 using Android.Util;
+
+using Android.Support.V4.Content;
+using Android.Content.PM;
 
 using Org.Json;
 using Newtonsoft.Json.Linq;
@@ -40,6 +47,7 @@ using Xamarin.Forms;
 using SQLite.Net;
 using SQLite.Net.Async;
 using SQLite.Net.Platform.XamarinAndroid;
+using Android.Locations;
 
 [assembly: Dependency(typeof(IBMMobilePush.Forms.Droid.IBMMobilePushImpl))]
 namespace IBMMobilePush.Forms.Droid
@@ -49,25 +57,69 @@ namespace IBMMobilePush.Forms.Droid
 		delegate void InboxCallbackDelegate();
 
 		Context ApplicationContext;
-		IBMMobilePushBroadcastReceiver BroadcastReceiver; 
-		public IBMMobilePushImpl()
-		{
+		IBMMobilePushBroadcastReceiver BroadcastReceiver;
+		ActionBroadcastReceiver ActionReceiver;
+		
+		public void OnResume()
+        {
 			ApplicationContext = Xamarin.Forms.Forms.Context;
 
-			IntentFilter intentFilter = new IntentFilter("com.ibm.mce.sdk.NOTIFIER");
 			BroadcastReceiver = new IBMMobilePushBroadcastReceiver(this);
-			ApplicationContext.RegisterReceiver (BroadcastReceiver, intentFilter);
-		}
+			ApplicationContext.RegisterReceiver(BroadcastReceiver, new IntentFilter("com.ibm.mce.sdk.NOTIFIER"));
 
-		~IBMMobilePushImpl()
-		{
-			ApplicationContext.UnregisterReceiver (BroadcastReceiver);
+			ActionReceiver = new ActionBroadcastReceiver();
+			ApplicationContext.RegisterReceiver(ActionReceiver, new IntentFilter("com.ibm.mce.sdk.EXECUTE_CUSTOM_ACTION"));
 		}
 
 		public RegistrationUpdatedDelegate RegistrationUpdated { set; get; }
 		public AttributeResultsDelegate AttributeQueueResults { set; get; }
 		public EventResultsDelegate EventQueueResults { set; get; }
-		public InboxResultsDelegate InboxMessagesUpdate { set; get; }
+		public GenericDelegate InboxMessagesUpdate { set; get; }
+		public GenericDelegate LocationsUpdated { get; set; }
+		public GeofenceDelegate GeofenceEntered { set; get; }
+		public GeofenceDelegate GeofenceExited { set; get; }
+		public BeaconDelegate BeaconEntered { set; get; }
+		public BeaconDelegate BeaconExited { set; get; }
+
+		void GeofenceEnter(MceGeofence geofence)
+		{
+			if (GeofenceEntered != null)
+			{
+				GeofenceEntered(new Geofence(geofence.Latitude, geofence.Longitude, geofence.Radius, geofence.Id));
+			}
+		}
+
+		void GeofenceExit(MceGeofence geofence)
+		{
+			if (GeofenceExited != null)
+			{
+				GeofenceExited(new Geofence(geofence.Latitude, geofence.Longitude, geofence.Radius, geofence.Id));
+			}
+		}
+
+		void LocationsUpdate()
+		{
+			if (LocationsUpdated != null)
+			{
+				LocationsUpdated();
+			}
+		}
+
+		void BeaconEnter(IBeacon beacon)
+		{
+			if (BeaconEntered != null)
+			{
+				BeaconEntered(new BeaconRegion(beacon.Major, beacon.Minor, beacon.Id));
+			}
+		}
+
+		void BeaconExit(IBeacon beacon)
+		{
+			if (BeaconExited != null)
+			{
+				BeaconExited(new BeaconRegion(beacon.Major, beacon.Minor, beacon.Id));
+			}
+		}
 
 		void RegistrationUpdate()
 		{
@@ -353,7 +405,7 @@ namespace IBMMobilePush.Forms.Droid
 			return defaultValue;
 		}
 
-		Event GenerateEvent (string name, string type, DateTimeOffset timestamp, string attribution, Dictionary<string,object> attributes)
+		Event GenerateEvent (string name, string type, DateTimeOffset timestamp, string attribution, string mailingId, Dictionary<string,object> attributes)
 		{
 			var apiAttributes = new List<IBMMobilePush.Droid.API.Attribute.Attribute>();
 			foreach(KeyValuePair<string, object> attribute in attributes)
@@ -361,13 +413,13 @@ namespace IBMMobilePush.Forms.Droid
 				apiAttributes.Add ( AttributeConverter(attribute.Key, attribute.Value));
 			}
 
-			return new Event(type, name, ConvertDate (timestamp, new Java.Util.Date()), apiAttributes, attribution);
+			return new Event(type, name, ConvertDate (timestamp, new Java.Util.Date()), apiAttributes, attribution, mailingId);
 		}
 
-		public void AddEvent(string name, string type, DateTimeOffset timestamp, string attribution, Dictionary<string,object> attributes, EventResultsDelegate callback)
+		public void AddEvent(string name, string type, DateTimeOffset timestamp, string attribution, string mailingId, Dictionary<string,object> attributes, EventResultsDelegate callback)
 		{
-			var sdkEvent = GenerateEvent (name, type, timestamp, attribution, attributes);
-			MceSdk.GetEventsClient(false).SendEvent(ApplicationContext, sdkEvent, new EventCallback (name, type, timestamp, attribution, attributes, callback));
+			var sdkEvent = GenerateEvent (name, type, timestamp, attribution, mailingId, attributes);
+			MceSdk.GetEventsClient(false).SendEvent(ApplicationContext, sdkEvent, new EventCallback (name, type, timestamp, attribution, mailingId, attributes, callback));
 		}
 
 		public void FlushEventQueue()
@@ -375,9 +427,9 @@ namespace IBMMobilePush.Forms.Droid
 			ThreadPool.QueueUserWorkItem (o => IBMMobilePush.Droid.Events.EventsClientImpl.SendAllEvents(ApplicationContext) );
 		}
 
-		public void QueueAddEvent (string name, string type, DateTimeOffset timestamp, string attribution, Dictionary<string,object> attributes, bool flush)
+		public void QueueAddEvent (string name, string type, DateTimeOffset timestamp, string attribution, string mailingId, Dictionary<string,object> attributes, bool flush)
 		{
-			var sdkEvent = GenerateEvent (name, type, timestamp, attribution, attributes);
+			var sdkEvent = GenerateEvent (name, type, timestamp, attribution, mailingId, attributes);
 			MceSdk.QueuedEventsClient.SendEvent(ApplicationContext, sdkEvent, flush);
 		}
 
@@ -390,11 +442,12 @@ namespace IBMMobilePush.Forms.Droid
 					var type = apiEvent.Type;
 					var timestamp = apiEvent.Timestamp;
 					var attribution = apiEvent.Attribution;
+					var mailingId = apiEvent.MailingId;
 					var attributes = new Dictionary<string,object>();
 					foreach (var attribute in apiEvent.Attributes) {
 						attributes.Add (attribute.Key, attribute.Value);
 					}
-					EventQueueResults (true, name, type, ConvertDate( timestamp, DateTimeOffset.Now), attribution, attributes);
+					EventQueueResults (true, name, type, ConvertDate( timestamp, DateTimeOffset.Now), attribution, mailingId, attributes);
 				}
 			}
 		}
@@ -426,87 +479,20 @@ namespace IBMMobilePush.Forms.Droid
 			return IsProviderRegistered () && IsMceRegistered ();
 		}
 
+		Dictionary<string, PushAction> actionRegistry = new Dictionary<string, PushAction>();
+
 		public void RegisterAction (string name, PushAction handler)
 		{
-			MceNotificationActionRegistry.RegisterNotificationAction (name, new ActionHandler(handler));
+			actionRegistry[name] = handler;
 		}
 
-		public void ExecuteAction(JObject action, JObject payload, string attribution, int id)
+		public void ExecuteAction(JObject action, JObject payload, string attribution, string mailingId, int id)
 		{
 			var name = action["type"].ToString();
-			var handler = MceNotificationActionRegistry.GetNotificationAction(name) as ActionHandler;
+			PushAction handler = actionRegistry[name];
 			if (handler != null)
 			{
-				handler.ExecuteAction(action, payload, attribution, id);
-			}
-		}
-
-		class ActionHandler : Java.Lang.Object, IMceNotificationAction
-		{
-			PushAction Handler;
-
-			public ActionHandler(PushAction handler)
-			{
-				this.Handler = handler;
-			}
-
-			public void ExecuteAction(JObject action, JObject payload, string attribution, int id)
-			{
-				Handler.HandleAction(action, payload, attribution, id);
-			}
-
-			public void HandleAction (Context context, string type, string name, string attribution, IDictionary<string, string> payload, bool fromNotification)
-			{
-				string[] skipKeys = {"name", "type", "com.ibm.mce.sdk.NOTIF_SOURCE", "com.ibm.mce.sdk.NOTIF_SOURCE_ID", "com.ibm.mce.sdk.NOTIF_SOURCE_PAYLOAD" };
-
-				var intent = new Intent(context, typeof(MainActivity));
-
-				if (payload.ContainsKey("com.ibm.mce.sdk.NOTIF_SOURCE"))
-				{
-					var jsonPayload = JObject.Parse(payload["com.ibm.mce.sdk.NOTIF_SOURCE"]);
-					intent.PutExtra("jsonPayload", jsonPayload.ToString());
-				}
-
-				if (payload.ContainsKey("com.ibm.mce.sdk.NOTIF_SOURCE_ID"))
-				{
-					var id = int.Parse(payload["com.ibm.mce.sdk.NOTIF_SOURCE_ID"]);
-					intent.PutExtra("id", id);
-				}
-
-				var jsonAction = new JObject (){ {"type", type}, {"name", name} };
-				foreach (KeyValuePair<string, string> item in payload) {
-					if(skipKeys.Contains(item.Key))
-						continue;
-					
-					try
-					{
-						jsonAction.Add (item.Key, JObject.Parse(item.Value));
-					}
-					catch (Exception ex) {
-						jsonAction.Add (item.Key, item.Value);
-					}
-				}
-						
-				intent.PutExtra("jsonAction", jsonAction.ToString());
-				if (attribution != null)
-				{
-					intent.PutExtra("attribution", attribution);
-				}
-				intent.AddFlags(ActivityFlags.NewTask);
-				context.StartActivity(intent);
-			}
-
-			public void Init (Context context, JSONObject jsonObject)
-			{
-			}
-
-			public bool ShouldDisplayNotification (Context context, INotificationDetails notificationDetails, Bundle bundle)
-			{
-				return true;
-			}
-
-			public void Update (Context context, JSONObject jsonObject)
-			{
+				handler.HandleAction(action, payload, attribution, mailingId, id);
 			}
 		}
 
@@ -520,32 +506,11 @@ namespace IBMMobilePush.Forms.Droid
 			ThreadPool.QueueUserWorkItem (o => InboxMessagesClient.LoadInboxMessages(ApplicationContext, new InboxCallback(InboxMessagesUpdate)) );
 		}
 
-		public RichContent FetchRichContent (string richContentId)
-		{
-			var messageCursor = RichContentDatabaseHelper.GetRichContentDatabaseHelper (ApplicationContext).GetMessagesByContentId (richContentId);
-			messageCursor.MoveToFirst();
-			var message = messageCursor.RichContent;
-			if(message == null)
-			{
-				Logging.Error("Inbox Message not found in database");
-				return null;
-			}
-
-			return ConvertToRichContent (message);		
-		}
-			
-		RichContent ConvertToRichContent(IBMMobilePush.Droid.Plugin.Inbox.RichContent message)
-		{
-			var json = message.Content.ToString ();
-			var content = JObject.Parse (json);
-			return new RichContent () { 
-				RichContentId = message.ContentId,
-				Content = content
-			};
-		}
-
 		InboxMessage ConvertToInboxMessage(IBMMobilePush.Droid.Plugin.Inbox.RichContent message)
 		{
+			var json = message.Content.ToString();
+			var content = JObject.Parse(json);
+
 			return new InboxMessage () { 
 				InboxMessageId = message.MessageId,
 				RichContentId = message.ContentId,
@@ -553,8 +518,10 @@ namespace IBMMobilePush.Forms.Droid
 				SendDate = ConvertDate(message.SendDate, DateTimeOffset.MinValue),
 				TemplateName = message.Template,
 				Attribution = message.Attribution,
+				//MailingId = message.MailingId, // It seems like mailling id should be here, but it's missing in the SDK
 				IsRead = (bool) message.IsRead,
-				IsDeleted = (bool) message.IsDeleted
+				IsDeleted = (bool) message.IsDeleted,
+				Content = content
 			};
 		}
 
@@ -635,11 +602,58 @@ namespace IBMMobilePush.Forms.Droid
 			completion (messages.ToArray());
 		}
 
-		public void ExecuteAction(JToken action, string attribution, string source, Dictionary<string, string> attributes)
+		public void ExecuteAction(JToken action, string attribution, string mailingId, string source, Dictionary<string, string> attributes)
 		{
 			var actionType = action ["type"].ToString();
+			if (actionType == "url" || actionType == "dial" || actionType.ToLower() == "openapp")
+			{
+				var androidImpl = MceNotificationActionRegistry.GetNotificationAction(actionType);
+				if (androidImpl != null) {
+					var payload = new Dictionary<string, string>();
 
-			var actionImpl = MceNotificationActionRegistry.GetNotificationAction(actionType);
+					JObject actionObject = action.Value<JObject>();
+
+					List<string> keys = actionObject.Properties().Select(p => p.Name).ToList();
+
+					foreach (string key in keys) {
+						payload[key] = action[key].ToString();
+					}
+
+					androidImpl.HandleAction(ApplicationContext, actionType, null, null, mailingId, payload, false);
+
+					var eventAttributes = new List<IBMMobilePush.Droid.API.Attribute.Attribute>();
+					foreach (KeyValuePair<string, string> entry in attributes)
+					{
+						eventAttributes.Add(new StringAttribute(entry.Key, entry.Value));
+					}
+
+					eventAttributes.Add(new StringAttribute("actionTaken", actionType));
+					var name = actionType;
+	var clickEventDetails = MceNotificationActionImpl.GetClickEventDetails(actionType);
+					if (clickEventDetails != null)
+					{
+						name = clickEventDetails.EventName;
+						var value = action["value"].ToString();
+	eventAttributes.Add(new StringAttribute(clickEventDetails.ValueName, value));
+					}
+					else {
+						foreach (KeyValuePair<string, string> entry in payload)
+						{
+							eventAttributes.Add(new StringAttribute(entry.Key, entry.Value));
+						}
+					}
+
+					var sdkEvent = new Event(source, name, new Date(), eventAttributes, attribution, mailingId);
+					MceSdk.QueuedEventsClient.SendEvent(ApplicationContext, sdkEvent, true);
+				}
+				return;
+			}
+			else if (!actionRegistry.ContainsKey(actionType))
+			{
+				return;
+			}
+
+			var actionImpl = actionRegistry[actionType];
 			if (actionImpl != null) {
 				var payload = new Dictionary<string,string> ();
 
@@ -651,7 +665,7 @@ namespace IBMMobilePush.Forms.Droid
 					payload [key] = action [key].ToString ();
 				}
 
-				actionImpl.HandleAction(ApplicationContext, actionType, null, null, payload, false);
+				actionImpl.HandleAction(action as JObject, action as JObject, attribution, mailingId, 0);
 
 				var eventAttributes = new List<IBMMobilePush.Droid.API.Attribute.Attribute>();
 				foreach (KeyValuePair<string, string> entry in attributes)
@@ -675,7 +689,7 @@ namespace IBMMobilePush.Forms.Droid
 					}
 				}
 
-				var sdkEvent = new Event(source, name, new Date(), eventAttributes, attribution);
+				var sdkEvent = new Event(source, name, new Date(), eventAttributes, attribution, mailingId);
 
 				MceSdk.QueuedEventsClient.SendEvent(ApplicationContext, sdkEvent, true);
 			}
@@ -703,10 +717,80 @@ namespace IBMMobilePush.Forms.Droid
 			return new Xamarin.Forms.Size (metrics.WidthPixels/metrics.Density, metrics.HeightPixels/metrics.Density);
 		}
 
+		public ISet<Geofence> GeofencesNear(double latitude, double longitude)
+		{
+			var geofences = new HashSet<Geofence>();
+
+			Location location = new Location("SDK");
+
+			location.Latitude = latitude;
+			location.Longitude = longitude;
+
+
+			var allGeofences = IBMMobilePush.Droid.Location.LocationManager.GetLocations(ApplicationContext, LocationPreferences.GetCurrentLocationsState(ApplicationContext).TrackedBeaconsIds);
+			foreach(var aGeofence in allGeofences)
+			{
+				var geofence = new Geofence(aGeofence.Latitude, aGeofence.Longitude, aGeofence.Radius, aGeofence.Id);
+				geofences.Add(geofence);
+			}
+
+			return geofences;
+		}
+
+		public void SyncGeofences()
+		{
+			LocationRetrieveService.StartLocationUpdates(ApplicationContext);
+		}
+
+		public bool GeofenceEnabled()
+		{
+			return ContextCompat.CheckSelfPermission(ApplicationContext, Android.Manifest.Permission.AccessFineLocation) == Permission.Granted;
+		}
+
+		public ISet<BeaconRegion> BeaconRegions()
+		{
+			var beaconRegions = new HashSet<BeaconRegion>();
+        	var trackedIBeacons = IBMMobilePush.Droid.Location.LocationManager.GetLocations(ApplicationContext, LocationPreferences.GetCurrentLocationsState(ApplicationContext).TrackedBeaconsIds);
+			foreach (MceLocation location in trackedIBeacons)
+			{
+				IBeacon beaconLocation = (IBeacon)location;
+				beaconRegions.Add(new BeaconRegion(beaconLocation.Major, null, null));
+			}
+
+			return beaconRegions;
+		}
+
+		public bool BeaconEnabled()
+		{
+			BluetoothAdapter bluetoothAdapter = BluetoothAdapter.DefaultAdapter;
+			if (bluetoothAdapter == null)
+			{
+				return false;
+			}
+			else 
+			{
+				if (!bluetoothAdapter.IsEnabled)
+				{
+					return false;
+				}
+			}
+			return true;
+		}
+
+		public Guid? BeaconUUID()
+		{
+			var uuid = IBeaconsPreferences.GetBeaconsUUID(ApplicationContext);
+			if (uuid != null)
+			{
+				return new Guid(uuid);
+			}
+			return null;
+		}
+
 		class InboxCallback : Java.Lang.Object, IOperationCallback
 		{
-			InboxResultsDelegate Callback;
-			public InboxCallback(InboxResultsDelegate callback)
+			GenericDelegate Callback;
+			public InboxCallback(GenericDelegate callback)
 			{
 				Callback = callback;
 			}
@@ -726,35 +810,98 @@ namespace IBMMobilePush.Forms.Droid
 			string Name;
 			string Type;
 			DateTimeOffset Timestamp;
+			string MailingId;
 			string Attribution;
 			Dictionary<string,object> Attributes;
 			EventResultsDelegate Callback;
 
-			public EventCallback(string name, string type, DateTimeOffset timestamp, string attribution, Dictionary<string,object> attributes, EventResultsDelegate callback)
+			public EventCallback(string name, string type, DateTimeOffset timestamp, string attribution, string mailingId, Dictionary<string,object> attributes, EventResultsDelegate callback)
 			{
 				Name = name;
 				Type = type;
 				Timestamp = timestamp;
-				attribution = attribution;
+				Attribution = attribution;
+				MailingId = mailingId;
 				Attributes = attributes;
 				Callback = callback;
 			}
 
 			public void OnFailure(Java.Lang.Object p0, OperationResult p1)
 			{
-				Callback(false, Name, Type, Timestamp, Attribution, Attributes);
+				Callback(false, Name, Type, Timestamp, Attribution, MailingId, Attributes);
 			}
 
 			public void OnSuccess(Java.Lang.Object p0, OperationResult p1)
 			{
-				Callback(true, Name, Type, Timestamp, Attribution, Attributes);
+				Callback(true, Name, Type, Timestamp, Attribution, MailingId, Attributes);
 			}
-
 		}
+		 
+		class ActionBroadcastReceiver : BroadcastReceiver
+		{
+			public override void OnReceive(Context context, Intent intent)
+			{
+				var jsonActionString = intent.GetStringExtra("action");
+				if (jsonActionString != null)
+				{
+
+					var jsonAction = JObject.Parse(jsonActionString);
+					JObject jsonPayload = null;
+					if (intent.HasExtra("payload"))
+					{
+						jsonPayload = JObject.Parse(intent.GetStringExtra("payload"));
+					}
+					var attribution = intent.GetStringExtra("attribution");
+					int id = 0;
+					try
+					{
+						id = Int32.Parse(intent.GetStringExtra("id"));
+					}
+					catch { }
+
+					var mailingId = intent.GetStringExtra("mailingId");
+
+					SDK.Instance.ExecuteAction(jsonAction, jsonPayload, attribution, mailingId, id);
+				}
+			}
+		}
+
 
 		class IBMMobilePushBroadcastReceiver : MceBroadcastReceiver
 		{
 			IBMMobilePushImpl IBMMobilePush;
+
+			public override void OnLocationEvent(Context context, MceLocation location, EventBroadcastHandlerLocationType locationType, EventBroadcastHandlerLocationEventType eventType)
+			{
+				if (locationType == EventBroadcastHandlerLocationType.Ibeacon)
+				{
+					var iBeacon = location as IBeacon;
+					if (iBeacon != null)
+					{
+						if (eventType == EventBroadcastHandlerLocationEventType.Enter)
+							IBMMobilePush.BeaconEnter(iBeacon);
+						if (eventType == EventBroadcastHandlerLocationEventType.Exit)
+							IBMMobilePush.BeaconExit(iBeacon);
+					}
+				}
+				if (locationType == EventBroadcastHandlerLocationType.Geofence)
+				{
+					var geofence = location as MceGeofence;
+					if (geofence != null)
+					{
+						if (eventType == EventBroadcastHandlerLocationEventType.Enter)
+							IBMMobilePush.GeofenceEnter(geofence);
+						if (eventType == EventBroadcastHandlerLocationEventType.Exit)
+							IBMMobilePush.GeofenceExit(geofence);
+					}
+				}
+			}
+
+			public override void OnLocationUpdate(Context context, Location location)
+			{
+				IBMMobilePush.LocationsUpdate();
+			}
+
 			public IBMMobilePushBroadcastReceiver(IBMMobilePushImpl ibmMobilePush)
 			{
 				IBMMobilePush = ibmMobilePush;
@@ -803,7 +950,8 @@ namespace IBMMobilePush.Forms.Droid
 			public override void OnSessionEnd (Context p0, Date p1, long p2)
 			{
 			}
-			public override void OnSessionStart (Context p0, Date p1)
+
+			public override void OnSessionStart(Context p0, Date p1)
 			{
 			}
 		}

@@ -28,7 +28,7 @@ namespace Sample
 			calendar = DependencyService.Get<ICalendarAction> ();
 		}
 
-		public override void HandleAction (JObject action, JObject payload, string attribution, int id)
+		public override void HandleAction (JObject action, JObject payload, string attribution, string mailingId, int id)
 		{
 			var title = action.GetValue ("title").ToString();
 			var startDate = DateTimeOffset.Parse( action.GetValue ("startDate").ToString() );

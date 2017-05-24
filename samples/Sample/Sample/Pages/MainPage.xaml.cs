@@ -53,6 +53,12 @@ namespace Sample
 			case "Attributes":
 				await Navigation.PushAsync (new AttributesPage());
 				break;
+			case "Geofences":
+				await Navigation.PushAsync(new GeofencePage());
+				break;
+			case "iBeacons":
+				await Navigation.PushAsync(new BeaconPage());
+				break;
 			}
 		}
 	}

@@ -28,7 +28,7 @@ namespace Sample
 			emailSender = DependencyService.Get<IEmailAction> ();
 		}
 
-		public override void HandleAction (JObject action, JObject payload, string attribution, int id)
+		public override void HandleAction (JObject action, JObject payload, string attribution, string mailingId, int id)
 		{
 			JToken values = null;
 			string subject = null;
