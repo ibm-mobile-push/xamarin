@@ -10,7 +10,7 @@
     <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
     <AssemblyName>SampleiOS</AssemblyName>
     <XamarinInsightsApiKey>5a419c98c13662528dd48480a6dc1fbd19b06398</XamarinInsightsApiKey>
-    <ReleaseVersion>3.1.0.0</ReleaseVersion>
+    <ReleaseVersion>3.3.0.0</ReleaseVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
     <DebugSymbols>true</DebugSymbols>
@@ -226,6 +226,26 @@
     <ImageAsset Include="Resources\Images.xcassets\refresh.imageset\refresh%403x.png" />
     <ImageAsset Include="Resources\Images.xcassets\play.imageset\play%401x.png" />
     <ImageAsset Include="Resources\Images.xcassets\play.imageset\play.png" />
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\MCE-29-1.png" />
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\MCE-29%402x.png" />
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\MCE-29%403x.png" />
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\MCE-40%402x.png" />
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\MCE-60%402x-1.png" />
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\MCE-57.png" />
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\MCE-57%402x.png" />
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\MCE-60%402x.png" />
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\MCE-60%403x.png" />
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\MCE-29.png" />
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\MCE-29%402x-1.png" />
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\MCE-40.png" />
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\MCE-40%402x-1.png" />
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\MCE-50.png" />
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\MCE-50%402x.png" />
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\MCE-72-1.png" />
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\MCE-72%402x.png" />
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\MCE-76.png" />
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\MCE-76%402x.png" />
+    <ImageAsset Include="Resources\Images.xcassets\AppIcons.appiconset\MCE-167.png" />
   </ItemGroup>
   <ItemGroup>
     <InterfaceDefinition Include="Resources\LaunchScreen.xib" />

@@ -213,12 +213,12 @@ namespace IBMMobilePush.Forms.iOS
 
 		public String UserId()
 		{
-			return MCERegistrationDetails.UserId;
+            return MCERegistrationDetails.SharedInstance().UserId;
 		}
 
 		public String ChannelId()
 		{
-			return MCERegistrationDetails.ChannelId;
+			return MCERegistrationDetails.SharedInstance().ChannelId;
 		}
 
 		public String AppKey()
@@ -228,6 +228,7 @@ namespace IBMMobilePush.Forms.iOS
 
 
 		MCEAttributesClient _AttributeClient;
+        [System.Obsolete("MCEAttributesClient is deprecated")]
 		MCEAttributesClient AttributeClient { 
 			get {
 				if (_AttributeClient == null) {
@@ -237,6 +238,7 @@ namespace IBMMobilePush.Forms.iOS
 			} 
 		}
 
+        [System.Obsolete("SetUserAttribute is deprecated")]
 		public void SetUserAttribute<T> (String key, T value, AttributeResultsDelegate callback)
 		{
 			AttributeClient.SetUserAttributes(new NSDictionary(key, value), (error) => {
@@ -244,6 +246,7 @@ namespace IBMMobilePush.Forms.iOS
 			});
 		}
 
+        [System.Obsolete("UpdateUserAttribute is deprecated, please use QueueUpdateUserAttribute instead.")]
 		public void UpdateUserAttribute<T> (string key, T value, AttributeResultsDelegate callback)
 		{
 			AttributeClient.UpdateUserAttributes(new NSDictionary(key, value), (error) => {
@@ -251,6 +254,7 @@ namespace IBMMobilePush.Forms.iOS
 			});
 		}
 
+        [System.Obsolete("DeleteUserAttribute is deprecated, please use QueueDeleteUserAttribute instead.")]
 		public void DeleteUserAttribute (string key, AttributeResultsDelegate callback)
 		{
 			AttributeClient.DeleteUserAttributes(new NSObject[] { (NSString) key }, (error) => {
@@ -258,6 +262,7 @@ namespace IBMMobilePush.Forms.iOS
 			});
 		}
 
+        [System.Obsolete("SetChannelAttribute is deprecated")]
 		public void SetChannelAttribute<T> (string key, T value, AttributeResultsDelegate callback)
 		{
 			AttributeClient.SetChannelAttributes(new NSDictionary(key, value), (error) => {
@@ -265,6 +270,7 @@ namespace IBMMobilePush.Forms.iOS
 			});
 		}
 
+        [System.Obsolete("UpdateChannelAttribute is deprecated")]
 		public void UpdateChannelAttribute<T> (string key, T value, AttributeResultsDelegate callback)
 		{
 			AttributeClient.UpdateChannelAttributes(new NSDictionary(key, value), (error) => {
@@ -272,6 +278,7 @@ namespace IBMMobilePush.Forms.iOS
 			});
 		}
 
+        [System.Obsolete("DeleteChannelAttribute is deprecated")]
 		public void DeleteChannelAttribute (string key, AttributeResultsDelegate callback)
 		{
 			AttributeClient.DeleteChannelAttributes(new NSObject[] { (NSString) key }, (error) => {
@@ -279,6 +286,7 @@ namespace IBMMobilePush.Forms.iOS
 			});
 		}
 
+        [System.Obsolete("QueueSetUserAttribute is deprecated")]
 		public void QueueSetUserAttribute<T> (string key, T value)
 		{
 			MCEAttributesQueueManager.SharedInstance ().SetUserAttributes (new NSDictionary (key, value));
@@ -294,16 +302,19 @@ namespace IBMMobilePush.Forms.iOS
 			MCEAttributesQueueManager.SharedInstance ().DeleteUserAttributes (new NSObject[] { (NSString) key } );
 		}
 
+        [System.Obsolete("QueueSetChannelAttribute is deprecated")]
 		public void QueueSetChannelAttribute<T> (string key, T value)
 		{	
 			MCEAttributesQueueManager.SharedInstance ().SetChannelAttributes (new NSDictionary (key, value));
 		}
 
+        [System.Obsolete("QueueUpdateChannelAttribute is deprecated")]
 		public void QueueUpdateChannelAttribute<T> (string key, T value)
 		{
 			MCEAttributesQueueManager.SharedInstance ().UpdateChannelAttributes (new NSDictionary (key, value));
 		}
 
+        [System.Obsolete("QueueDeleteChannelAttribute is deprecated")]
 		public void QueueDeleteChannelAttribute (string key)
 		{
 			MCEAttributesQueueManager.SharedInstance ().DeleteChannelAttributes (new NSObject[] { (NSString) key } );
@@ -371,17 +382,13 @@ namespace IBMMobilePush.Forms.iOS
 			return apiEvent;
 		}
 
+        [System.Obsolete("AddEvent is deprecated, use QueueAddEvent instead")]
 		public void AddEvent(string name, string type, DateTimeOffset timestamp, string attribution, string mailingId, Dictionary<string,object> attributes, EventResultsDelegate callback)
 		{
 			var apiEvent = GenerateEvent (name, type, timestamp, attribution, mailingId, attributes);
 			EventClient.SendEvents (new NSObject[] { apiEvent }, delegate(NSError error) {
 				callback(error == null, name, type, timestamp, attribution, mailingId, attributes);
 			});
-		}
-
-		public void FlushEventQueue()
-		{
-			MCEEventService.SharedInstance ().SendEvents ();
 		}
 
 		void EventQueueResultNotification(bool success, NSNotification note)
@@ -437,12 +444,12 @@ namespace IBMMobilePush.Forms.iOS
 
 		public bool IsProviderRegistered()
 		{
-			return MCERegistrationDetails.ApsRegistered();
+			return MCERegistrationDetails.SharedInstance().ApsRegistered;
 		}
 
 		public bool IsMceRegistered()
 		{
-			return MCERegistrationDetails.MceRegistered();
+			return MCERegistrationDetails.SharedInstance().MceRegistered;
 		}
 
 		public bool IsRegistered()

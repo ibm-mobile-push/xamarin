@@ -3,7 +3,7 @@
  *
  * 5725E28, 5725I03
  *
- * © Copyright IBM Corp. 2016, 2016
+ * © Copyright IBM Corp. 2016, 2017
  * US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
  */
 
@@ -20,12 +20,6 @@ namespace Sample
 		{
 			InitializeComponent ();
 
-			SendClient.Tapped += (object sender, EventArgs e) => {
-				SendClient.Status = RightStatus.Sending;
-				SDK.Instance.AddEvent("appOpened", "simpleNotification", DateTimeOffset.Now, "SendClient", "SendClient", new Dictionary<string, object>(), (success, name, type, timestamp, attribution, mailingId, attributes) => {
-					SendClient.Status = success ? RightStatus.Received : RightStatus.Failed;
-				});
-			};
 			SendQueue.Tapped += (object sender, EventArgs e) => {
 				SendQueue.Status = RightStatus.Sending;
 				SDK.Instance.QueueAddEvent("appOpened", "simpleNotification", DateTimeOffset.Now, "SendQueue", "SendQueue", new Dictionary<string, object>(), true);
@@ -34,26 +28,19 @@ namespace Sample
 				QueueEvent.Status = RightStatus.Queued;
 				SDK.Instance.QueueAddEvent("appOpened", "simpleNotification", DateTimeOffset.Now, "QueueEvent", "QueueEvent", new Dictionary<string, object>(), false);
 			};
-			FlushQueue.Tapped += (object sender, EventArgs e) => {
-				FlushQueue.Status = RightStatus.Sending;
-				SDK.Instance.QueueAddEvent("appOpened", "simpleNotification", DateTimeOffset.Now, "FlushQueue", "FlushQueue", new Dictionary<string, object>(), false);
-				SDK.Instance.FlushEventQueue();
-			};
 		}
 
 		public void QueueCallback(bool success, string name, string type, DateTimeOffset timestamp, string attribution, string mailingId, Dictionary<string,object> attributes)
 		{
-			switch (attribution) {
-			case "SendQueue":
-				SendQueue.Status = success ? RightStatus.Received : RightStatus.Failed;
-				break;
-			case "QueueEvent":
-				QueueEvent.Status = success ? RightStatus.Received : RightStatus.Failed;
-				break;
-			case "FlushQueue":
-				FlushQueue.Status = success ? RightStatus.Received : RightStatus.Failed;
-				break;
-			}
+            switch (attribution)
+            {
+                case "SendQueue":
+                    SendQueue.Status = success ? RightStatus.Received : RightStatus.Failed;
+                    break;
+                case "QueueEvent":
+                    QueueEvent.Status = success ? RightStatus.Received : RightStatus.Failed;
+                    break;
+            }
 		}
 
 		protected override void OnDisappearing ()

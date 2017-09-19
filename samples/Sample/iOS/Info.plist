@@ -51,13 +51,13 @@
 	</dict>
 	<key>CFBundleName</key>
 	<string>Sample</string>
-	<key>CFBundleIdentifier</key>
-	<string>com.xtify.silverpop</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>See interesting things nearby!</string>
 	<key>UIFileSharingEnabled</key>
 	<true/>
 	<key>NSCalendarsUsageDescription</key>
 	<string>Use the calendar</string>
+	<key>CFBundleIdentifier</key>
+	<string>INSERT.YOUR.BUNDLE.ID.HERE</string>
 </dict>
 </plist>

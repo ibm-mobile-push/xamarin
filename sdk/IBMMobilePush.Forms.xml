@@ -386,11 +386,52 @@
             The IBMMobilePush SDK main forms interface class.
             </summary>
         </member>
+        <member name="P:IBMMobilePush.Forms.SDK.Instance">
+            <summary>
+            This method provides the singleton for the SDK.
+            </summary>
+            <value>The instance.</value>
+        </member>
+        <member name="M:IBMMobilePush.Forms.SDK.OnResume">
+            <summary>
+            This method should be called on resume of the app.
+            </summary>
+        </member>
         <member name="P:IBMMobilePush.Forms.SDK.RegistrationUpdated">
             <summary>
             Gets or sets the registration updated callback delegate.
             </summary>
             <value>The registration updated.</value>
+        </member>
+        <member name="P:IBMMobilePush.Forms.SDK.LocationsUpdated">
+            <summary>
+            Gets or sets the locations updated callback.
+            </summary>
+            <value>The locations updated.</value>
+        </member>
+        <member name="P:IBMMobilePush.Forms.SDK.GeofenceEntered">
+            <summary>
+            Gets or sets the geofence entered callback.
+            </summary>
+            <value>The geofence entered.</value>
+        </member>
+        <member name="P:IBMMobilePush.Forms.SDK.GeofenceExited">
+            <summary>
+            Gets or sets the geofence exited callback.
+            </summary>
+            <value>The geofence exited.</value>
+        </member>
+        <member name="P:IBMMobilePush.Forms.SDK.BeaconExited">
+            <summary>
+            Gets or sets the beacon exited callback.
+            </summary>
+            <value>The beacon exited.</value>
+        </member>
+        <member name="P:IBMMobilePush.Forms.SDK.BeaconEntered">
+            <summary>
+            Gets or sets the beacon entered callback.
+            </summary>
+            <value>The beacon entered.</value>
         </member>
         <member name="M:IBMMobilePush.Forms.SDK.UserId">
             <summary>
@@ -424,6 +465,8 @@
         <member name="M:IBMMobilePush.Forms.SDK.SetUserAttribute``1(System.String,``0,IBMMobilePush.Forms.AttributeResultsDelegate)">
             <summary>
             Replaces the current user attributes with the specified attribute.
+            
+            Please note, this method is deprecated.
             </summary>
             <param name="key">Key.</param>
             <param name="value">Value.</param>
@@ -433,6 +476,8 @@
         <member name="M:IBMMobilePush.Forms.SDK.UpdateUserAttribute``1(System.String,``0,IBMMobilePush.Forms.AttributeResultsDelegate)">
             <summary>
             Adds or replaces the specified user attribute.
+            
+            Please note, this method is deprecated, please use QueueUpdateUserAttribute instead.
             </summary>
             <param name="key">Key.</param>
             <param name="value">Value.</param>
@@ -442,31 +487,8 @@
         <member name="M:IBMMobilePush.Forms.SDK.DeleteUserAttribute(System.String,IBMMobilePush.Forms.AttributeResultsDelegate)">
             <summary>
             Deletes the specified user attribute.
-            </summary>
-            <param name="key">Key.</param>
-            <param name="callback">Callback.</param>
-        </member>
-        <member name="M:IBMMobilePush.Forms.SDK.SetChannelAttribute``1(System.String,``0,IBMMobilePush.Forms.AttributeResultsDelegate)">
-            <summary>
-             Replaces the current channel attributes with the specified attribute.
-            </summary>
-            <param name="key">Key.</param>
-            <param name="value">Value.</param>
-            <param name="callback">Callback.</param>
-            <typeparam name="T">The 1st type parameter.</typeparam>
-        </member>
-        <member name="M:IBMMobilePush.Forms.SDK.UpdateChannelAttribute``1(System.String,``0,IBMMobilePush.Forms.AttributeResultsDelegate)">
-            <summary>
-            Adds or replaces the specified channel attribute.
-            </summary>
-            <param name="key">Key.</param>
-            <param name="value">Value.</param>
-            <param name="callback">Callback.</param>
-            <typeparam name="T">The 1st type parameter.</typeparam>
-        </member>
-        <member name="M:IBMMobilePush.Forms.SDK.DeleteChannelAttribute(System.String,IBMMobilePush.Forms.AttributeResultsDelegate)">
-            <summary>
-            Deletes the specified channel attribute.
+            
+            Please note, this method is deprecated, please use QueueDeleteUserAttribute instead
             </summary>
             <param name="key">Key.</param>
             <param name="callback">Callback.</param>
@@ -474,6 +496,8 @@
         <member name="M:IBMMobilePush.Forms.SDK.QueueSetUserAttribute``1(System.String,``0)">
             <summary>
             Queues a replacement of the current user attributes with the specified attribute.
+            
+            Please note, this method is deprecated.
             </summary>
             <param name="key">Key.</param>
             <param name="value">Value.</param>
@@ -496,6 +520,8 @@
         <member name="M:IBMMobilePush.Forms.SDK.QueueSetChannelAttribute``1(System.String,``0)">
             <summary>
             Queues the replacement of the current channel attributes with the specified attribute.
+            
+            Please note, this method is deprecated.
             </summary>
             <param name="key">Key.</param>
             <param name="value">Value.</param>
@@ -504,6 +530,8 @@
         <member name="M:IBMMobilePush.Forms.SDK.QueueUpdateChannelAttribute``1(System.String,``0)">
             <summary>
             Queues adding or replacing the specified channel attribute.
+            
+            Please note, this method is deprecated.
             </summary>
             <param name="key">Key.</param>
             <param name="value">Value.</param>
@@ -512,6 +540,8 @@
         <member name="M:IBMMobilePush.Forms.SDK.QueueDeleteChannelAttribute(System.String)">
             <summary>
             Queues the removal of the specified channel attribute.
+            
+            Please note, this method is deprecated.
             </summary>
             <param name="key">Key.</param>
         </member>
@@ -536,6 +566,8 @@
         <member name="M:IBMMobilePush.Forms.SDK.AddEvent(System.String,System.String,System.DateTimeOffset,System.String,System.String,System.Collections.Generic.Dictionary{System.String,System.Object},IBMMobilePush.Forms.EventResultsDelegate)">
             <summary>
             Sends an event to the server.
+            
+            Please note, this method is deprecated, please use QueueAddEvent instead.
             </summary>
             <param name="name">Name.</param>
             <param name="type">Type.</param>
@@ -544,11 +576,6 @@
             <param name="mailingId">MailingId.</param>
             <param name="attributes">Attributes.</param>
             <param name="callback">Callback.</param>
-        </member>
-        <member name="M:IBMMobilePush.Forms.SDK.FlushEventQueue">
-            <summary>
-            Flushes the queued event queue to the server.
-            </summary>
         </member>
         <member name="P:IBMMobilePush.Forms.SDK.Badge">
             <summary>
@@ -574,7 +601,12 @@
             </summary>
             <returns><c>true</c> if this device has registered with push provider; otherwise, <c>false</c>.</returns>
         </member>
-        <!-- Badly formed XML comment ignored for member "M:IBMMobilePush.Forms.SDK.IsRegistered" -->
+        <member name="M:IBMMobilePush.Forms.SDK.IsRegistered">
+            <summary>
+            Queries if the device has registered with a push provider and the SDK is registered with MCE.
+            </summary>
+            <returns><c>true</c> if this instance is registered with MCE and the push provider; otherwise, <c>false</c>.</returns>
+        </member>
         <member name="M:IBMMobilePush.Forms.SDK.RegisterAction(System.String,IBMMobilePush.Forms.PushAction)">
             <summary>
             Registers a custom action handler.
@@ -677,6 +709,17 @@
             <param name="attribution">Attribution.</param>
             <param name="mailingId">MailingId.</param>
             <param name="source">Source.</param>
+            <param name="attributes">Attributes for event</param>
+        </member>
+        <member name="M:IBMMobilePush.Forms.SDK.ExecuteAction(Newtonsoft.Json.Linq.JObject,Newtonsoft.Json.Linq.JObject,System.String,System.String,System.Int32)">
+            <summary>
+            Executes the action.
+            </summary>
+            <param name="action">Action.</param>
+            <param name="payload">Payload.</param>
+            <param name="attribution">Attribution.</param>
+            <param name="mailingId">Mailing identifier.</param>
+            <param name="id">Identifier.</param>
         </member>
         <member name="M:IBMMobilePush.Forms.SDK.ExecuteInboxAction(Newtonsoft.Json.Linq.JToken,System.String,System.String,System.Collections.Generic.Dictionary{System.String,System.String})">
             <summary>
@@ -685,6 +728,7 @@
             <param name="action">Action.</param>
             <param name="attribution">Attribution.</param>
             <param name="mailingId">MailingId.</param>
+            <param name="attributes">Attributes for event</param>
         </member>
         <member name="M:IBMMobilePush.Forms.SDK.ExecuteInAppAction(Newtonsoft.Json.Linq.JToken,System.String,System.String)">
             <summary>
@@ -708,10 +752,53 @@
             <returns>The inbox template.</returns>
             <param name="templateName">Template name.</param>
         </member>
+        <member name="M:IBMMobilePush.Forms.SDK.SyncGeofences">
+            <summary>
+            Syncs the geofences.
+            </summary>
+        </member>
+        <member name="M:IBMMobilePush.Forms.SDK.GeofencesNear(System.Double,System.Double)">
+            <summary>
+            Get nearby geofences
+            </summary>
+            <returns>Geofences nearby</returns>
+            <param name="latitude">Latitude.</param>
+            <param name="longitude">Longitude.</param>
+        </member>
+        <member name="M:IBMMobilePush.Forms.SDK.GeofenceEnabled">
+            <summary>
+            Query if geofences are enabled.
+            </summary>
+            <returns><c>true</c>, if geofences are enabled, <c>false</c> otherwise.</returns>
+        </member>
+        <member name="M:IBMMobilePush.Forms.SDK.BeaconRegions">
+            <summary>
+            Query current iBeacon Regions
+            </summary>
+            <returns>The iBeacon regions.</returns>
+        </member>
+        <member name="M:IBMMobilePush.Forms.SDK.BeaconEnabled">
+            <summary>
+            Query if iBeacons are enabled.
+            </summary>
+            <returns><c>true</c>, if iBeacons are enabled, <c>false</c> otherwise.</returns>
+        </member>
+        <member name="M:IBMMobilePush.Forms.SDK.BeaconUUID">
+            <summary>
+            Query the global iBeacon UUID
+            </summary>
+            <returns>The UUID.</returns>
+        </member>
         <member name="F:IBMMobilePush.Forms.SDK.loggingLevel">
             <summary>
             The logging level for C# code. Not currently connected to a specified logging level in MceConfig.json.
             </summary>
+        </member>
+        <member name="P:IBMMobilePush.Forms.SDK.LoggingLevel">
+            <summary>
+            Gets or sets the logging level.
+            </summary>
+            <value>The logging level.</value>
         </member>
         <member name="T:IBMMobilePush.Forms.Database">
             <summary>

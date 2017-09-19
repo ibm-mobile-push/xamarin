@@ -29,13 +29,34 @@ namespace Sample
 
 		public override void HandleAction (JObject action, JObject payload, string attribution, string mailingId, int id)
 		{
-			var richContentId = action["value"].ToString();
-			SDK.Instance.FetchInboxMessageWithRichContentId (richContentId, (message) => {
-				Device.BeginInvokeOnMainThread(() =>
-				{
-					Application.Current.MainPage.Navigation.PushModalAsync(new InboxMessagePage(message, null));
+            var inboxMessageId = action["inboxMessageId"];
+            if(inboxMessageId == null)
+            {
+				var richContentId = action["value"];
+				SDK.Instance.FetchInboxMessageWithRichContentId(richContentId.ToString(), (message) => {
+                    if (message != null)
+                    {
+                        Device.BeginInvokeOnMainThread(() =>
+                        {
+                            var page = new InboxMessagePage(message, null);
+                            Application.Current.MainPage.Navigation.PushModalAsync(page);
+                        });
+                    }
 				});
-			});
+			}
+            else
+            {
+				SDK.Instance.FetchInboxMessage(inboxMessageId.ToString(), (message) => {
+                    if (message != null)
+                    {
+                        Device.BeginInvokeOnMainThread(() =>
+                        {
+                            var page = new InboxMessagePage(message, null);
+                            Application.Current.MainPage.Navigation.PushModalAsync(page);
+                        });
+                    }
+				});
+			}
 		}
 	}
 }

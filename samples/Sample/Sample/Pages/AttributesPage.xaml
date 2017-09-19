@@ -1,10 +1,10 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
 Licensed Materials - Property of IBM
 
 5725E28, 5725I03
 
-© Copyright IBM Corp. 2016, 2016
+© Copyright IBM Corp. 2016, 2017
 US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
 -->
 <ContentPage 
@@ -24,14 +24,12 @@ US Government Users Restricted Rights - Use, duplication or disclosure restricte
 							<Label Text="Choose an Action" />
 							<local:SegmentedControl HorizontalOptions="End" x:Name="Action">
 								<local:SegmentedControl.Children>
-									<local:SegmentedControlOption Text="Set" />
 									<local:SegmentedControlOption Text="Update" />
 									<local:SegmentedControlOption Text="Delete" />
 								</local:SegmentedControl.Children>
 							</local:SegmentedControl>
 						</StackLayout>
 		      		</ViewCell>
-		      		<local:RightStatusCell Text="Send via Client" x:Name="SendClient" />
 		      		<local:RightStatusCell Text="Send via Queue" x:Name="SendQueue" />
 		        </TableSection>
 		    </TableRoot>

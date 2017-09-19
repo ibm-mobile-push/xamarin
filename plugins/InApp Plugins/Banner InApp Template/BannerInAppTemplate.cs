@@ -84,22 +84,57 @@ namespace Sample
 			}
 		}
 
-		View _InAppView;
+		Image _ContentImage;
+		Image ContentImage
+		{
+			get
+			{
+				if (_ContentImage == null)
+				{
+                    _ContentImage = new Image() {
+                        Aspect = Aspect.AspectFill
+                    };
+				}
+				return _ContentImage;
+			}
+		}
+
+        StackLayout _Content;
+		StackLayout Content
+		{
+			get
+			{
+				if (_Content == null)
+				{
+                    _Content = new StackLayout()
+                    {
+                        Orientation = StackOrientation.Horizontal,
+                        HorizontalOptions = LayoutOptions.StartAndExpand,
+                        Children = {
+                                    IconImage,
+                                    LabelText,
+                                    CancelImage
+                                }
+                    };
+				}
+				return _Content;
+			}
+		}
+
+        AbsoluteLayout _InAppView;
 		public override View InAppView
 		{ 
 			get 
 			{
-				if (_InAppView == null) {
-					_InAppView = new StackLayout () {
-						Orientation=StackOrientation.Horizontal,
-						HorizontalOptions = LayoutOptions.StartAndExpand,
-						BackgroundColor = Color.Red,
-						Children = {
-							IconImage,
-							LabelText,
-							CancelImage
+                if (_InAppView == null)
+                {
+                    _InAppView = new AbsoluteLayout()
+                    {
+                        Children = {
+                            Content,
+							ContentImage
 						}
-					};
+                    };
 
 					var tapGesture = new TapGestureRecognizer ();
 					tapGesture.Tapped += (object sender, EventArgs e) => {
@@ -109,13 +144,15 @@ namespace Sample
 					};
 					_InAppView.GestureRecognizers.Add (tapGesture);
 				}
-				StackLayout inAppView = _InAppView as StackLayout;
-				if (inAppView != null) {
-					inAppView.Padding = new Thickness (5, 0, 5, 0);
-					inAppView.HeightRequest = Height;
-					inAppView.WidthRequest = Layout.Width - 10;
-				}
+                _InAppView.HeightRequest = Height;
+                _ContentImage.HeightRequest = Height;
+                _ContentImage.WidthRequest = Layout.Width;
+				_Content.Padding = new Thickness (10, 0, 10, 0);
+				_Content.HeightRequest = Height;
+				_Content.WidthRequest = Layout.Width - 20;
+                _InAppView.WidthRequest = Layout.Width;
 
+                _InAppView.RaiseChild(Content);
 				return _InAppView;
 			}
 		}
@@ -179,7 +216,11 @@ namespace Sample
 
 		public override void Configure ()
 		{
-			if (Message.Content ["color"] != null)
+            ContentImage.Source = null;
+            InAppView.BackgroundColor = Color.FromRgba(0, 0, 0, 0);
+            if (Message.Content["mainImage"] != null)
+                ContentImage.Source = ImageSource.FromUri(new Uri(Message.Content["mainImage"].ToString()));
+			else if (Message.Content ["color"] != null)
 				InAppView.BackgroundColor = Color.FromHex(Message.Content ["color"].ToString ());
 			else 
 				InAppView.BackgroundColor = Color.FromRgb (18, 84, 189);

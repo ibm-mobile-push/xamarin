@@ -8,694 +8,916 @@
         <member name="T:IBMMobilePush.Forms.AttributeOperation">
             <summary>
             Attribute operation.
-            </summary></member>
+            </summary>
+        </member>
         <member name="T:IBMMobilePush.Forms.RegistrationUpdatedDelegate">
             <summary>
-            Registration updated delegate.
-            </summary></member>
+            Registration updated delegate. 
+            </summary>
+        </member>
+        <member name="T:IBMMobilePush.Forms.GeofenceDelegate">
+            <summary>
+            Geofence breach delegate.
+            </summary>
+        </member>
+        <member name="T:IBMMobilePush.Forms.BeaconDelegate">
+            <summary>
+            iBeacon breach delegate.
+            </summary>
+        </member>
         <member name="T:IBMMobilePush.Forms.AttributeResultsDelegate">
             <summary>
             Attribute queue results delegate.
-            </summary></member>
+            </summary> 
+        </member>
         <member name="T:IBMMobilePush.Forms.EventResultsDelegate">
             <summary>
-            Event queue results delegate.
-            </summary></member>
-        <member name="T:IBMMobilePush.Forms.InboxResultsDelegate">
+            Event queue results delegate. 
+            </summary>
+        </member>
+        <member name="T:IBMMobilePush.Forms.GenericDelegate">
             <summary>
-            Inbox messages results delegate.
-            </summary></member>
+            Generic results delegate.
+            </summary>
+        </member>
+        <member name="T:IBMMobilePush.Forms.Geofence">
+            <summary>
+            Geofence.
+            </summary>
+        </member>
+        <member name="T:IBMMobilePush.Forms.BeaconRegion">
+            <summary>
+            Beacon region.
+            </summary>
+        </member>
         <member name="T:IBMMobilePush.Forms.IIBMMobilePush">
             <summary>
             IBM Mobile Push interface
-            </summary></member>
+            </summary>
+        </member>
         <member name="T:IBMMobilePush.Forms.InAppManager">
             <summary>
-            This class stores, manages and executes InApp messages.
-            </summary></member>
+            This class stores, manages and runs in-app messages.
+            </summary>
+        </member>
         <member name="P:IBMMobilePush.Forms.InAppManager.Instance">
             <summary>
             This property returns a singleton object for the manager.
-            </summary></member>
+            </summary>
+        </member>
         <member name="M:IBMMobilePush.Forms.InAppManager.ExecuteRulesAsync(System.Collections.Generic.List{System.String})">
             <summary>
-            This method will find the next InApp message with the specified rule to be displayed and execute it.
+            This method finds the next in-app message with the specified rule to be displayed and runs it.
             </summary>
             <param name="rules">A list of rules to look for.</param>
-            <param name="frame">The current apps Frame object to insert the message on to.</param></member>
+        </member>
         <member name="M:IBMMobilePush.Forms.InAppManager.DeleteInAppMessage(IBMMobilePush.Forms.InAppMessage)">
             <summary>
-            This method will delete an InApp message before it is expired or overviewed
+            This method deletes an in-app message before it's expired or overviewed.
             </summary>
-            <param name="message">Message to be deleted.</param></member>
+            <param name="message">In-App message to be deleted.</param>
+        </member>
         <member name="T:IBMMobilePush.Forms.InAppMessage">
             <summary>
-            Class representing a single InAppMessage
-            </summary></member>
+            A class representing a single in-app message.
+            </summary>
+        </member>
         <member name="P:IBMMobilePush.Forms.InAppMessage.Id">
             <summary>
-            Unique primary key for identifying InAppMessages
-            </summary></member>
+            The unique primary key for identifying in-app messages.
+            </summary>
+        </member>
         <member name="P:IBMMobilePush.Forms.InAppMessage.Template">
             <summary>
-            Template name to be used to display message.
-            </summary></member>
+            The template name to be used to display a message.
+            </summary>
+        </member>
         <member name="P:IBMMobilePush.Forms.InAppMessage.MaxViews">
             <summary>
-            Maximum number of views for the message.
-            </summary></member>
+            The maximum number of views for the message.
+            </summary>
+        </member>
         <member name="P:IBMMobilePush.Forms.InAppMessage.NumViews">
             <summary>
             The number of times the message has been shown to the user.
-            </summary></member>
+            </summary>
+        </member>
         <member name="P:IBMMobilePush.Forms.InAppMessage.TriggerTimestamp">
             <summary>
             The Unix timestamp that the message should start showing up.
-            </summary></member>
+            </summary>
+        </member>
         <member name="P:IBMMobilePush.Forms.InAppMessage.TriggerDateString">
             <summary>
-            TriggerTimestamp in ISO8601 format
-            </summary></member>
+            The trigger timestamp in an ISO8601 format.
+            </summary>
+        </member>
         <member name="P:IBMMobilePush.Forms.InAppMessage.TriggerDate">
             <summary>
-            TriggerTimestamp in DateTimeOffset format
-            </summary></member>
+            The trigger timestamp in a DateTimeOffset format.
+            </summary>
+        </member>
         <member name="P:IBMMobilePush.Forms.InAppMessage.Attribution">
             <summary>
-            The campaign name associated with this InApp message
-            </summary></member>
+            The campaign name associated with the in-app message.
+            </summary>
+        </member>
         <member name="P:IBMMobilePush.Forms.InAppMessage.ContentString">
             <summary>
-            Json formatted string representing rich content, template developer defined.
-            </summary></member>
+            The JSON-formatted string representing rich content. The template is developer-defined.
+            </summary>
+        </member>
         <member name="M:IBMMobilePush.Forms.InAppMessage.IsTriggered">
             <summary>
-            This method returns true if the InAppMessage is triggered, false otherwise.
+            This method returns true if the in-app message is triggered. Otherwise, it returns false.
             </summary>
-            <returns></returns></member>
+            <returns></returns>
+        </member>
         <member name="P:IBMMobilePush.Forms.InAppMessage.Rules">
             <summary>
-            JsonArray of Rules for this message.
-            </summary></member>
+            The JSON array of rules for this message.
+            </summary>
+        </member>
         <member name="P:IBMMobilePush.Forms.InAppMessage.Content">
             <summary>
-            This property returns the Content property in the form of a JsonObject.
-            </summary></member>
+            This property returns the content property in the form of a JSON object.
+            </summary>
+        </member>
         <member name="M:IBMMobilePush.Forms.InAppMessage.#ctor">
             <summary>
-            Empty default constructor
-            </summary></member>
+            An empty default constructor.
+            </summary>
+        </member>
         <member name="M:IBMMobilePush.Forms.InAppMessage.#ctor(Newtonsoft.Json.Linq.JObject)">
             <summary>
-            JsonObject to InAppMessage parser/constructor.
+            The JSON object to the in-app message parser/constructor.
             </summary>
-            <param name="jsonObject"></param></member>
+            <param name="jsonObject"></param>
+        </member>
         <member name="P:IBMMobilePush.Forms.InAppMessageRule.Id">
             <summary>
             Unique primary key for identifying InAppMessages
-            </summary></member>
+            </summary>
+        </member>
         <member name="P:IBMMobilePush.Forms.InAppMessageRule.InAppMessageId">
             <summary>
-            Gets or sets the in app message identifier.
+            Gets or sets the in-app message identifier.
             </summary>
-            <value>The in app message identifier.</value></member>
+            <value>The in-app rule identifier.</value>
+        </member>
         <member name="P:IBMMobilePush.Forms.InAppMessageRule.InAppRuleId">
             <summary>
-            Gets or sets the in app rule identifier.
+            Gets or sets the in-app rule identifier.
             </summary>
-            <value>The in app rule identifier.</value></member>
+            <value>The in app rule identifier.</value>
+        </member>
         <member name="M:IBMMobilePush.Forms.InAppMessageRule.#ctor">
             <summary>
-            Initializes a new instance of the <see cref="T:IBMMobilePush.Forms.InAppMessageRule" /> class.
-            </summary></member>
+            Initializes a new instance of the <see cref="T:IBMMobilePush.Forms.InAppMessageRule"/> class.
+            </summary>
+        </member>
         <member name="M:IBMMobilePush.Forms.InAppMessageRule.#ctor(System.Int32,System.Int32)">
             <summary>
-            Initializes a new instance of the <see cref="T:IBMMobilePush.Forms.InAppMessageRule" /> class.
+            Initializes a new instance of the <see cref="T:IBMMobilePush.Forms.InAppMessageRule"/> class.
             </summary>
-            <param name="inAppMessageId">In app message identifier.</param>
-            <param name="inAppRuleId">In app rule identifier.</param></member>
+            <param name="inAppMessageId">In-app message identifier.</param>
+            <param name="inAppRuleId">In-app rule identifier.</param>
+        </member>
         <member name="P:IBMMobilePush.Forms.InAppRule.Id">
             <summary>
-            Unique primary key for identifying InAppMessages
-            </summary></member>
+            The unique primary key for identifying in-app message rules.
+            </summary>
+        </member>
         <member name="P:IBMMobilePush.Forms.InAppRule.Rule">
             <summary>
             Gets or sets the rule name.
             </summary>
-            <value>The rule name.</value></member>
+            <value>The rule name.</value>
+        </member>
         <member name="M:IBMMobilePush.Forms.InAppRule.#ctor">
             <summary>
-            Initializes a new instance of the <see cref="T:IBMMobilePush.Forms.InAppRule" /> class.
-            </summary></member>
+            Initializes a new instance of the <see cref="T:IBMMobilePush.Forms.InAppRule"/> class.
+            </summary>
+        </member>
         <member name="M:IBMMobilePush.Forms.InAppRule.#ctor(System.String)">
             <summary>
-            Initializes a new instance of the <see cref="T:IBMMobilePush.Forms.InAppRule" /> class.
+            Initializes a new instance of the <see cref="T:IBMMobilePush.Forms.InAppRule"/> class.
             </summary>
-            <param name="name">Rule name.</param></member>
+            <param name="name">Rule name.</param>
+        </member>
         <member name="T:IBMMobilePush.Forms.InAppTemplateRegistry">
             <summary>
-            Class to register InApp templates with.
-            </summary></member>
+            The class to register in-app templates with.
+            </summary>
+        </member>
         <member name="P:IBMMobilePush.Forms.InAppTemplateRegistry.Instance">
             <summary>
             This property returns a singleton object for the registry.
-            </summary></member>
+            </summary>
+        </member>
         <member name="M:IBMMobilePush.Forms.InAppTemplateRegistry.RegisterTemplate(IBMMobilePush.Forms.InAppTemplate,System.String)">
             <summary>
-            Register template handler with registry to be used to display InboxMessage previews and messages.
+            The register template handler with registry to be used to display inbox notification previews and messages.
             </summary>
             <param name="template">Template handler.</param>
-            <param name="templateName">Template name.</param></member>
+            <param name="templateName">Template name.</param>
+        </member>
         <member name="M:IBMMobilePush.Forms.InAppTemplateRegistry.RegisteredTemplate(System.String)">
             <summary>
-            Retrieve registered handler for template name.
+            Retrieves the registered handler for a template name.
             </summary>
             <param name="templateName">Template name.</param>
-            <returns>InboxTemplate registered for specified template name.</returns></member>
+            <returns>InboxTemplate registered for specified template name.</returns>
+        </member>
         <member name="M:IBMMobilePush.Forms.InAppTemplate.Show">
             <summary>
-            Display InApp message with this template to user.
-            </summary></member>
+            Displays an in-app message with this template to the user.
+            </summary>
+        </member>
         <member name="M:IBMMobilePush.Forms.InAppTemplate.Wait">
             <summary>
-            Delay dismissing of presentated InApp message.
-            </summary></member>
+            Delays dismissing the presented in-app message.
+            </summary>
+        </member>
         <member name="M:IBMMobilePush.Forms.InAppTemplate.Hide">
             <summary>
-            Hide the InApp message.
-            </summary></member>
+            Hides the in-app message.
+            </summary>
+        </member>
         <member name="M:IBMMobilePush.Forms.InAppTemplate.Configure">
             <summary>
-            Configure InApp Template to display assigned InApp message.
-            </summary></member>
+            Configures the in-app template to display the assigned in-app message.
+            </summary>
+        </member>
         <member name="P:IBMMobilePush.Forms.InAppTemplate.InAppView">
             <summary>
-            Gets the in app view to display InApp message to user with this template.
+            Gets the in-app view to display the in-app message to a user with this template.
             </summary>
-            <value>The in app view.</value></member>
+            <value>The in-app view.</value>
+        </member>
         <member name="P:IBMMobilePush.Forms.InAppTemplate.XConstraint">
             <summary>
-            Gets the X constraint of the template to display to user.
+            Gets the X constraint of the template to display to a user.
             </summary>
-            <value>The X constraint.</value></member>
+            <value>The X constraint.</value>
+        </member>
         <member name="P:IBMMobilePush.Forms.InAppTemplate.YConstraint">
             <summary>
-            Gets the Y constraint of the template to display to user.
+            Gets the Y constraint of the template to display to a user.
             </summary>
-            <value>The Y constraint.</value></member>
+            <value>The Y constraint.</value>
+        </member>
         <member name="P:IBMMobilePush.Forms.InAppTemplate.WidthConstraint">
             <summary>
-            Gets the width constraint of the template to display to user.
+            Gets the width constraint of the template to display to a user.
             </summary>
-            <value>The width constraint.</value></member>
+            <value>The width constraint.</value>
+        </member>
         <member name="P:IBMMobilePush.Forms.InAppTemplate.HeightConstraint">
             <summary>
-            Gets the height constraint of the template to display to user.
+            Gets the height constraint of the template to display to a user.
             </summary>
-            <value>The height constraint.</value></member>
+            <value>The height constraint.</value>
+        </member>
         <member name="M:IBMMobilePush.Forms.InAppTemplate.DisplayMessage(IBMMobilePush.Forms.InAppMessage)">
             <summary>
-            Displays the InApp message to user with this template.
+            Displays the in-app message to a user with this template.
             </summary>
-            <param name="message">Message.</param></member>
+            <param name="message">Message.</param>
+        </member>
         <member name="P:IBMMobilePush.Forms.InAppTemplate.Layout">
             <summary>
             Gets the layout for this template.
             </summary>
-            <value>The layout.</value></member>
+            <value>The layout.</value>
+        </member>
         <member name="M:IBMMobilePush.Forms.InAppTemplate.Dismiss(System.Object,System.EventArgs)">
             <summary>
-            Dismiss the InApp template.
+            Dismisses the in-app template.
             </summary>
             <param name="sender">Sender.</param>
-            <param name="e">Event Arguments</param></member>
+            <param name="e">Event Arguments</param>
+        </member>
         <member name="T:IBMMobilePush.Forms.InboxMessage">
             <summary>
-            Inbox message.
-            </summary></member>
+            The inbox notification.
+            </summary>
+        </member>
         <member name="P:IBMMobilePush.Forms.InboxMessage.InboxMessageId">
             <summary>
-            Gets or sets the inbox message identifier.
+            Gets or sets the inbox notification identifier.
             </summary>
-            <value>The inbox message identifier.</value></member>
+            <value>The inbox notification identifier.</value>
+        </member>
         <member name="P:IBMMobilePush.Forms.InboxMessage.RichContentId">
             <summary>
             Gets or sets the rich content identifier.
             </summary>
-            <value>The rich content identifier.</value></member>
+            <value>The rich content identifier.</value>
+        </member>
         <member name="P:IBMMobilePush.Forms.InboxMessage.ExpirationDate">
             <summary>
             Gets or sets the expiration date.
             </summary>
-            <value>The expiration date.</value></member>
+            <value>The expiration date.</value>
+        </member>
         <member name="P:IBMMobilePush.Forms.InboxMessage.SendDate">
             <summary>
-            Gets or sets the send date.
+            Gets or sets the send date. 
             </summary>
-            <value>The send date.</value></member>
+            <value>The send date.</value>
+        </member>
         <member name="P:IBMMobilePush.Forms.InboxMessage.TemplateName">
             <summary>
             Gets or sets the name of the template.
             </summary>
-            <value>The name of the template.</value></member>
+            <value>The name of the template.</value>
+        </member>
+        <member name="P:IBMMobilePush.Forms.InboxMessage.Content">
+            <summary>
+            Gets or sets the content.
+            </summary>
+            <value>The content.</value>
+        </member>
         <member name="P:IBMMobilePush.Forms.InboxMessage.Attribution">
             <summary>
             Gets or sets the attribution or campaign name.
             </summary>
-            <value>The attribution.</value></member>
+            <value>The attribution.</value>
+        </member>
         <member name="P:IBMMobilePush.Forms.InboxMessage.IsRead">
             <summary>
-            Gets or sets a value indicating whether this instance is read.
+            Gets or sets a value indicating whether this instance was read.
             </summary>
-            <value><c>true</c> if this instance is read; otherwise, <c>false</c>.</value></member>
+            <value><c>true</c> if this instance is read; otherwise, <c>false</c>.</value>
+        </member>
         <member name="P:IBMMobilePush.Forms.InboxMessage.IsDeleted">
             <summary>
-            Gets or sets a value indicating whether this instance is deleted.
+            Gets or sets a value indicating whether this instance was deleted.
             </summary>
-            <value><c>true</c> if this instance is deleted; otherwise, <c>false</c>.</value></member>
+            <value><c>true</c> if this instance is deleted; otherwise, <c>false</c>.</value>
+        </member>
         <member name="M:IBMMobilePush.Forms.InboxMessage.#ctor">
             <summary>
-            Initializes a new instance of the <see cref="T:IBMMobilePush.Forms.InboxMessage" /> class.
-            </summary></member>
-        <member name="T:IBMMobilePush.Forms.RichContent">
-            <summary>
-            Rich content of Inbox Message.
-            </summary></member>
-        <member name="P:IBMMobilePush.Forms.RichContent.RichContentId">
-            <summary>
-            Gets or sets the rich content identifier.
+            Initializes a new instance of the <see cref="T:IBMMobilePush.Forms.InboxMessage"/> class. 
             </summary>
-            <value>The rich content identifier.</value></member>
-        <member name="P:IBMMobilePush.Forms.RichContent.Content">
-            <summary>
-            Gets or sets the content.
-            </summary>
-            <value>The content.</value></member>
-        <member name="M:IBMMobilePush.Forms.RichContent.#ctor">
-            <summary>
-            Initializes a new instance of the <see cref="T:IBMMobilePush.Forms.RichContent" /> class.
-            </summary></member>
+        </member>
         <member name="T:IBMMobilePush.Forms.IInboxTemplate">
             <summary>
-            Interface for inbox templates.
-            </summary></member>
+            The interface for inbox templates.
+            </summary>
+        </member>
         <member name="T:IBMMobilePush.Forms.PushAction">
             <summary>
-            Push action base abstract class.
-            </summary></member>
-        <member name="M:IBMMobilePush.Forms.PushAction.HandleAction(Newtonsoft.Json.Linq.JObject,Newtonsoft.Json.Linq.JObject,System.String,System.Int32)">
+            The push action base abstract class.
+            </summary>
+        </member>
+        <member name="M:IBMMobilePush.Forms.PushAction.HandleAction(Newtonsoft.Json.Linq.JObject,Newtonsoft.Json.Linq.JObject,System.String,System.String,System.Int32)">
             <summary>
             Handles the action.
             </summary>
             <param name="action">Action as a JSON Object.</param>
-            <param name="payload">Entire payload as a JSON Object.</param>
-            <param name="attribution">Attribution or campaign name of sending push.</param>
-            <param name="id">Push identifier used only in Android to remove a notification already sent.</param></member>
+            <param name="payload">The entire payload as a JSON object.</param>
+            <param name="attribution">The attribution or campaign name of sending push.</param>
+            <param name="mailingId">The mailingId of sending push.</param>
+            <param name="id">The push identifier used only in Android to remove a notification already sent.</param>
+        </member>
         <member name="T:IBMMobilePush.Forms.SDK">
             <summary>
-            IBMMobilePush SDK Main forms interface class.
-            </summary></member>
+            The IBMMobilePush SDK main forms interface class.
+            </summary>
+        </member>
+        <member name="P:IBMMobilePush.Forms.SDK.Instance">
+            <summary>
+            This method provides the singleton for the SDK.
+            </summary>
+            <value>The instance.</value>
+        </member>
+        <member name="M:IBMMobilePush.Forms.SDK.OnResume">
+            <summary>
+            This method should be called on resume of the app.
+            </summary>
+        </member>
         <member name="P:IBMMobilePush.Forms.SDK.RegistrationUpdated">
             <summary>
             Gets or sets the registration updated callback delegate.
             </summary>
-            <value>The registration updated.</value></member>
+            <value>The registration updated.</value>
+        </member>
+        <member name="P:IBMMobilePush.Forms.SDK.LocationsUpdated">
+            <summary>
+            Gets or sets the locations updated callback.
+            </summary>
+            <value>The locations updated.</value>
+        </member>
+        <member name="P:IBMMobilePush.Forms.SDK.GeofenceEntered">
+            <summary>
+            Gets or sets the geofence entered callback.
+            </summary>
+            <value>The geofence entered.</value>
+        </member>
+        <member name="P:IBMMobilePush.Forms.SDK.GeofenceExited">
+            <summary>
+            Gets or sets the geofence exited callback.
+            </summary>
+            <value>The geofence exited.</value>
+        </member>
+        <member name="P:IBMMobilePush.Forms.SDK.BeaconExited">
+            <summary>
+            Gets or sets the beacon exited callback.
+            </summary>
+            <value>The beacon exited.</value>
+        </member>
+        <member name="P:IBMMobilePush.Forms.SDK.BeaconEntered">
+            <summary>
+            Gets or sets the beacon entered callback.
+            </summary>
+            <value>The beacon entered.</value>
+        </member>
         <member name="M:IBMMobilePush.Forms.SDK.UserId">
             <summary>
-            UserId for current user.
+            The user ID for the current user.
             </summary>
-            <returns>UserId</returns></member>
+            <returns>UserId</returns>
+        </member>
         <member name="M:IBMMobilePush.Forms.SDK.ChannelId">
             <summary>
-            ChannelId for the current device.
+            The channel ID for the current device.
             </summary>
-            <returns>ChannelId</returns></member>
+            <returns>ChannelId</returns>
+        </member>
         <member name="M:IBMMobilePush.Forms.SDK.AppKey">
             <summary>
-            Application AppKey currently in use.
+            The application app key currently in use.
             </summary>
-            <returns>AppKey</returns></member>
+            <returns>AppKey</returns>
+        </member>
         <member name="M:IBMMobilePush.Forms.SDK.Version">
-            <summary>
-            Native SDK Version number.
-            </summary></member>
+            <summary> 
+            The native SDK version number.
+            </summary>
+        </member>
         <member name="P:IBMMobilePush.Forms.SDK.AttributeQueueResults">
             <summary>
             Gets or sets the attribute queue callback delegate.
             </summary>
-            <value>The attribute queue results.</value></member>
+            <value>The attribute queue results.</value>
+        </member>
         <member name="M:IBMMobilePush.Forms.SDK.SetUserAttribute``1(System.String,``0,IBMMobilePush.Forms.AttributeResultsDelegate)">
             <summary>
-            Replace current user attributes with specified attribute.
+            Replaces the current user attributes with the specified attribute.
+            
+            Please note, this method is deprecated.
             </summary>
             <param name="key">Key.</param>
             <param name="value">Value.</param>
             <param name="callback">Callback.</param>
-            <typeparam name="T">The 1st type parameter.</typeparam></member>
+            <typeparam name="T">The 1st type parameter.</typeparam>
+        </member>
         <member name="M:IBMMobilePush.Forms.SDK.UpdateUserAttribute``1(System.String,``0,IBMMobilePush.Forms.AttributeResultsDelegate)">
             <summary>
-            Add or replace specified user attribute.
+            Adds or replaces the specified user attribute.
+            
+            Please note, this method is deprecated, please use QueueUpdateUserAttribute instead.
             </summary>
             <param name="key">Key.</param>
             <param name="value">Value.</param>
             <param name="callback">Callback.</param>
-            <typeparam name="T">The 1st type parameter.</typeparam></member>
+            <typeparam name="T">The 1st type parameter.</typeparam>
+        </member>
         <member name="M:IBMMobilePush.Forms.SDK.DeleteUserAttribute(System.String,IBMMobilePush.Forms.AttributeResultsDelegate)">
             <summary>
-            Delete specified user attribute.
+            Deletes the specified user attribute.
+            
+            Please note, this method is deprecated, please use QueueDeleteUserAttribute instead
             </summary>
             <param name="key">Key.</param>
-            <param name="callback">Callback.</param></member>
-        <member name="M:IBMMobilePush.Forms.SDK.SetChannelAttribute``1(System.String,``0,IBMMobilePush.Forms.AttributeResultsDelegate)">
-            <summary>
-            Replace current channel attributes with specified attribute.
-            </summary>
-            <param name="key">Key.</param>
-            <param name="value">Value.</param>
             <param name="callback">Callback.</param>
-            <typeparam name="T">The 1st type parameter.</typeparam></member>
-        <member name="M:IBMMobilePush.Forms.SDK.UpdateChannelAttribute``1(System.String,``0,IBMMobilePush.Forms.AttributeResultsDelegate)">
-            <summary>
-            Add or replace specified channel attribute.
-            </summary>
-            <param name="key">Key.</param>
-            <param name="value">Value.</param>
-            <param name="callback">Callback.</param>
-            <typeparam name="T">The 1st type parameter.</typeparam></member>
-        <member name="M:IBMMobilePush.Forms.SDK.DeleteChannelAttribute(System.String,IBMMobilePush.Forms.AttributeResultsDelegate)">
-            <summary>
-            Delete specified channel attribute.
-            </summary>
-            <param name="key">Key.</param>
-            <param name="callback">Callback.</param></member>
+        </member>
         <member name="M:IBMMobilePush.Forms.SDK.QueueSetUserAttribute``1(System.String,``0)">
             <summary>
-            Queue replacement of current user attributes with specified attribute.
+            Queues a replacement of the current user attributes with the specified attribute.
+            
+            Please note, this method is deprecated.
             </summary>
             <param name="key">Key.</param>
             <param name="value">Value.</param>
-            <typeparam name="T">The 1st type parameter.</typeparam></member>
+            <typeparam name="T">The 1st type parameter.</typeparam>
+        </member>
         <member name="M:IBMMobilePush.Forms.SDK.QueueUpdateUserAttribute``1(System.String,``0)">
             <summary>
-            Queue adding or replacing specified user attribute.
+            Queues adding or replacing the specified user attribute.
             </summary>
             <param name="key">Key.</param>
             <param name="value">Value.</param>
-            <typeparam name="T">The 1st type parameter.</typeparam></member>
+            <typeparam name="T">The 1st type parameter.</typeparam>
+        </member>
         <member name="M:IBMMobilePush.Forms.SDK.QueueDeleteUserAttribute(System.String)">
             <summary>
-            Queue removal of sepcified user attribute.
+            Queues the removal of the specified user attribute.
             </summary>
-            <param name="key">Key.</param></member>
+            <param name="key">Key.</param>
+        </member>
         <member name="M:IBMMobilePush.Forms.SDK.QueueSetChannelAttribute``1(System.String,``0)">
             <summary>
-            Queue replacement of current channel attributes with specified attribute.
+            Queues the replacement of the current channel attributes with the specified attribute.
+            
+            Please note, this method is deprecated.
             </summary>
             <param name="key">Key.</param>
             <param name="value">Value.</param>
-            <typeparam name="T">The 1st type parameter.</typeparam></member>
+            <typeparam name="T">The 1st type parameter.</typeparam>
+        </member>
         <member name="M:IBMMobilePush.Forms.SDK.QueueUpdateChannelAttribute``1(System.String,``0)">
             <summary>
-            Queue adding or replacing specified channel attribute.
+            Queues adding or replacing the specified channel attribute.
+            
+            Please note, this method is deprecated.
             </summary>
             <param name="key">Key.</param>
             <param name="value">Value.</param>
-            <typeparam name="T">The 1st type parameter.</typeparam></member>
+            <typeparam name="T">The 1st type parameter.</typeparam>
+        </member>
         <member name="M:IBMMobilePush.Forms.SDK.QueueDeleteChannelAttribute(System.String)">
             <summary>
-            Queue removal of sepcified channel attribute.
+            Queues the removal of the specified channel attribute.
+            
+            Please note, this method is deprecated.
             </summary>
-            <param name="key">Key.</param></member>
+            <param name="key">Key.</param>
+        </member>
         <member name="P:IBMMobilePush.Forms.SDK.EventQueueResults">
             <summary>
             Gets or sets the event queue result delegate.
             </summary>
-            <value>The event queue results.</value></member>
-        <member name="M:IBMMobilePush.Forms.SDK.QueueAddEvent(System.String,System.String,System.DateTimeOffset,System.String,System.Collections.Generic.Dictionary{System.String,System.Object},System.Boolean)">
+            <value>The event queue results.</value>
+        </member>
+        <member name="M:IBMMobilePush.Forms.SDK.QueueAddEvent(System.String,System.String,System.DateTimeOffset,System.String,System.String,System.Collections.Generic.Dictionary{System.String,System.Object},System.Boolean)">
             <summary>
-            Add event to event queue to be sent to the server.
+            Adds an event to the event queue to be sent to the server.
             </summary>
             <param name="name">Name.</param>
             <param name="type">Type.</param>
             <param name="timestamp">Timestamp.</param>
             <param name="attribution">Attribution.</param>
+            <param name="mailingId">MailingId.</param>
             <param name="attributes">Attributes.</param>
-            <param name="flush">If set to <c>true</c> flush.</param></member>
-        <member name="M:IBMMobilePush.Forms.SDK.AddEvent(System.String,System.String,System.DateTimeOffset,System.String,System.Collections.Generic.Dictionary{System.String,System.Object},IBMMobilePush.Forms.EventResultsDelegate)">
+            <param name="flush">If set to <c>true</c> flush.</param>
+        </member>
+        <member name="M:IBMMobilePush.Forms.SDK.AddEvent(System.String,System.String,System.DateTimeOffset,System.String,System.String,System.Collections.Generic.Dictionary{System.String,System.Object},IBMMobilePush.Forms.EventResultsDelegate)">
             <summary>
-            Send event to server.
+            Sends an event to the server.
+            
+            Please note, this method is deprecated, please use QueueAddEvent instead.
             </summary>
             <param name="name">Name.</param>
             <param name="type">Type.</param>
             <param name="timestamp">Timestamp.</param>
             <param name="attribution">Attribution.</param>
+            <param name="mailingId">MailingId.</param>
             <param name="attributes">Attributes.</param>
-            <param name="callback">Callback.</param></member>
-        <member name="M:IBMMobilePush.Forms.SDK.FlushEventQueue">
-            <summary>
-            Flushs the queued event queue to server.
-            </summary></member>
+            <param name="callback">Callback.</param>
+        </member>
         <member name="P:IBMMobilePush.Forms.SDK.Badge">
             <summary>
             Gets or sets the badge.
             </summary>
-            <value>The badge.</value></member>
+            <value>The badge.</value>
+        </member>
         <member name="P:IBMMobilePush.Forms.SDK.Icon">
             <summary>
             Gets or sets the icon used in pushed messages.
             </summary>
-            <value>The icon.</value></member>
+            <value>The icon.</value>
+        </member>
         <member name="M:IBMMobilePush.Forms.SDK.IsMceRegistered">
             <summary>
-            Query if SDK has registered with MCE server.
+            Queries if the SDK has registered with the MCE server.
             </summary>
-            <returns><c>true</c> if registered with MCE; otherwise, <c>false</c>.</returns></member>
+            <returns><c>true</c> if registered with MCE; otherwise, <c>false</c>.</returns>
+        </member>
         <member name="M:IBMMobilePush.Forms.SDK.IsProviderRegistered">
             <summary>
-            Query if device has registered with push provider.
+            Queries if the device has registered with a push provider.
             </summary>
-            <returns><c>true</c> if this device has registered with push provider; otherwise, <c>false</c>.</returns></member>
+            <returns><c>true</c> if this device has registered with push provider; otherwise, <c>false</c>.</returns>
+        </member>
         <member name="M:IBMMobilePush.Forms.SDK.IsRegistered">
             <summary>
-            Query if device has registered with push provider and SDK is registered with MCE.
+            Queries if the device has registered with a push provider and the SDK is registered with MCE.
             </summary>
-            <returns><c>true</c> if this instance is registered with MCE and Push Provider; otherwise, <c>false</c>.</returns></member>
+            <returns><c>true</c> if this instance is registered with MCE and the push provider; otherwise, <c>false</c>.</returns>
+        </member>
         <member name="M:IBMMobilePush.Forms.SDK.RegisterAction(System.String,IBMMobilePush.Forms.PushAction)">
             <summary>
             Registers a custom action handler.
             </summary>
             <param name="name">Name.</param>
-            <param name="handler">Handler.</param></member>
+            <param name="handler">Handler.</param>
+        </member>
         <member name="M:IBMMobilePush.Forms.SDK.PhoneHome">
             <summary>
-            Executes SDK phone home immediately, useful after login / user merge.
-            </summary></member>
+            Runs the SDK phone home immediately. This is useful after a login or user merge.
+            </summary>
+        </member>
         <member name="M:IBMMobilePush.Forms.SDK.SyncInboxMessages">
             <summary>
-            Syncs the inbox messages with server.
-            </summary></member>
+            Syncs the inbox notification with the server.
+            </summary>
+        </member>
         <member name="P:IBMMobilePush.Forms.SDK.InboxMessagesUpdate">
             <summary>
-            Gets or sets the inbox messages update callback delegate.
+            Gets or sets the inbox notification update callback delegate.
             </summary>
-            <value>The inbox messages update.</value></member>
-        <member name="M:IBMMobilePush.Forms.SDK.FetchRichContent(System.String)">
-            <summary>
-            Fetchs the RichContent for a specified richContentId.
-            </summary>
-            <returns>The rich content.</returns>
-            <param name="richContentId">Rich content identifier.</param></member>
+            <value>The inbox messages update.</value>
+        </member>
         <member name="M:IBMMobilePush.Forms.SDK.FetchInboxMessage(System.String,IBMMobilePush.Forms.InboxMessageResultsDelegate)">
             <summary>
-            Fetchs the inbox message using a specified inboxMessageId.
+            Fetches the inbox notification by using a specified inbox ID.
             </summary>
-            <param name="inboxMessageId">Inbox message identifier.</param>
-            <param name="callback">Callback.</param></member>
+            <param name="inboxMessageId">The inbox message identifier.</param>
+            <param name="callback">Callback.</param>
+        </member>
         <member name="M:IBMMobilePush.Forms.SDK.DeleteInboxMessage(IBMMobilePush.Forms.InboxMessage)">
             <summary>
-            Deletes the specified inbox message.
+            Deletes the specified inbox notification.
             </summary>
-            <param name="message">Message.</param></member>
+            <param name="message">Message.</param>
+        </member>
         <member name="M:IBMMobilePush.Forms.SDK.ReadInboxMessage(IBMMobilePush.Forms.InboxMessage)">
             <summary>
-            Sets the read status to true for specified inbox message.
+            Sets the read status to true for the specified inbox notification.
             </summary>
-            <param name="message">Message.</param></member>
+            <param name="message">Message.</param>
+        </member>
         <member name="M:IBMMobilePush.Forms.SDK.FetchInboxMessageWithRichContentId(System.String,IBMMobilePush.Forms.InboxMessageResultsDelegate)">
             <summary>
-            Fetchs the inbox message for the specified richContentId.
+            Fetches the inbox notification for the specified richContentId.
             </summary>
             <param name="richContentId">Rich content identifier.</param>
-            <param name="callback">Callback.</param></member>
+            <param name="callback">Callback.</param>
+        </member>
         <member name="M:IBMMobilePush.Forms.SDK.FetchInboxMessages(System.Action{IBMMobilePush.Forms.InboxMessage[]},System.Boolean)">
             <summary>
-            Fetchs the inbox messages from the database.
+            Fetches the inbox notifications from the database.
             </summary>
             <param name="completion">Completion.</param>
-            <param name="ascending">If set to <c>true</c> ascending.</param></member>
+            <param name="ascending">If set to <c>true</c> ascending.</param>
+        </member>
         <member name="M:IBMMobilePush.Forms.SDK.StatusBarHeight">
             <summary>
-            Get current status bar height.
+            Gets the current status bar height.
             </summary>
-            <returns>The bar height.</returns></member>
+            <returns>The bar height.</returns>
+        </member>
         <member name="M:IBMMobilePush.Forms.SDK.ScreenSize">
             <summary>
-            Get current screen size.
+            Gets the current screen size.
             </summary>
-            <returns>The size.</returns></member>
+            <returns>The size.</returns>
+        </member>
         <member name="M:IBMMobilePush.Forms.SDK.GetConnection(System.String)">
             <summary>
-            Get SQLite connection for specifed filename.
+            Gets the SQLite connection for a specifed file name.
             </summary>
             <returns>The connection.</returns>
-            <param name="filename">Filename.</param></member>
+            <param name="filename">Filename.</param>
+        </member>
         <member name="M:IBMMobilePush.Forms.SDK.DeleteInAppMessage(IBMMobilePush.Forms.InAppMessage)">
             <summary>
-            Deletes specified InApp message.
+            Deletes the specified in-app message.
             </summary>
-            <param name="inAppMessage">In app message.</param></member>
+            <param name="inAppMessage">In app message.</param>
+        </member>
         <member name="M:IBMMobilePush.Forms.SDK.ExecuteInAppRule(System.String[])">
             <summary>
-            Execute next InApp message that has any of specified rules.
+            Runs the next in-app message that has any of specified rules.
             </summary>
-            <param name="rules">Rules.</param></member>
+            <param name="rules">Rules.</param>
+        </member>
         <member name="M:IBMMobilePush.Forms.SDK.RegisterInAppTemplate(System.String,IBMMobilePush.Forms.InAppTemplate)">
-            <summary>
-            Register an InApp template.
+            <summary> 
+            Registers an in-app template.
             </summary>
             <param name="templateName">Template name.</param>
-            <param name="template">Template.</param></member>
-        <member name="M:IBMMobilePush.Forms.SDK.ExecuteAction(Newtonsoft.Json.Linq.JToken,System.String,System.String)">
+            <param name="template">Template.</param>
+        </member>
+        <member name="M:IBMMobilePush.Forms.SDK.ExecuteAction(Newtonsoft.Json.Linq.JToken,System.String,System.String,System.String,System.Collections.Generic.Dictionary{System.String,System.String})">
             <summary>
-            Executes the specified Action.
+            Runs the specified action.
             </summary>
             <param name="action">Action.</param>
             <param name="attribution">Attribution.</param>
-            <param name="source">Source.</param></member>
-        <member name="M:IBMMobilePush.Forms.SDK.ExecuteInboxAction(Newtonsoft.Json.Linq.JToken,System.String)">
+            <param name="mailingId">MailingId.</param>
+            <param name="source">Source.</param>
+            <param name="attributes">Attributes for event</param>
+        </member>
+        <member name="M:IBMMobilePush.Forms.SDK.ExecuteAction(Newtonsoft.Json.Linq.JObject,Newtonsoft.Json.Linq.JObject,System.String,System.String,System.Int32)">
             <summary>
-            Executes the specified inbox action.
+            Executes the action.
             </summary>
             <param name="action">Action.</param>
-            <param name="attribution">Attribution.</param></member>
-        <member name="M:IBMMobilePush.Forms.SDK.ExecuteInAppAction(Newtonsoft.Json.Linq.JToken,System.String)">
+            <param name="payload">Payload.</param>
+            <param name="attribution">Attribution.</param>
+            <param name="mailingId">Mailing identifier.</param>
+            <param name="id">Identifier.</param>
+        </member>
+        <member name="M:IBMMobilePush.Forms.SDK.ExecuteInboxAction(Newtonsoft.Json.Linq.JToken,System.String,System.String,System.Collections.Generic.Dictionary{System.String,System.String})">
             <summary>
-            Executes the specfied InApp action.
+            Runs the specified inbox action.
             </summary>
             <param name="action">Action.</param>
-            <param name="attribution">Attribution.</param></member>
+            <param name="attribution">Attribution.</param>
+            <param name="mailingId">MailingId.</param>
+            <param name="attributes">Attributes for event</param>
+        </member>
+        <member name="M:IBMMobilePush.Forms.SDK.ExecuteInAppAction(Newtonsoft.Json.Linq.JToken,System.String,System.String)">
+            <summary>
+            Runs the specified in-app action.
+            </summary>
+            <param name="action">Action.</param>
+            <param name="attribution">Attribution.</param>
+            <param name="mailingId">MailingId.</param>
+        </member>
         <member name="M:IBMMobilePush.Forms.SDK.RegisterInboxTemplate(System.String,IBMMobilePush.Forms.IInboxTemplate)">
             <summary>
-            Registers the specified inbox template handler for the specified name.
+            Returns the registered template handler for the specified name.
             </summary>
             <param name="templateName">Template name.</param>
-            <param name="template">Template.</param></member>
+            <param name="template">Template.</param>
+        </member>
         <member name="M:IBMMobilePush.Forms.SDK.RegisteredInboxTemplate(System.String)">
             <summary>
             Return the registered template handler for the speicifed name.
             </summary>
             <returns>The inbox template.</returns>
-            <param name="templateName">Template name.</param></member>
+            <param name="templateName">Template name.</param>
+        </member>
+        <member name="M:IBMMobilePush.Forms.SDK.SyncGeofences">
+            <summary>
+            Syncs the geofences.
+            </summary>
+        </member>
+        <member name="M:IBMMobilePush.Forms.SDK.GeofencesNear(System.Double,System.Double)">
+            <summary>
+            Get nearby geofences
+            </summary>
+            <returns>Geofences nearby</returns>
+            <param name="latitude">Latitude.</param>
+            <param name="longitude">Longitude.</param>
+        </member>
+        <member name="M:IBMMobilePush.Forms.SDK.GeofenceEnabled">
+            <summary>
+            Query if geofences are enabled.
+            </summary>
+            <returns><c>true</c>, if geofences are enabled, <c>false</c> otherwise.</returns>
+        </member>
+        <member name="M:IBMMobilePush.Forms.SDK.BeaconRegions">
+            <summary>
+            Query current iBeacon Regions
+            </summary>
+            <returns>The iBeacon regions.</returns>
+        </member>
+        <member name="M:IBMMobilePush.Forms.SDK.BeaconEnabled">
+            <summary>
+            Query if iBeacons are enabled.
+            </summary>
+            <returns><c>true</c>, if iBeacons are enabled, <c>false</c> otherwise.</returns>
+        </member>
+        <member name="M:IBMMobilePush.Forms.SDK.BeaconUUID">
+            <summary>
+            Query the global iBeacon UUID
+            </summary>
+            <returns>The UUID.</returns>
+        </member>
         <member name="F:IBMMobilePush.Forms.SDK.loggingLevel">
             <summary>
-            The logging level for C# code. Not currently connected to specified logging level in MceConfig.json.
-            </summary></member>
+            The logging level for C# code. Not currently connected to a specified logging level in MceConfig.json.
+            </summary>
+        </member>
+        <member name="P:IBMMobilePush.Forms.SDK.LoggingLevel">
+            <summary>
+            Gets or sets the logging level.
+            </summary>
+            <value>The logging level.</value>
+        </member>
         <member name="T:IBMMobilePush.Forms.Database">
             <summary>
-            Database base class.
-            </summary></member>
+            The database base class.
+            </summary>
+        </member>
         <member name="T:IBMMobilePush.Forms.ExpiringMessage">
             <summary>
-            Base class for all messages that can expire after a specific time has passed (such as Inbox and InApp messages).
-            </summary></member>
+            The base class for all messages that can expire after a specific time has passed, such as inbox notifcations and in-app messages.
+            </summary>
+        </member>
         <member name="P:IBMMobilePush.Forms.ExpiringMessage.ExpirationTimestamp">
             <summary>
             The Unix timestamp that the message shouldn't show up after.
-            </summary></member>
+            </summary>
+        </member>
         <member name="P:IBMMobilePush.Forms.ExpiringMessage.ExpirationDateString">
             <summary>
-            ExpirationTimestamp in ISO8601 format
-            </summary></member>
+            The expiration timestamp in an ISO8601 format.
+            </summary>
+        </member>
         <member name="P:IBMMobilePush.Forms.ExpiringMessage.ExpirationDate">
             <summary>
-            ExpirationTimestamp in DateTimeOffset format
-            </summary></member>
+            The expiration timestamp in a DateTimeOffset format.
+            </summary>
+        </member>
         <member name="M:IBMMobilePush.Forms.ExpiringMessage.IsExpired">
             <summary>
-            This method returns true if the Message is expired, false otherwise.
+            This method returns true if the message is expired; otherwise, false.
             </summary>
-            <returns></returns></member>
+            <returns></returns>
+        </member>
         <member name="T:IBMMobilePush.Forms.LogLevel">
             <summary>
             This enumerated type represents logging levels.
-            </summary></member>
+            </summary>
+        </member>
         <member name="F:IBMMobilePush.Forms.LogLevel.NONE">
             <summary>
             This value represents no logging.
-            </summary></member>
+            </summary>
+        </member>
         <member name="F:IBMMobilePush.Forms.LogLevel.ERROR">
             <summary>
             This value represents logging only error messages.
-            </summary></member>
+            </summary>
+        </member>
         <member name="F:IBMMobilePush.Forms.LogLevel.WARN">
             <summary>
             This value represents logging error and warning messages.
-            </summary></member>
+            </summary>
+        </member>
         <member name="F:IBMMobilePush.Forms.LogLevel.INFO">
             <summary>
-            This value represents logging error, warning and info messages.
-            </summary></member>
+            This value represents logging error, warning and informational messages.
+            </summary>
+        </member>
         <member name="F:IBMMobilePush.Forms.LogLevel.VERBOSE">
             <summary>
-            This value represents all logging turned on.
-            </summary></member>
+            This value represents all logging messages turned on.
+            </summary>
+        </member>
         <member name="T:IBMMobilePush.Forms.Logging">
             <summary>
-            Logging.
-            </summary></member>
+            This class logs to the console.
+            </summary>
+        </member>
         <member name="M:IBMMobilePush.Forms.Logging.Error(System.String)">
             <summary>
-            Error the specified message.
+            Logs an error message for the specified message.
             </summary>
-            <param name="message">Message.</param></member>
+            <param name="message">Message.</param>
+        </member>
         <member name="M:IBMMobilePush.Forms.Logging.Error(System.String,System.Exception)">
             <summary>
-            Error the specified message and ex.
+            Logs an error message for the specified message and exception.
             </summary>
             <param name="message">Message.</param>
-            <param name="ex">Ex.</param></member>
+            <param name="ex">Ex.</param>
+        </member>
         <member name="M:IBMMobilePush.Forms.Logging.Warn(System.String)">
             <summary>
-            Warn the specified message.
+            Logs warning and error messages for the specified message.
             </summary>
-            <param name="message">Message.</param></member>
+            <param name="message">Message.</param>
+        </member>
         <member name="M:IBMMobilePush.Forms.Logging.Warn(System.String,System.Exception)">
             <summary>
-            Warn the specified message and ex.
+            Logs warning and error messages for the specified message and exception.
             </summary>
             <param name="message">Message.</param>
-            <param name="ex">Ex.</param></member>
+            <param name="ex">Ex.</param>
+        </member>
         <member name="M:IBMMobilePush.Forms.Logging.Info(System.String)">
             <summary>
-            Info the specified message.
+            Logs informational, warning, and error messages for the specified message.
             </summary>
-            <param name="message">Message.</param></member>
+            <param name="message">Message.</param>
+        </member>
         <member name="M:IBMMobilePush.Forms.Logging.Info(System.String,System.Exception)">
             <summary>
-            Info the specified message and ex.
+            Logs informational, warning, and error messages for the specified message and exception.
             </summary>
             <param name="message">Message.</param>
-            <param name="ex">Ex.</param></member>
+            <param name="ex">Ex.</param>
+        </member>
         <member name="M:IBMMobilePush.Forms.Logging.Verbose(System.String)">
             <summary>
-            Verbose the specified message.
-            </summary>
-            <param name="message">Message.</param></member>
-        <member name="M:IBMMobilePush.Forms.Logging.Verbose(System.String,System.Exception)">
-            <summary>
-            Verbose the specified message and ex.
+            Logs all messages, including events that are sent to the server and callback information, for the specified message.
             </summary>
             <param name="message">Message.</param>
-            <param name="ex">Ex.</param></member>
+        </member>
+        <member name="M:IBMMobilePush.Forms.Logging.Verbose(System.String,System.Exception)">
+            <summary>
+            Logs all messages, including events that are sent to the server and callback information, for the specified message and exception.
+            </summary>
+            <param name="message">Message.</param>
+            <param name="ex">Ex.</param>
+        </member>
     </members>
 </doc>

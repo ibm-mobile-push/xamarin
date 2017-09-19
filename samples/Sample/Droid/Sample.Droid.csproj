@@ -19,7 +19,7 @@
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
     <TargetFrameworkVersion>v7.1</TargetFrameworkVersion>
     <XamarinInsightsApiKey>5a419c98c13662528dd48480a6dc1fbd19b06398</XamarinInsightsApiKey>
-    <ReleaseVersion>3.1.0.0</ReleaseVersion>
+    <ReleaseVersion>3.3.0.0</ReleaseVersion>
     <AndroidTlsProvider></AndroidTlsProvider>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">

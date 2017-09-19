@@ -251,6 +251,7 @@ namespace IBMMobilePush.Forms.Droid
 			}
 		}
 
+        [System.Obsolete("SetUserAttribute is deprecated")]
 		public void SetUserAttribute<T> (String key, T value, AttributeResultsDelegate callback)
 		{
 			IBMMobilePush.Droid.API.Attribute.Attribute attribute = AttributeConverter (key, value);
@@ -263,6 +264,7 @@ namespace IBMMobilePush.Forms.Droid
 			}
 		}
 
+        [System.Obsolete("UpdateUserAttribute is deprecated, please use QueueUpdateUserAttribute instead.")]
 		public void UpdateUserAttribute<T> (string key, T value, AttributeResultsDelegate callback)
 		{
 			IBMMobilePush.Droid.API.Attribute.Attribute attribute = AttributeConverter (key, value);
@@ -275,44 +277,14 @@ namespace IBMMobilePush.Forms.Droid
 			}
 		}
 
-		public void DeleteUserAttribute (string key, AttributeResultsDelegate callback)
-		{
-			var attributeCallback = new AttributeCallback (key, AttributeOperation.SetUserAttributes, callback);
-			MceSdk.GetAttributesClient(false).DeleteUserAttributes (ApplicationContext, new List<string>(){key}, attributeCallback);
-		}
+        [System.Obsolete("DeleteUserAttribute is deprecated, please use QueueDeleteUserAttribute instead.")]
+        public void DeleteUserAttribute(string key, AttributeResultsDelegate callback)
+        {
+            var attributeCallback = new AttributeCallback(key, AttributeOperation.SetUserAttributes, callback);
+            MceSdk.GetAttributesClient(false).DeleteUserAttributes(ApplicationContext, new List<string>() { key }, attributeCallback);
+        }
 
-		public void SetChannelAttribute<T> (string key, T value, AttributeResultsDelegate callback)
-		{
-			IBMMobilePush.Droid.API.Attribute.Attribute attribute = AttributeConverter (key, value);
-			if (attribute != null) {
-				var attributeCallback = new AttributeCallback (attribute, AttributeOperation.SetUserAttributes, callback);
-				var attributes = new List<IBMMobilePush.Droid.API.Attribute.Attribute> () { attribute };
-				MceSdk.GetAttributesClient(false).SetChannelAttributes (ApplicationContext, attributes, attributeCallback);
-			} else {
-				Logging.Error ("Could not set channel attribute because could not convert value type.");
-			}
-
-		}
-
-		public void UpdateChannelAttribute<T> (string key, T value, AttributeResultsDelegate callback)
-		{
-			IBMMobilePush.Droid.API.Attribute.Attribute attribute = AttributeConverter (key, value);
-			if (attribute != null) {
-				var attributes = new List<IBMMobilePush.Droid.API.Attribute.Attribute> () { attribute };
-				var attributeCallback = new AttributeCallback (attribute, AttributeOperation.SetUserAttributes, callback);
-				MceSdk.GetAttributesClient(false).UpdateChannelAttributes (ApplicationContext, attributes, attributeCallback);
-			} else {
-				Logging.Error ("Could not update channel attribute because could not convert value type.");
-			}
-
-		}
-
-		public void DeleteChannelAttribute (string key, AttributeResultsDelegate callback)
-		{
-			var attributeCallback = new AttributeCallback (key, AttributeOperation.SetUserAttributes, callback);
-			MceSdk.GetAttributesClient(false).DeleteChannelAttributes (ApplicationContext, new List<string>(){key}, attributeCallback);
-		}
-
+        [System.Obsolete("QueueSetUserAttribute is deprecated")]
 		public void QueueSetUserAttribute<T> (string key, T value)
 		{
 			IBMMobilePush.Droid.API.Attribute.Attribute attribute = AttributeConverter (key, value);
@@ -338,33 +310,6 @@ namespace IBMMobilePush.Forms.Droid
 		public void QueueDeleteUserAttribute (string key)
 		{
 			MceSdk.QueuedAttributesClient.DeleteUserAttributes (ApplicationContext, new List<string>(){key});
-		}
-
-		public void QueueSetChannelAttribute<T> (string key, T value)
-		{	
-			IBMMobilePush.Droid.API.Attribute.Attribute attribute = AttributeConverter (key, value);
-			if (attribute != null) {
-				var attributes = new List<IBMMobilePush.Droid.API.Attribute.Attribute> () { attribute };
-				MceSdk.QueuedAttributesClient.SetChannelAttributes (ApplicationContext, attributes);
-			} else {
-				Logging.Error ("Could not set channel attribute because could not convert value type.");
-			}
-		}
-
-		public void QueueUpdateChannelAttribute<T> (string key, T value)
-		{
-			IBMMobilePush.Droid.API.Attribute.Attribute attribute = AttributeConverter (key, value);
-			if (attribute != null) {
-				var attributes = new List<IBMMobilePush.Droid.API.Attribute.Attribute> () { attribute };
-				MceSdk.QueuedAttributesClient.UpdateChannelAttributes (ApplicationContext, attributes);
-			} else {
-				Logging.Error ("Could not update channel attribute because could not convert value type.");
-			}
-		}
-
-		public void QueueDeleteChannelAttribute (string key)
-		{
-			MceSdk.QueuedAttributesClient.DeleteChannelAttributes (ApplicationContext, new List<string>(){key});
 		}
 
 		void AttributeOperationResponse(IAttributesOperation operation)
@@ -416,15 +361,11 @@ namespace IBMMobilePush.Forms.Droid
 			return new Event(type, name, ConvertDate (timestamp, new Java.Util.Date()), apiAttributes, attribution, mailingId);
 		}
 
+        [System.Obsolete("AddEvent is deprecated, use QueueAddEvent instead")]
 		public void AddEvent(string name, string type, DateTimeOffset timestamp, string attribution, string mailingId, Dictionary<string,object> attributes, EventResultsDelegate callback)
 		{
 			var sdkEvent = GenerateEvent (name, type, timestamp, attribution, mailingId, attributes);
 			MceSdk.GetEventsClient(false).SendEvent(ApplicationContext, sdkEvent, new EventCallback (name, type, timestamp, attribution, mailingId, attributes, callback));
-		}
-
-		public void FlushEventQueue()
-		{
-			ThreadPool.QueueUserWorkItem (o => IBMMobilePush.Droid.Events.EventsClientImpl.SendAllEvents(ApplicationContext) );
 		}
 
 		public void QueueAddEvent (string name, string type, DateTimeOffset timestamp, string attribution, string mailingId, Dictionary<string,object> attributes, bool flush)
@@ -578,15 +519,32 @@ namespace IBMMobilePush.Forms.Droid
 		public void FetchInboxMessage (string inboxMessageId, InboxMessageResultsDelegate callback)
 		{
 			var messageCursor = RichContentDatabaseHelper.GetRichContentDatabaseHelper(ApplicationContext).GetMessagesByMessageId(inboxMessageId);
-			messageCursor.MoveToFirst();
-			var message = messageCursor.RichContent;
-			if(message == null)
-			{
-				Logging.Error("Inbox Message not found in database");
-				callback(null);
-			}
+            if (messageCursor.Count > 0)
+            {
+                messageCursor.MoveToFirst();
+                var message = messageCursor.RichContent;
+                callback(ConvertToInboxMessage(message));
+            }
+            else
+            {
+                InboxMessagesClient.AddMessageToLoad(inboxMessageId);
+                ThreadPool.QueueUserWorkItem(o => InboxMessagesClient.LoadInboxMessages(ApplicationContext, new InboxCallback(() =>
+                {
+    				messageCursor = RichContentDatabaseHelper.GetRichContentDatabaseHelper(ApplicationContext).GetMessagesByMessageId(inboxMessageId);
+                    if (messageCursor.Count > 0)
+                    {
+                        messageCursor.MoveToFirst();
+                        var message = messageCursor.RichContent;
+						callback(ConvertToInboxMessage(message));
+					}
+                    else
+					{
+						Logging.Error("Inbox Message not found in database");
+						callback(null);
+					}
 
-			callback( ConvertToInboxMessage (message) );
+				})));
+            }
 		}
 
 		public void FetchInboxMessages (Action<InboxMessage[]> completion, bool ascending)
