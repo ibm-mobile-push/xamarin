@@ -13,7 +13,6 @@ using System.Collections.Generic;
 
 using Xamarin.Forms;
 
-using IBMMobilePush.Forms;
 using IBMMobilePush.iOS;
 
 using UIKit;
@@ -32,6 +31,8 @@ namespace IBMMobilePush.Forms.iOS
 {
 	public class IBMMobilePushImpl : IIBMMobilePush
 	{
+        CLLocationManager LocationManager;
+
 		public IBMMobilePushImpl()
 		{
 			NSNotificationCenter.DefaultCenter.AddObserver(new NSString("EnteredGeofence"), (note) =>
@@ -152,12 +153,25 @@ namespace IBMMobilePush.Forms.iOS
 				}
 			});
 
+            LocationManager = new CLLocationManager();
+            LocationManager.AuthorizationChanged += (sender, e) => {
+                if (LocationAuthorizationChanged != null)
+                    LocationAuthorizationChanged();
+            };
+
 		}
-		
-        public void OnResume()
+
+		public bool LocationInitialized()
+		{
+            return CLLocationManager.Status == CLAuthorizationStatus.AuthorizedAlways;
+		}
+
+		public void OnResume()
         {
             
         }
+
+        public GenericDelegate LocationAuthorizationChanged { set; get; }
 
 		public GeofenceDelegate GeofenceEntered { set; get; }
 		public GeofenceDelegate GeofenceExited { set; get; }
@@ -496,6 +510,18 @@ namespace IBMMobilePush.Forms.iOS
 			}
 		}
 
+		// iOS Support only
+		public void ManualLocationInitialization()
+		{
+            MCESdk.SharedInstance().ManualLocationInitialization();
+		}
+
+		// iOS Support only
+		public void ManualSdkInitialization()
+		{
+            MCESdk.SharedInstance().ManualInitialization();
+		}
+
 		public void PhoneHome()
 		{
 			var defaults = NSUserDefaults.StandardUserDefaults;
@@ -537,12 +563,15 @@ namespace IBMMobilePush.Forms.iOS
 			};
 		}
 
-		public void FetchInboxMessage (string inboxMessageId, InboxMessageResultsDelegate callback)
-		{
-			MCEInboxMessage inboxMessage = MCEInboxDatabase.SharedInstance().InboxMessageWithInboxMessageId(inboxMessageId);
+        public void FetchInboxMessage(string inboxMessageId, InboxMessageResultsDelegate callback)
+        {
+            MCEInboxMessage inboxMessage = MCEInboxDatabase.SharedInstance().InboxMessageWithInboxMessageId(inboxMessageId);
 
-			if(inboxMessage == null)
-				callback(null);
+            if (inboxMessage == null)
+            { 
+                callback(null);
+                return;
+            }
 
 			callback(Convert(inboxMessage));
  		}
@@ -674,9 +703,12 @@ namespace IBMMobilePush.Forms.iOS
 		{
 			var beaconRegions = MCELocationDatabase.SharedInstance().BeaconRegions();
 			var beacons = new HashSet<BeaconRegion>();
-			foreach(CLBeaconRegion beaconRegion in beaconRegions)
-			{
-				beacons.Add(new BeaconRegion(beaconRegion.Major.Int32Value, null, beaconRegion.Identifier));
+            if(beaconRegions != null)
+            {
+				foreach (CLBeaconRegion beaconRegion in beaconRegions)
+				{
+					beacons.Add(new BeaconRegion(beaconRegion.Major.Int32Value, null, beaconRegion.Identifier));
+				}
 			}
 			return beacons;
 		}

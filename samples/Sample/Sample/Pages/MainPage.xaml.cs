@@ -20,15 +20,16 @@ namespace Sample
 		public MainPage ()
 		{
 			InitializeComponent ();
-
-			VersionLabel.Text = SDK.Instance.Version ();
-			if (Device.OS == TargetPlatform.Android) {
-				Logo.HeightRequest = 100;
-				Logo.WidthRequest = 245;
-			}
-			Logo.Source = ImageSource.FromFile("logo.png");
+            this.Appearing += (sender, e) => {
+				VersionLabel.Text = SDK.Instance.Version();
+                if (Device.RuntimePlatform == Device.Android)
+				{
+					Logo.HeightRequest = 100;
+					Logo.WidthRequest = 245;
+				}
+				Logo.Source = ImageSource.FromFile("logo.png");
+			};
 		}
-
 
 		public async void OpenPage(object sender, EventArgs e) 
 		{

@@ -19,20 +19,41 @@ namespace Sample
 		ICurrentLocation CurrentLocation;
 		bool follow;
 
-		public GeofencePage()
-		{
-			InitializeComponent();
-
+        void UpdateStatus()
+        {
 			if (SDK.Instance.GeofenceEnabled())
 			{
-				Status.Text = "ENABLED";
-				Status.TextColor = Color.Green;
+				if (SDK.Instance.LocationInitialized())
+				{
+					Status.Text = "ENABLED";
+					Status.TextColor = Color.Green;
+
+				}
+				else
+				{
+					Status.Text = "DELAYED (Touch to enable)";
+					Status.TextColor = Color.Gray;
+				}
 			}
 			else
 			{
 				Status.Text = "DISABLED";
 				Status.TextColor = Color.Red;
 			}
+		}    
+
+		public GeofencePage()
+		{
+			InitializeComponent();
+
+            SDK.Instance.LocationAuthorizationChanged += () => {
+                UpdateStatus();
+            };
+
+            Status.Clicked += (sender, e) => {
+                SDK.Instance.ManualLocationInitialization();
+            };
+            UpdateStatus();
 
 			follow = true;
 			var syncItem = new ToolbarItem();

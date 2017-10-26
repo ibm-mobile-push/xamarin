@@ -21,33 +21,26 @@ namespace Sample
 
 	public class InboxAction : PushAction
 	{
+        String inboxMessageId = null;
 		IOpenAppAction openApp;
 		public InboxAction()
 		{
 			openApp = DependencyService.Get<IOpenAppAction>();
-		}
+            SDK.Instance.InboxMessagesUpdate += InboxMessagesUpdate;;
+        }
 
 		public override void HandleAction (JObject action, JObject payload, string attribution, string mailingId, int id)
 		{
             var inboxMessageId = action["inboxMessageId"];
-            if(inboxMessageId == null)
-            {
-				var richContentId = action["value"];
-				SDK.Instance.FetchInboxMessageWithRichContentId(richContentId.ToString(), (message) => {
-                    if (message != null)
-                    {
-                        Device.BeginInvokeOnMainThread(() =>
-                        {
-                            var page = new InboxMessagePage(message, null);
-                            Application.Current.MainPage.Navigation.PushModalAsync(page);
-                        });
-                    }
-				});
-			}
-            else
+            if(inboxMessageId != null)
             {
 				SDK.Instance.FetchInboxMessage(inboxMessageId.ToString(), (message) => {
-                    if (message != null)
+                    if (message == null)
+                    {
+                        this.inboxMessageId = inboxMessageId.ToString();
+                        SDK.Instance.SyncInboxMessages();
+                    }
+                    else
                     {
                         Device.BeginInvokeOnMainThread(() =>
                         {
@@ -58,6 +51,23 @@ namespace Sample
 				});
 			}
 		}
-	}
+
+        void InboxMessagesUpdate()
+        {
+            if (this.inboxMessageId != null)
+            {
+                SDK.Instance.FetchInboxMessage(this.inboxMessageId, (message) =>
+                {
+                    Device.BeginInvokeOnMainThread(() =>
+                    {
+                        var page = new InboxMessagePage(message, null);
+                        Application.Current.MainPage.Navigation.PushModalAsync(page);
+                    });
+
+                    this.inboxMessageId = null;
+                });
+            }
+		}
+    }
 }
 

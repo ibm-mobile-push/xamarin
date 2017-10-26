@@ -6,15 +6,11 @@
  * © Copyright IBM Corp. 2016, 2016
  * US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
  */
-using Sample.Droid;
 using System;
 using System.IO;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
-
-using IBMMobilePush.Forms;
 using IBMMobilePush.Droid.API;
 using IBMMobilePush.Droid.API.Broadcast;
 using IBMMobilePush.Droid.API.Attribute;
@@ -24,36 +20,99 @@ using IBMMobilePush.Droid.API.Event;
 using IBMMobilePush.Droid.Plugin.Inbox;
 using IBMMobilePush.Droid.Location;
 using IBMMobilePush.Droid.Beacons;
-
 using Java.Util;
-
 using Android.App;
 using Android.Content;
 using Android.OS;
-using Android.Runtime;
-using Android.Views;
-using Android.Widget;
 using Android.Bluetooth;
-using Android.Util;
-
 using Android.Support.V4.Content;
 using Android.Content.PM;
-
-using Org.Json;
 using Newtonsoft.Json.Linq;
-
 using Xamarin.Forms;
-
 using SQLite.Net;
 using SQLite.Net.Async;
 using SQLite.Net.Platform.XamarinAndroid;
 using Android.Locations;
+using Android.Support.V4.App;
 
 [assembly: Dependency(typeof(IBMMobilePush.Forms.Droid.IBMMobilePushImpl))]
 namespace IBMMobilePush.Forms.Droid
 {
 	public class IBMMobilePushImpl : IIBMMobilePush
 	{
+        public IBMMobilePushImpl()
+        {
+			ApplicationContext = Xamarin.Forms.Forms.Context;
+
+			if (LocationAutoInitialize())
+            {
+                ManualLocationInitialization();
+            }
+            else
+            {
+                if (LocationInitialized())
+                {
+                    ManualLocationInitialization();
+                }
+            }
+		}
+
+		public GenericDelegate LocationAuthorizationChanged { set; get; }
+
+		public bool LocationInitialized()
+        {
+			var prefs = ApplicationContext.GetSharedPreferences("MCE", FileCreationMode.Private);
+			return prefs.GetBoolean("locationInitialized", false);
+		}
+
+		public void SetLocationInitialized(bool status)
+		{
+			var prefs = ApplicationContext.GetSharedPreferences("MCE", FileCreationMode.Private);
+			var prefEditor = prefs.Edit();
+			prefEditor.PutBoolean("locationInitialized", status);
+			prefEditor.Commit();
+		}
+
+		public void ManualLocationInitialization()
+        {
+            if (ContextCompat.CheckSelfPermission(ApplicationContext, Android.Manifest.Permission.AccessFineLocation) == Permission.Granted)
+            {
+                IBMMobilePush.Droid.Location.LocationManager.EnableLocationSupport( ApplicationContext );
+                SetLocationInitialized(true);
+			}
+            else
+            {
+                ActivityCompat.RequestPermissions((Activity)Xamarin.Forms.Forms.Context, new string[] { Android.Manifest.Permission.AccessFineLocation, Android.Manifest.Permission.Bluetooth, Android.Manifest.Permission.BluetoothAdmin }, 0);
+			}
+
+			if (LocationAuthorizationChanged != null)
+				LocationAuthorizationChanged();
+		}
+
+		// iOS Support only
+		public void ManualSdkInitialization()
+		{
+
+		}
+
+		public bool LocationAutoInitialize()
+        {
+            try
+            {
+				var configHandle = ApplicationContext.Assets.Open("MceConfig.json");
+				var configStream = new StreamReader(configHandle);
+				string response = configStream.ReadToEnd();
+                return JObject.Parse(response)["location"]["autoInitialize"].Value<bool>();
+            }
+            catch(Java.Lang.Exception ex)
+            {
+				return true;
+			}
+			catch (System.Exception ex)
+			{
+				return true;
+			}
+		}
 		delegate void InboxCallbackDelegate();
 
 		Context ApplicationContext;
@@ -62,8 +121,6 @@ namespace IBMMobilePush.Forms.Droid
 		
 		public void OnResume()
         {
-			ApplicationContext = Xamarin.Forms.Forms.Context;
-
 			BroadcastReceiver = new IBMMobilePushBroadcastReceiver(this);
 			ApplicationContext.RegisterReceiver(BroadcastReceiver, new IntentFilter("com.ibm.mce.sdk.NOTIFIER"));
 
@@ -128,31 +185,31 @@ namespace IBMMobilePush.Forms.Droid
 			}
 		}
 
-		public String Version()
+		public string Version()
 		{
 			return MceSdk.SdkVerNumber;
 		}
 
-		public String UserId()
+		public string UserId()
 		{
 			var details = MceSdk.RegistrationClient.GetRegistrationDetails (ApplicationContext);
 			return details.UserId;
 		}
 
-		public String ChannelId()
+		public string ChannelId()
 		{
 			var details = MceSdk.RegistrationClient.GetRegistrationDetails (ApplicationContext);
 			return details.ChannelId;
 		}
 
-		public String AppKey()
+		public string AppKey()
 		{
 			return MceSdk.RegistrationClient.GetAppKey (ApplicationContext);
 		}
 
-		IBMMobilePush.Droid.API.Attribute.Attribute AttributeConverter(String key, object value)
+		IBMMobilePush.Droid.API.Attribute.Attribute AttributeConverter(string key, object value)
 		{
-			var stringValue = value as String;
+			var stringValue = value as string;
 			if (stringValue != null) {
 				return new StringAttribute (key, stringValue);
 			}
@@ -218,9 +275,9 @@ namespace IBMMobilePush.Forms.Droid
 			IBMMobilePush.Droid.API.Attribute.Attribute attribute;
 			AttributeResultsDelegate callback;
 			AttributeOperation operation;
-			String key;
+			string key;
 
-			public AttributeCallback(String key, AttributeOperation operation, AttributeResultsDelegate callback)
+			public AttributeCallback(string key, AttributeOperation operation, AttributeResultsDelegate callback)
 			{
 				this.key = key;
 				this.callback = callback;
@@ -252,7 +309,7 @@ namespace IBMMobilePush.Forms.Droid
 		}
 
         [System.Obsolete("SetUserAttribute is deprecated")]
-		public void SetUserAttribute<T> (String key, T value, AttributeResultsDelegate callback)
+		public void SetUserAttribute<T> (string key, T value, AttributeResultsDelegate callback)
 		{
 			IBMMobilePush.Droid.API.Attribute.Attribute attribute = AttributeConverter (key, value);
 			if (attribute != null) {

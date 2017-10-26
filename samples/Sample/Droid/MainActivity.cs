@@ -32,9 +32,30 @@ using System.Collections.Generic;
 namespace Sample.Droid
 {
 	[Activity(Label = "Sample.Droid", Icon = "@drawable/icon", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
-	public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsApplicationActivity
+	public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsApplicationActivity, ActivityCompat.IOnRequestPermissionsResultCallback
 	{
-        protected override void OnResume()
+		public override void OnRequestPermissionsResult(int requestCode, string[] permissions, Permission[] grantResults)
+		{
+			if (requestCode == 0)
+			{
+				// Check if the only required permission has been granted
+				if (grantResults.Length == 1 && grantResults[0] == Permission.Granted)
+				{
+					Logging.Info("Location permission was granted.");
+					SDK.Instance.ManualLocationInitialization();
+				}
+				else
+				{
+					Logging.Info("Location permission was NOT granted.");
+				}
+			}
+			else
+			{
+				base.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+			}
+		}
+
+		protected override void OnResume()
         {
             base.OnResume();
             SDK.Instance.OnResume();
@@ -46,13 +67,6 @@ namespace Sample.Droid
 			base.OnCreate(bundle);
 			global::Xamarin.Forms.Forms.Init(this, bundle);
 
-			if(ContextCompat.CheckSelfPermission(ApplicationContext, Android.Manifest.Permission.AccessFineLocation) != Permission.Granted)
-			{
-				ActivityCompat.RequestPermissions(this, new String[] { Android.Manifest.Permission.AccessFineLocation, Android.Manifest.Permission.AccessCoarseLocation }, 0);
-			}
-			else {
-				IBMMobilePush.Droid.Location.LocationManager.EnableLocationSupport(this);
-			}
 			var jsonActionString = this.Intent.GetStringExtra("action");
 			if (jsonActionString != null)
 			{

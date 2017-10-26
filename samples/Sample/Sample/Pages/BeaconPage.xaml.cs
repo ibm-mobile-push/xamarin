@@ -15,24 +15,44 @@ using IBMMobilePush.Forms;
 
 namespace Sample
 {
-	public partial class BeaconPage : ContentPage
+    public partial class BeaconPage : ContentPage
 	{
 		Dictionary<int, string> RegionDetails = new Dictionary<int, string>();
+
+		void UpdateStatus()
+		{
+			if (SDK.Instance.GeofenceEnabled())
+			{
+				if (SDK.Instance.LocationInitialized())
+				{
+					Status.Text = "ENABLED";
+					Status.TextColor = Color.Green;
+
+				}
+				else
+				{
+					Status.Text = "DELAYED (Touch to enable)";
+					Status.TextColor = Color.Gray;
+				}
+			}
+			else
+			{
+				Status.Text = "DISABLED";
+				Status.TextColor = Color.Red;
+			}
+		}
 
 		public BeaconPage()
 		{
 			InitializeComponent();
+            UpdateStatus();
+			SDK.Instance.LocationAuthorizationChanged += () => {
+				UpdateStatus();
+			};
 
-			if (SDK.Instance.BeaconEnabled())
-			{
-				Status.Detail = "ENABLED";
-				Status.DetailColor = Color.Green;
-			}
-			else
-			{
-				Status.Detail = "DISABLED";
-				Status.DetailColor = Color.Red;
-			}
+			Status.Clicked += (sender, e) => {
+				SDK.Instance.ManualLocationInitialization();
+			};
 
 			var uuid = SDK.Instance.BeaconUUID();
 			if (uuid == null)
@@ -60,12 +80,16 @@ namespace Sample
 		void UpdateRegions()
 		{
 			Regions.Clear();
-			foreach (BeaconRegion region in SDK.Instance.BeaconRegions())
-			{
-				var cell = new TextCell() { Text = region.Major.ToString() };
-				if (RegionDetails.ContainsKey(region.Major.Value))
-					cell.Detail = RegionDetails[region.Major.Value];
-				Regions.Add(cell);
+            var regions = SDK.Instance.BeaconRegions();
+            if(regions != null)
+            {
+				foreach (BeaconRegion region in regions)
+				{
+					var cell = new TextCell() { Text = region.Major.ToString() };
+					if (RegionDetails.ContainsKey(region.Major.Value))
+						cell.Detail = RegionDetails[region.Major.Value];
+					Regions.Add(cell);
+				}
 			}
 		}
 	}

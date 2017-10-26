@@ -7,7 +7,7 @@ Licensed Materials - Property of IBM
 © Copyright IBM Corp. 2016, 2016
 US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
 -->
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="1" android:versionName="1.0" package="com.xtify.sample">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.xtify.sample" android:versionCode="33" android:versionName="3.3">
 	<permission android:name="com.xtify.sample.permission.C2D_MESSAGE" android:protectionLevel="signature" />
 	<uses-permission android:name="com.xtify.sample.permission.C2D_MESSAGE" />
 	<uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />

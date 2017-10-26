@@ -25,20 +25,20 @@ namespace Sample
 			MainPage = new NavigationPage( new MainPage() );
 
 			// Custom Actions
-			SDK.Instance.RegisterAction ("sendEmail", new EmailAction ());
-			SDK.Instance.RegisterAction ("calendar", new CalendarAction ());
-			SDK.Instance.RegisterAction ("snooze", new SnoozeAction ());
-			SDK.Instance.RegisterAction ("displayWebView", new WebViewAction ());
+			SDK.Instance.RegisterAction("sendEmail", new EmailAction());
+			SDK.Instance.RegisterAction("calendar", new CalendarAction());
+			SDK.Instance.RegisterAction("snooze", new SnoozeAction());
+			SDK.Instance.RegisterAction("displayWebView", new WebViewAction());
 
 			// Inbox Plugin
-			SDK.Instance.RegisterAction ("openInboxMessage", new InboxAction ());
-			SDK.Instance.RegisterInboxTemplate ("default", new DefaultInboxTemplate ());
-			SDK.Instance.RegisterInboxTemplate ("post", new PostInboxTemplate ());
+			SDK.Instance.RegisterAction("openInboxMessage", new InboxAction());
+			SDK.Instance.RegisterInboxTemplate("default", new DefaultInboxTemplate());
+			SDK.Instance.RegisterInboxTemplate("post", new PostInboxTemplate());
 
 			// InApp Plugin
-			SDK.Instance.RegisterInAppTemplate ("video", new VideoInAppTemplate ());
-			SDK.Instance.RegisterInAppTemplate ("image", new ImageInAppTemplate ());
-			SDK.Instance.RegisterInAppTemplate ("default", new BannerInAppTemplate ());
+			SDK.Instance.RegisterInAppTemplate("video", new VideoInAppTemplate());
+			SDK.Instance.RegisterInAppTemplate("image", new ImageInAppTemplate());
+			SDK.Instance.RegisterInAppTemplate("default", new BannerInAppTemplate());
 
 			if (jsonAction != null)
 			{
@@ -46,9 +46,9 @@ namespace Sample
 			}
 		}
 
-		protected override void OnStart ()
-		{
-			// Handle when your app starts
+        protected override void OnStart()
+        {
+            // Handle when your app starts
 		}
 
 		protected override void OnSleep ()

@@ -10,7 +10,7 @@
     <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
     <AssemblyName>SampleiOS</AssemblyName>
     <XamarinInsightsApiKey>5a419c98c13662528dd48480a6dc1fbd19b06398</XamarinInsightsApiKey>
-    <ReleaseVersion>3.3.0.0</ReleaseVersion>
+    <ReleaseVersion>3.3.0.1</ReleaseVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
     <DebugSymbols>true</DebugSymbols>
@@ -157,6 +157,11 @@
     <ProjectReference Include="..\Sample\Sample.csproj">
       <Project>{CEBECA3A-76F2-4EB3-ADA4-D59650DA3321}</Project>
       <Name>Sample</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sample.iOS.NotificationService\Sample.iOS.NotificationService.csproj">
+      <IsAppExtension>true</IsAppExtension>
+      <Project>{79131E3C-AFE9-4AFF-8F5D-6836DD6CB1FE}</Project>
+      <Name>Sample.iOS.NotificationService</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -584,6 +584,21 @@
             </summary>
             <value>The badge.</value>
         </member>
+        <member name="M:IBMMobilePush.Forms.SDK.ManualLocationInitialization">
+            <summary>
+            Manually initialize location services for SDK, requires location's 
+            autoInitialize=FALSE MceConfig.plist flag. This is used to delay 
+            location services initalization until desired.
+            </summary>
+        </member>
+        <member name="M:IBMMobilePush.Forms.SDK.ManualSdkInitialization">
+            <summary>
+            Manually initialize SDK, is used to wait until an event occurs before 
+            beginning to interact with the IBM servers. For example, you might not 
+            want to create a userid/channelid until after a user logs into your 
+            system. Requires autoInitialize=FALSE MceConfig.plist flag.
+            </summary>
+        </member>
         <member name="P:IBMMobilePush.Forms.SDK.Icon">
             <summary>
             Gets or sets the icon used in pushed messages.
