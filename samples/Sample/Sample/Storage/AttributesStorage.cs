@@ -20,7 +20,7 @@ namespace Sample
 		private string ActionKey = "AttributesAction";
 		public string Action { 
 			get {
-				return GetValue<string> (ActionKey, "Set");
+				return GetValue<string> (ActionKey, "Update");
 			}
 			set {
 				SetValue<string> (ActionKey, value);

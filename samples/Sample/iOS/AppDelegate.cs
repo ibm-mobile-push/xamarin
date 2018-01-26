@@ -55,8 +55,6 @@ namespace Sample.iOS
 						UIApplication.SharedApplication.RegisterForRemoteNotifications();
 					});
 				});
-
-
 			}
 			else if (UIDevice.CurrentDevice.CheckSystemVersion(8,0))
 			{

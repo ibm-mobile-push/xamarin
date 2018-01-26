@@ -386,16 +386,23 @@
             The IBMMobilePush SDK main forms interface class.
             </summary>
         </member>
+        <member name="M:IBMMobilePush.Forms.SDK.XamarinPluginVersion">
+            <summary>
+            Version of the IBMMobilePush Xamarin Plugin.
+            </summary>
+            <returns>The plugin version.</returns>
+        </member>
         <member name="P:IBMMobilePush.Forms.SDK.Instance">
             <summary>
             This method provides the singleton for the SDK.
             </summary>
             <value>The instance.</value>
         </member>
-        <member name="M:IBMMobilePush.Forms.SDK.OnResume">
+        <member name="M:IBMMobilePush.Forms.SDK.LocationInitialized">
             <summary>
-            This method should be called on resume of the app.
+            Is location initialized?
             </summary>
+            <returns><c>true</c>, if location was initialized, <c>false</c> otherwise.</returns>
         </member>
         <member name="P:IBMMobilePush.Forms.SDK.RegistrationUpdated">
             <summary>
@@ -408,6 +415,12 @@
             Gets or sets the locations updated callback.
             </summary>
             <value>The locations updated.</value>
+        </member>
+        <member name="P:IBMMobilePush.Forms.SDK.LocationAuthorizationChanged">
+            <summary>
+            Gets or sets the location authorization changed.
+            </summary>
+            <value>The location authorization changed.</value>
         </member>
         <member name="P:IBMMobilePush.Forms.SDK.GeofenceEntered">
             <summary>

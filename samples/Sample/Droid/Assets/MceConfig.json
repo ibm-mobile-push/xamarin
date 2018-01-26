@@ -2,12 +2,18 @@
     "Please note: if you are in Europe, you may need to change the value in 'baseUrl' below to": "https://sdk6.ibm.xtify.com",
     "baseUrl": "https://sdk.ibm.xtify.com",
     "appKey": {
-        "prod": "INSERT YOUR DEV APPKEY HERE"
+      "prod": "INSERT YOUR APPKEY HERE"
     },
     "senderId": "INSERT YOUR GOOGLE SENDER ID HERE",
 
+    "Please note, this option can be used to assign a device a different UserId on reinstallation, the default is to use the same UserId on reinstallation if possible (false). If you want a different UserId on reinstallation set invalidateExistingUser to": true,
+    "invalidateExistingUser": false,
+
     "Setting sessionEnabled to true will trigger session start and session end events": "",
     "sessionsEnabled": true,
+
+    "Use 'gcm' for GCM of 'fcm' for FCM": "",
+    "messagingService": "gcm",
 
     "sessionTimeout is the number of minutes the SDK wait while the application is in the background before sending session end event": "",
     "sessionTimeout": 20,
@@ -19,7 +25,7 @@
     "groupNotificationsByAttribution": false,
 
     "Choose one of the following values for loglevel: ": ["none", "error", "warn", "info", "debug", "verbose"],
-    "loglevel": "verbose",
+    "loglevel": "error",
 
     "Please note, the log iteration files will be stored under": "<application cache folder on sdcard>/ibm-mce-android-sdk/logs/<installation time folder, format: yyyy-MM-dd-HH-mm-ss>",
     "logfile": false,

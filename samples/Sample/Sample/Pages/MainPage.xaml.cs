@@ -21,7 +21,8 @@ namespace Sample
 		{
 			InitializeComponent ();
             this.Appearing += (sender, e) => {
-				VersionLabel.Text = SDK.Instance.Version();
+                SDKVersionLabel.Text = "Native SDK Version: " + SDK.Instance.Version();
+                PluginVersionLabel.Text = "Xamarin Plugin Version: " + SDK.Instance.XamarinPluginVersion();
                 if (Device.RuntimePlatform == Device.Android)
 				{
 					Logo.HeightRequest = 100;

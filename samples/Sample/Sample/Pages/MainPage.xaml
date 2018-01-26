@@ -19,14 +19,15 @@ US Government Users Restricted Rights - Use, duplication or disclosure restricte
 		<TableView Intent="Data" HasUnevenRows="true">
 		    <TableRoot>
 		        <TableSection>
-		        	<ViewCell Height="200">
-		        		<StackLayout Padding="0,20,0,0">
-							<StackLayout.BackgroundColor>
-								<OnPlatform x:TypeArguments="Color" iOS="#EFEFF4" />
-							</StackLayout.BackgroundColor>
+		        	<ViewCell Height="220">
+		        		<StackLayout Padding="0,20,0,20">
+                            <StackLayout.BackgroundColor>
+                                <OnPlatform x:TypeArguments="Color" iOS="#EFEFF4" />
+                            </StackLayout.BackgroundColor>
 	        				<Label Text="IBM Mobile Customer Engagement" FontAttributes="Bold" HorizontalOptions="Center" />
-							<Label Text="Version" x:Name="VersionLabel" HorizontalOptions="Center" />
 							<Image HorizontalOptions="Center" x:Name="Logo" />
+                            <Label Text="SDK Version" x:Name="SDKVersionLabel" HorizontalOptions="Center" />
+                            <Label Text="Xamarin Plugin Version" x:Name="PluginVersionLabel" HorizontalOptions="Center" />
 		        		</StackLayout>
 		        	</ViewCell>
 		      		<TextCell Text="Registration Details" Tapped="OpenPage" StyleId="Registration" />

@@ -55,15 +55,15 @@
 	<true/>
 	<key>NSCalendarsUsageDescription</key>
 	<string>Use the calendar</string>
-	<key>CFBundleIdentifier</key>
-	<string>INSERT.YOUR.BUNDLE.ID.HERE</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>See interesting things nearby!</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>See interesting things nearby!</string>
 	<key>CFBundleShortVersionString</key>
-	<string>3.3.0</string>
+	<string>3.3.1</string>
 	<key>CFBundleVersion</key>
-	<string>3301</string>
+	<string>3310</string>
+	<key>CFBundleIdentifier</key>
+	<string>INSERT.BUNDLE.ID.HERE</string>
 </dict>
 </plist>

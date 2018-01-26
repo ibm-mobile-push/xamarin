@@ -33,8 +33,11 @@ namespace IBMMobilePush.Forms.iOS
 	{
         CLLocationManager LocationManager;
 
+        public String XamarinPluginVersion() {
+            return null;
+        }
 		public IBMMobilePushImpl()
-		{
+        {
 			NSNotificationCenter.DefaultCenter.AddObserver(new NSString("EnteredGeofence"), (note) =>
 			{
 				CLCircularRegion region = note.UserInfo["region"] as CLCircularRegion;
@@ -84,11 +87,8 @@ namespace IBMMobilePush.Forms.iOS
 		
 			NSNotificationCenter.DefaultCenter.AddObserver(new NSString("LocationDatabaseUpdated"), (note) =>
 			{
-				if (LocationsUpdated != null)
-				{
-					LocationsUpdated();
-				}
-			});
+                LocationsUpdated?.Invoke();
+            });
 
 			NSNotificationCenter.DefaultCenter.AddObserver (new NSString("SetUserAttributesSuccess"), (note) => {
 				AttributeQueueResultNotification(AttributeOperation.SetUserAttributes, true, note);
@@ -147,11 +147,8 @@ namespace IBMMobilePush.Forms.iOS
 
 
 			NSNotificationCenter.DefaultCenter.AddObserver (new NSString("MCESyncDatabase"),(note) => {
-				if(InboxMessagesUpdate != null)
-				{
-					InboxMessagesUpdate();
-				}
-			});
+                InboxMessagesUpdate?.Invoke();
+            });
 
             LocationManager = new CLLocationManager();
             LocationManager.AuthorizationChanged += (sender, e) => {
@@ -165,11 +162,6 @@ namespace IBMMobilePush.Forms.iOS
 		{
             return CLLocationManager.Status == CLAuthorizationStatus.AuthorizedAlways;
 		}
-
-		public void OnResume()
-        {
-            
-        }
 
         public GenericDelegate LocationAuthorizationChanged { set; get; }
 
@@ -214,11 +206,8 @@ namespace IBMMobilePush.Forms.iOS
 
 		public void RegistrationUpdatedNotification(NSNotification note)
 		{
-			if(RegistrationUpdated != null)
-			{
-				RegistrationUpdated();
-			}
-		}
+            RegistrationUpdated?.Invoke();
+        }
 
 		public String Version()
 		{
@@ -545,8 +534,13 @@ namespace IBMMobilePush.Forms.iOS
 				sendDate = reference.AddSeconds(inboxMessage.SendDate.SecondsSinceReferenceDate);
 			}
 
-			NSError error = null;
-			var contentString = new NSString(inboxMessage.ContentData, NSStringEncoding.UTF8);
+
+            NSError error = null;
+            var contentString = new NSString( NSJsonSerialization.Serialize(inboxMessage.Content,0, out error), NSStringEncoding.UTF8);
+            if(error != null)
+            {
+                return null;
+            }
 			var content = JObject.Parse(contentString);
 
 			return new InboxMessage () {
@@ -554,7 +548,7 @@ namespace IBMMobilePush.Forms.iOS
 				RichContentId = inboxMessage.RichContentId,
 				ExpirationDate = expirationDate,
 				SendDate = sendDate,
-				TemplateName = inboxMessage.Template,
+				TemplateName = inboxMessage.TemplateName,
 				Attribution = inboxMessage.Attribution,
 				MailingId = inboxMessage.MailingId,
 				IsRead=inboxMessage.IsRead,
@@ -568,12 +562,24 @@ namespace IBMMobilePush.Forms.iOS
             MCEInboxMessage inboxMessage = MCEInboxDatabase.SharedInstance().InboxMessageWithInboxMessageId(inboxMessageId);
 
             if (inboxMessage == null)
-            { 
-                callback(null);
-                return;
+            {
+                MCEInboxQueueManager.SharedInstance().GetInboxMessageId(inboxMessageId, (MCEInboxMessage arg0, NSError arg1) =>
+                {
+                    if (inboxMessage == null)
+                    {
+                        callback(null);
+                        return;
+                    }
+                    else
+                    {
+                        callback(Convert(inboxMessage));
+                    }
+                });
             }
-
-			callback(Convert(inboxMessage));
+            else
+            {
+                callback(Convert(inboxMessage));
+            }
  		}
 
 		public void ExecuteAction(JToken action, string attribution, string mailingId, string source, Dictionary<string, string> attributes)

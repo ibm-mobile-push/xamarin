@@ -37,7 +37,7 @@ namespace Sample
 
 			var interactive = false;
 			if (action.GetValue ("interactive") != null) {
-				interactive = bool.Parse (action.GetValue ("interactive").ToString ());
+                interactive = action.GetValue("interactive").ToObject   <bool>();
 			}
 
 			calendar.AddEvent (title, description, startDate, endDate, interactive);

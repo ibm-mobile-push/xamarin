@@ -55,15 +55,9 @@ namespace Sample.Droid
 			}
 		}
 
-		protected override void OnResume()
-        {
-            base.OnResume();
-            SDK.Instance.OnResume();
-        }
-
 		protected override void OnCreate(Bundle bundle)
 		{
-			CachedImageRenderer.Init();
+			CachedImageRenderer.Init(true);
 			base.OnCreate(bundle);
 			global::Xamarin.Forms.Forms.Init(this, bundle);
 
