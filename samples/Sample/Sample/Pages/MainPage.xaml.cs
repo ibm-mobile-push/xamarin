@@ -36,32 +36,36 @@ namespace Sample
 		{
 			var styleId = ((Cell)sender).StyleId;
 
-			switch (styleId) {
-			case "Registration":
-				await Navigation.PushAsync (new RegistrationPage ());
-				break;
-			case "Inbox":
-				await Navigation.PushAsync (new InboxPage ());
-				break;
-			case "InApp":
-				await Navigation.PushAsync (new InAppPage());
-				break;
-			case "Actions":
-				await Navigation.PushAsync (new ActionsPage());
-				break;
-			case "Events":
-				await Navigation.PushAsync (new EventsPage());
-				break;
-			case "Attributes":
-				await Navigation.PushAsync (new AttributesPage());
-				break;
-			case "Geofences":
-				await Navigation.PushAsync(new GeofencePage());
-				break;
-			case "iBeacons":
-				await Navigation.PushAsync(new BeaconPage());
-				break;
-			}
+            switch (styleId)
+            {
+                case "Registration":
+                    await Navigation.PushAsync(new RegistrationPage());
+                    break;
+                case "PhoneHome":
+                    await Navigation.PushAsync(new PhoneHomePage());
+                    break;
+                case "Inbox":
+                    await Navigation.PushAsync(new InboxPage());
+                    break;
+                case "InApp":
+                    await Navigation.PushAsync(new InAppPage());
+                    break;
+                case "Actions":
+                    await Navigation.PushAsync(new ActionsPage());
+                    break;
+                case "Events":
+                    await Navigation.PushAsync(new EventsPage());
+                    break;
+                case "Attributes":
+                    await Navigation.PushAsync(new AttributesPage());
+                    break;
+                case "Geofences":
+                    await Navigation.PushAsync(new GeofencePage());
+                    break;
+                case "iBeacons":
+                    await Navigation.PushAsync(new BeaconPage());
+                    break;
+            }
 		}
 	}
 

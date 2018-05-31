@@ -12,6 +12,9 @@
   "Please note, this option can be used to assign a device a different UserId on reinstallation, the default is to use the same UserId on reinstallation if possible (false). If you want a different UserId on reinstallation set invalidateExistingUser to": true,
   "invalidateExistingUser": false,
 
+  "This flag can be used to prevent the SDK from reinitializing after a GDPR request has been processed if set to": false,
+  "autoReinitialize": true,
+
   "Please note, the existince of the location key is not required, if it is not present though, iBeacon and Geofence support will be disabled.": "",
   "location": {
     "The location autoInitialize flag can be set to false to delay turning on the location services until desired.": "",
@@ -45,8 +48,8 @@
   "sessionTimeout": 20,
 
   "Choose one of the following values for loglevel: ": [ "none", "error", "info", "warn", "verbose" ],
-  "loglevel": "error",
+  "loglevel": "debug",
 
   "Set logfile to true to write logs to the iTunes sync directory for debugging": "",
-  "logfile": true
+  "logfile": true,
 }

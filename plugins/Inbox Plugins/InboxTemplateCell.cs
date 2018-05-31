@@ -8,12 +8,14 @@
  */
 
 using System;
+using IBMMobilePush.Forms;
 using Xamarin.Forms;
 
 namespace Sample
 {
 	public abstract class InboxTemplateCell : ViewCell
 	{
+		public InboxMessage InboxMessage;
 		public abstract void CellDisappearing();
 	}
 

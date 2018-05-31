@@ -31,51 +31,49 @@ namespace Sample
 			
 		public void CannedInApp(object sender, EventArgs e)
 		{
-			var styleId = ((Cell)sender).StyleId;
-			JObject json = new JObject () {
-				{"inApp", new JObject () {
-						{"triggerDate", "2014-06-03T13:21:58Z"},
-						{"rules", new  JArray (styleId, "all") },
-						{"expirationDate", "2099-06-03T13:21:58Z"},
-						{"content", new JObject() {
-								{"action", new JObject(){
-										{"type", "url"},
-										{"value", "http://ibm.co"}
-									}
-								}
-							}
-						},
-						{"maxViews", 5}
-					}
-				}
-			};
+            var styleId = ((Cell)sender).StyleId;
+
+            var message = new InAppMessage();
+            message.Id = Guid.NewGuid().ToString();
+            message.TriggerDate = DateTimeOffset.Now.AddDays(-1);
+            message.ExpirationDate = DateTimeOffset.Now.AddDays(1);
+            message.Rules = new JArray();
+            message.Rules.Add(styleId);
+            message.Rules.Add("all");
+            var action = new JObject() { { "type", "url" }, { "value", "http://ibm.co" } };
+            var content = new JObject();
+            content.Add("action", action);
+
+
+            message.MaxViews = 10;
+            message.NumViews = 0;
+
 			if (styleId.Equals("bottomBanner") || styleId.Equals ("topBanner")) {
-				
-				json ["inApp"] ["template"] = "default";
-				json ["inApp"] ["content"] ["text"] = "Canned Banner Template Text";
-				json ["inApp"] ["content"] ["icon"] = "note";
-				json ["inApp"] ["content"] ["color"] = "0077FF";
-				json ["inApp"] ["rules"] = new JArray (styleId, "all");
+                message.Template = "default";
+                content.Add("text", "Canned Banner Template Text");
+                content.Add("icon", "note");
+                content.Add("color", "0077FF");
 
 				if (styleId.Equals ("topBanner")) {
-					json ["inApp"] ["content"] ["orientation"] = "top";
+                    content.Add("orientation", "top");
 				}
 			}
 
 			if (styleId.Equals ("video") || styleId.Equals("image"))
 			{
-				json ["inApp"] ["template"] =styleId;
-				json ["inApp"] ["content"] ["title"] = "Canned Video Template Title";
-				json ["inApp"] ["content"] ["text"] = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque rhoncus, eros sed imperdiet finibus, purus nibh placerat leo, non fringilla massa tortor in tellus. Donec aliquet pharetra dui ac tincidunt. Ut eu mi at ligula varius suscipit. Vivamus quis quam nec urna sollicitudin egestas eu at elit. Nulla interdum non ligula in lobortis. Praesent lobortis justo at cursus molestie. Aliquam lectus velit, elementum non laoreet vitae, blandit tempus metus. Nam ultricies arcu vel lorem cursus aliquam. Nunc eget tincidunt ligula, quis suscipit libero. Integer velit nisi, lobortis at malesuada at, dictum vel nisi. Ut vulputate nunc mauris, nec porta nisi dignissim ac. Sed ut ante sapien. Quisque tempus felis id maximus congue. Aliquam quam eros, congue at augue et, varius scelerisque leo. Vivamus sed hendrerit erat. Mauris quis lacus sapien. Nullam elit quam, porttitor non nisl et, posuere volutpat enim. Praesent euismod at lorem et vulputate. Maecenas fermentum odio non arcu iaculis egestas. Praesent et augue quis neque elementum tincidunt. ";
+                message.Template = styleId;
+                content.Add("title", "Canned Video Template Title");
+                content.Add("text", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque rhoncus, eros sed imperdiet finibus, purus nibh placerat leo, non fringilla massa tortor in tellus. Donec aliquet pharetra dui ac tincidunt. Ut eu mi at ligula varius suscipit. Vivamus quis quam nec urna sollicitudin egestas eu at elit. Nulla interdum non ligula in lobortis. Praesent lobortis justo at cursus molestie. Aliquam lectus velit, elementum non laoreet vitae, blandit tempus metus. Nam ultricies arcu vel lorem cursus aliquam. Nunc eget tincidunt ligula, quis suscipit libero. Integer velit nisi, lobortis at malesuada at, dictum vel nisi. Ut vulputate nunc mauris, nec porta nisi dignissim ac. Sed ut ante sapien. Quisque tempus felis id maximus congue. Aliquam quam eros, congue at augue et, varius scelerisque leo. Vivamus sed hendrerit erat. Mauris quis lacus sapien. Nullam elit quam, porttitor non nisl et, posuere volutpat enim. Praesent euismod at lorem et vulputate. Maecenas fermentum odio non arcu iaculis egestas. Praesent et augue quis neque elementum tincidunt.");
 
 				if (styleId.Equals ("video")) {
-					json ["inApp"] ["content"] ["video"] = "http://techslides.com/demos/sample-videos/small.mp4";
+                    content.Add("video", "http://techslides.com/demos/sample-videos/small.mp4");
 				} else {
-					json ["inApp"] ["content"] ["image"] = "http://www.ibm.com/us-en/images/homepage/featured/04182016_f_above-the-clutter-14287_600x260.jpg";
+                    content.Add("image", "http://www.ibm.com/us-en/images/homepage/featured/04182016_f_above-the-clutter-14287_600x260.jpg");
 				}
 			}
 
-			InAppManager.Instance.InsertInAppAsync(json);
+            message.Content = content;
+            SDK.Instance.InsertInAppAsync(message);
 		}
 
 	}

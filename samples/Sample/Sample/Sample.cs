@@ -28,7 +28,11 @@ namespace Sample
 			SDK.Instance.RegisterAction("sendEmail", new EmailAction());
 			SDK.Instance.RegisterAction("calendar", new CalendarAction());
 			SDK.Instance.RegisterAction("snooze", new SnoozeAction());
-			SDK.Instance.RegisterAction("displayWebView", new WebViewAction());
+
+            // iOS and Android use different names for this plugin
+            var displayWebAction = new WebViewAction();
+            SDK.Instance.RegisterAction("displayWebView", displayWebAction);
+            SDK.Instance.RegisterAction("displayweb", displayWebAction);
 
 			// Inbox Plugin
 			SDK.Instance.RegisterAction("openInboxMessage", new InboxAction());

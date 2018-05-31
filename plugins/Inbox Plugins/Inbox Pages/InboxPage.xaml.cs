@@ -19,44 +19,34 @@ namespace Sample
 	public partial class InboxPage : ContentPage
 	{
 		public delegate void Completed();
-		public ObservableCollection<InboxMessage> Messages = new ObservableCollection<InboxMessage> ();
+
+        InboxTemplateCell generateCell(InboxMessage inboxMessage) {
+            var template = SDK.Instance.RegisteredInboxTemplate(inboxMessage.TemplateName);
+            if (template == null)
+            {
+                return null;
+            }
+            var cell = template.MessageCell(inboxMessage) as InboxTemplateCell;
+            cell.InboxMessage = inboxMessage;
+            cell.Tapped += MessageCell_Tapped;
+            return cell;
+        }
 
 		public void SyncMessages(Completed completed)
 		{
-			SDK.Instance.FetchInboxMessages ((newMessages) => {
-				if(Messages == null)
-					return;
+			SDK.Instance.FetchInboxMessages ((newInboxMessages) => {
+                var inboxMessageCells = new List<InboxTemplateCell>();
 
-				for(var index=0; index<newMessages.Length; index++)
-				{
-					var newMessage = newMessages[index];
-					var existingMessage = Messages.Where(m => m.InboxMessageId.Equals(newMessage.InboxMessageId)).Select(m=>m).FirstOrDefault();
-
-					if(existingMessage == null)
-					{
-						// new message isn't yet in Messages collection, insert it
-						Messages.Insert(index, newMessage);
-					}
-					else
-					{
-						// new message is in Messages collection, update it
-						var i = Messages.IndexOf(existingMessage);
-						Messages[i] = newMessage;
-					}
-				}
-
-				// Delete message if not in newMessages
-				var delete = new List<InboxMessage>();
-				foreach(var existingMessage in Messages)
-				{
-					var newMessage = newMessages.Where(m=>m.InboxMessageId.Equals(existingMessage.InboxMessageId)).Select(m=>m).FirstOrDefault();
-					if(newMessage == null)
-					{
-						delete.Add(existingMessage);
-					}
-				}
-				foreach(var existingMessage in delete)
-					Messages.Remove(existingMessage);
+                foreach (var inboxMessage in newInboxMessages)
+                {
+                    var cell = generateCell(inboxMessage);
+                    inboxMessageCells.Add(cell);
+                }
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    InboxMessages.Clear();
+                    InboxMessages.Add(inboxMessageCells);
+                });
 
 				if(completed != null)
 					completed();
@@ -64,8 +54,30 @@ namespace Sample
 			}, false);
 		}
 
+		void MessageCell_Tapped(object sender, EventArgs e)
+		{
+			var cell = sender as InboxTemplateCell;
+            if (cell != null)
+            {
+                var message = cell.InboxMessage;
+
+                // Update Message List read status
+                message.IsRead = true;
+
+                Navigation.PushAsync(new InboxMessagePage(message, this));
+            }
+		}
+
+
 		protected override void OnDisappearing ()
 		{
+            foreach(var cell in InboxMessages) {
+                var templatecell = cell as InboxTemplateCell;
+                if (templatecell != null)
+                {
+                    templatecell.CellDisappearing();
+                }
+            }
 			base.OnDisappearing ();
 			TranslationX = 1000;
 		}
@@ -75,27 +87,10 @@ namespace Sample
 			base.OnAppearing ();
 			TranslationX = 0;
 		}
-
+        
 		public InboxPage()
 		{
 			InitializeComponent ();
-
-			InboxMessages.HasUnevenRows = true;
-			InboxMessages.ItemsSource = Messages;
-			InboxMessages.ItemTemplate = new DataTemplate (typeof(InboxDataTemplate));
-			InboxMessages.ItemTapped += (object sender, ItemTappedEventArgs e) => {
-				var message = e.Item as InboxMessage;
-
-				// Update Message List read status
-				message.IsRead=true;
-				var index = Messages.IndexOf(message);
-				Messages[index]=message;
-
-				Navigation.PushAsync( new InboxMessagePage(message, this) );
-
-				InboxMessages.SelectedItem=null;
-			};
-
 			SDK.Instance.InboxMessagesUpdate += () => {
 				SyncMessages(null);
 			};
@@ -112,5 +107,55 @@ namespace Sample
 				SDK.Instance.SyncInboxMessages();
 			};
 		}
+
+        public InboxTemplateCell FindMessage(InboxMessage message)
+        {
+            foreach(var cell in InboxMessages) {
+                var templatecell = cell as InboxTemplateCell;
+                if(templatecell != null) {
+                    if(templatecell.InboxMessage.InboxMessageId == message.InboxMessageId) {
+                        return templatecell;
+                    }
+                }
+            }
+            return null;
+        }
+
+        public InboxMessage MessageAtIndex(int index)
+        {
+            var cell = InboxMessages[index] as InboxTemplateCell;
+            if(cell != null) {
+                return cell.InboxMessage;
+            }
+            return null;
+        }
+
+        public int MessageIndex(InboxMessage message) {
+            foreach (var cell in InboxMessages)
+            {
+                var templatecell = cell as InboxTemplateCell;
+                if (templatecell != null)
+                {
+                    if (templatecell.InboxMessage.InboxMessageId == message.InboxMessageId)
+                    {
+                        return InboxMessages.IndexOf(cell);
+                    }
+                }
+            }
+            return -1;
+        }
+
+        public int MessageCount()
+        {
+            return InboxMessages.Count();
+        }
+
+        public void UpdateCell(int index) {
+            var templatecell = InboxMessages[index] as InboxTemplateCell;
+            if (templatecell != null) {
+                InboxMessages[index] = generateCell(templatecell.InboxMessage);
+            }
+
+        }
 	}
 }

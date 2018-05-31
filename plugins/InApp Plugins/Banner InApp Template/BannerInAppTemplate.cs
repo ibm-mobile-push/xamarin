@@ -12,6 +12,8 @@ using IBMMobilePush.Forms;
 using Xamarin.Forms;
 using System.Threading.Tasks;
 using System.Globalization;
+using Xamarin.Forms.PlatformConfiguration;
+using Xamarin.Forms.PlatformConfiguration.iOSSpecific;
 
 namespace Sample
 {
@@ -31,7 +33,10 @@ namespace Sample
 
 		public float Height { 
 			get { 
-				return 44;
+                if(IsTop()) {
+                    return 44;
+                }
+                return 44 + (float)SDK.Instance.SafeAreaInsets().Bottom;
 			} 
 		}
 
@@ -145,12 +150,20 @@ namespace Sample
 					_InAppView.GestureRecognizers.Add (tapGesture);
 				}
                 _InAppView.HeightRequest = Height;
-                _ContentImage.HeightRequest = Height;
                 _ContentImage.WidthRequest = Layout.Width;
-				_Content.Padding = new Thickness (10, 0, 10, 0);
 				_Content.HeightRequest = Height;
 				_Content.WidthRequest = Layout.Width - 20;
                 _InAppView.WidthRequest = Layout.Width;
+
+                if (IsTop()) {
+                    _Content.Padding = new Thickness(10, 0, 10, 0);
+                    _Content.HeightRequest = Height;
+                    _ContentImage.HeightRequest = Height;
+                } else {
+                    _Content.Padding = new Thickness(10, 0, 10, SDK.Instance.SafeAreaInsets().Bottom);
+                    _Content.HeightRequest = Height - SDK.Instance.SafeAreaInsets().Bottom;
+                    _ContentImage.HeightRequest = Height - SDK.Instance.SafeAreaInsets().Bottom;
+                }
 
                 _InAppView.RaiseChild(Content);
 				return _InAppView;
@@ -180,7 +193,7 @@ namespace Sample
 				if(IsTop())
 					return Constraint.Constant (0);
 				else
-					return Constraint.Constant (Layout.Height - Height );
+                    return Constraint.Constant (Layout.Height - Height );
 			} 
 		}
 
@@ -192,7 +205,7 @@ namespace Sample
 
 		public override Constraint HeightConstraint {
 			get {
-				return Constraint.Constant (Height);
+                return Constraint.Constant (Height);
 			}
 		}
 

@@ -30,7 +30,8 @@ US Government Users Restricted Rights - Use, duplication or disclosure restricte
                             <Label Text="Xamarin Plugin Version" x:Name="PluginVersionLabel" HorizontalOptions="Center" />
 		        		</StackLayout>
 		        	</ViewCell>
-		      		<TextCell Text="Registration Details" Tapped="OpenPage" StyleId="Registration" />
+                    <TextCell Text="Registration Details" Tapped="OpenPage" StyleId="Registration" />
+                    <TextCell Text="Phone Home" Tapped="OpenPage" StyleId="PhoneHome" />
 		      		<TextCell Text="Inbox" Tapped="OpenPage" StyleId="Inbox" />
 		      		<TextCell Text="InApp" Tapped="OpenPage" StyleId="InApp" />
 		      		<TextCell Text="Push Actions" Tapped="OpenPage" StyleId="Actions" />

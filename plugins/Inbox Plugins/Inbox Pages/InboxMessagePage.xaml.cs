@@ -20,10 +20,6 @@ namespace Sample
 {
 	public partial class InboxMessagePage : ContentPage
 	{
-		InboxMessage FindMessage(InboxMessage message, InboxPage inbox)
-		{
-			return inbox.Messages.Where(m => m.InboxMessageId.Equals(message.InboxMessageId)).Select(m=>m).FirstOrDefault();
-		}
 
 		public InboxMessagePage (InboxMessage message, InboxPage inbox)
 		{
@@ -32,7 +28,7 @@ namespace Sample
 			SDK.Instance.ReadInboxMessage(message);
 
 			if (inbox == null) {
-				DismissLayout.Padding = new Thickness (10, Device.OnPlatform (20, 0, 0), 10, 0);
+                DismissLayout.Padding = new Thickness (10, Device.OnPlatform (Math.Max(SDK.Instance.SafeAreaInsets().Top, 20), 0, 0), 10, 0);
 				Dismiss.Clicked += (object sender, EventArgs e) => {
 					Navigation.PopModalAsync();
 				};
@@ -47,34 +43,32 @@ namespace Sample
 				Layout.Children.Add (view, 0, 1);
 			}
 
-			if (inbox == null || inbox.Messages.IndexOf (message) == 0) {
+            if (inbox == null || inbox.MessageIndex(message) == 0) {
 				ToolbarItems.Remove (PrevButton);
 			}
-			if (inbox == null || inbox.Messages.IndexOf (message) == inbox.Messages.Count-1) {
+            if (inbox == null || inbox.MessageIndex(message) == inbox.MessageCount() - 1) {
 				ToolbarItems.Remove (NextButton);
 			}
 
-			PrevButton.Clicked += (object sender, EventArgs e) => {
-				int index = inbox.Messages.IndexOf (FindMessage(message, inbox)) - 1;
-				Navigation.PushAsync(new InboxMessagePage(inbox.Messages[index], inbox));
+            PrevButton.Clicked += (object sender, EventArgs e) => {
+				int index = inbox.MessageIndex(message) - 1;
+                Navigation.PushAsync(new InboxMessagePage(inbox.MessageAtIndex(index), inbox));
 				Navigation.RemovePage(this);
+                inbox.UpdateCell(index);
 			};
 			NextButton.Clicked += (object sender, EventArgs e) => {
-				int index = inbox.Messages.IndexOf (FindMessage(message, inbox)) + 1;
-				Navigation.PushAsync(new InboxMessagePage(inbox.Messages[index], inbox));
-				Navigation.RemovePage(this);
+                int index = inbox.MessageIndex(message) + 1;
+                Navigation.PushAsync(new InboxMessagePage(inbox.MessageAtIndex(index), inbox));
+                Navigation.RemovePage(this);
+                inbox.UpdateCell(index);
 			};
 			TrashButton.Clicked += (object sender, EventArgs e) => {
 				SDK.Instance.DeleteInboxMessage(message);
-				if (inbox != null)
-				{
-					inbox.Messages.Remove(FindMessage(message, inbox));
-				}
 				SDK.Instance.SyncInboxMessages();
 				Navigation.PopAsync();
 			};
 
-			var attributes = new Dictionary<string, object>() {
+            var attributes = new Dictionary<string, object>() {
 							{"richContentId", message.RichContentId},
 							{"inboxMessageId", message.InboxMessageId}
 						};

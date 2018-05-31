@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 
 <!--
 Licensed Materials - Property of IBM
@@ -18,5 +18,9 @@ US Government Users Restricted Rights - Use, duplication or disclosure restricte
 	<ContentPage.ToolbarItems>
 		<ToolbarItem Name="Sync" x:Name="SyncButton" Icon="refresh" />
 	</ContentPage.ToolbarItems>
-	<ListView x:Name="InboxMessages" HasUnevenRows="True" />
+	<TableView HasUnevenRows="true" x:Name="InboxTableView">
+        <TableRoot>
+            <TableSection x:Name="InboxMessages" />>
+        </TableRoot>
+    </TableView>
 </ContentPage>

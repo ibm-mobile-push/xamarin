@@ -21,6 +21,13 @@ namespace Sample
 		{
 			InitializeComponent ();
 			UpdateRegistration ();
+            Registration.Tapped += (object sender, EventArgs e) => {
+                if (SDK.Instance.UserId() == null && SDK.Instance.ChannelId() == null)
+                {
+                    Registration.Detail = "Registering";
+                    SDK.Instance.ManualSdkInitialization();
+                }
+            };
 		}
 
 		protected override void OnAppearing()
@@ -37,8 +44,18 @@ namespace Sample
 		public void UpdateRegistration()
 		{
 			Device.BeginInvokeOnMainThread(() => {
-				UserId.Detail = SDK.Instance.UserId ();
-				ChannelId.Detail = SDK.Instance.ChannelId ();
+                var userId = SDK.Instance.UserId();
+                var channelId = SDK.Instance.ChannelId();
+                if(userId == null && channelId == null) {
+                    Registration.Detail = "Tap to Register";
+                } else {
+                    Registration.Detail = "Registered";
+                }
+                if(SDK.Instance.UserInvalidated()) {
+                    Registration.Detail += " (Invalidated State)";
+                }
+                UserId.Detail = userId;
+                ChannelId.Detail = channelId;
 				AppKey.Detail = SDK.Instance.AppKey ();
 			});
 		}

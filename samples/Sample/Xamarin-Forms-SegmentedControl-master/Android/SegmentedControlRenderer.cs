@@ -66,10 +66,12 @@ namespace Sample.Droid
 					for(var i = 0; i < rg.ChildCount; i++)
 					{
 						var r = (RadioButton)rg.GetChildAt(i);
-						r.Checked=false;
+                        if(r.Id == rg.CheckedRadioButtonId) {
+                            r.Checked = true;
+                        } else {
+                            r.Checked = false;
+                        }
 					}
-					var rc = (RadioButton)g.GetChildAt(rg.CheckedRadioButtonId-1);
-					rc.Checked=true;
 				}
 			};
 

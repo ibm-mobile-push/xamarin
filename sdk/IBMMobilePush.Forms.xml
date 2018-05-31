@@ -54,28 +54,6 @@
             IBM Mobile Push interface
             </summary>
         </member>
-        <member name="T:IBMMobilePush.Forms.InAppManager">
-            <summary>
-            This class stores, manages and runs in-app messages.
-            </summary>
-        </member>
-        <member name="P:IBMMobilePush.Forms.InAppManager.Instance">
-            <summary>
-            This property returns a singleton object for the manager.
-            </summary>
-        </member>
-        <member name="M:IBMMobilePush.Forms.InAppManager.ExecuteRulesAsync(System.Collections.Generic.List{System.String})">
-            <summary>
-            This method finds the next in-app message with the specified rule to be displayed and runs it.
-            </summary>
-            <param name="rules">A list of rules to look for.</param>
-        </member>
-        <member name="M:IBMMobilePush.Forms.InAppManager.DeleteInAppMessage(IBMMobilePush.Forms.InAppMessage)">
-            <summary>
-            This method deletes an in-app message before it's expired or overviewed.
-            </summary>
-            <param name="message">In-App message to be deleted.</param>
-        </member>
         <member name="T:IBMMobilePush.Forms.InAppMessage">
             <summary>
             A class representing a single in-app message.
@@ -116,14 +94,35 @@
             The trigger timestamp in a DateTimeOffset format.
             </summary>
         </member>
+        <member name="P:IBMMobilePush.Forms.InAppMessage.ExpirationTimestamp">
+            <summary>
+            The Unix timestamp that the message should stop showing up.
+            </summary>
+        </member>
+        <member name="P:IBMMobilePush.Forms.InAppMessage.ExpirationDateString">
+            <summary>
+            The Expiration timestamp in an ISO8601 format.
+            </summary>
+        </member>
+        <member name="P:IBMMobilePush.Forms.InAppMessage.ExpirationDate">
+            <summary>
+            The Expiration timestamp in a DateTimeOffset format.
+            </summary>
+        </member>
         <member name="P:IBMMobilePush.Forms.InAppMessage.Attribution">
             <summary>
             The campaign name associated with the in-app message.
             </summary>
         </member>
-        <member name="P:IBMMobilePush.Forms.InAppMessage.ContentString">
+        <member name="P:IBMMobilePush.Forms.InAppMessage.MailingId">
             <summary>
-            The JSON-formatted string representing rich content. The template is developer-defined.
+            Gets or sets the mailing identifier.
+            </summary>
+            <value>The mailing identifier.</value>
+        </member>
+        <member name="P:IBMMobilePush.Forms.InAppMessage.Content">
+            <summary>
+            This property returns the content property in the form of a JSON object.
             </summary>
         </member>
         <member name="M:IBMMobilePush.Forms.InAppMessage.IsTriggered">
@@ -137,21 +136,28 @@
             The JSON array of rules for this message.
             </summary>
         </member>
-        <member name="P:IBMMobilePush.Forms.InAppMessage.Content">
-            <summary>
-            This property returns the content property in the form of a JSON object.
-            </summary>
-        </member>
         <member name="M:IBMMobilePush.Forms.InAppMessage.#ctor">
             <summary>
             An empty default constructor.
             </summary>
         </member>
+        <member name="M:IBMMobilePush.Forms.InAppMessage.Execute">
+            <summary>
+            Execute this instance.
+            </summary>
+            <returns>The execute.</returns>
+        </member>
         <member name="M:IBMMobilePush.Forms.InAppMessage.#ctor(Newtonsoft.Json.Linq.JObject)">
             <summary>
-            The JSON object to the in-app message parser/constructor.
+            Initializes a new instance of the <see cref="T:IBMMobilePush.Forms.InAppMessage"/> class.
             </summary>
-            <param name="jsonObject"></param>
+            <param name="inAppJson">In app json.</param>
+        </member>
+        <member name="M:IBMMobilePush.Forms.InAppMessage.JsonObject">
+            <summary>
+            Jsons the object.
+            </summary>
+            <returns>The object.</returns>
         </member>
         <member name="P:IBMMobilePush.Forms.InAppMessageRule.Id">
             <summary>
@@ -827,6 +833,24 @@
             Gets or sets the logging level.
             </summary>
             <value>The logging level.</value>
+        </member>
+        <member name="M:IBMMobilePush.Forms.SDK.InsertInAppAsync(IBMMobilePush.Forms.InAppMessage)">
+            <summary>
+            Inserts an in app message into the database.
+            </summary>
+            <param name="message">InApp Message</param>
+        </member>
+        <member name="M:IBMMobilePush.Forms.SDK.SafeAreaInsets">
+            <summary>
+            Safe area insets for device (iPhone X)
+            </summary>
+            <returns>The area insets.</returns>
+        </member>
+        <member name="M:IBMMobilePush.Forms.SDK.UserInvalidated">
+            <summary>
+            Returns true when the user has been invalidated. (GDPR)
+            </summary>
+            <returns><c>true</c>, if user has been invalidated, <c>false</c> otherwise.</returns>
         </member>
         <member name="T:IBMMobilePush.Forms.Database">
             <summary>

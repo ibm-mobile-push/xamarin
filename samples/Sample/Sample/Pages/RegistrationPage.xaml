@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 
 <!--
 Licensed Materials - Property of IBM
@@ -25,6 +25,7 @@ US Government Users Restricted Rights - Use, duplication or disclosure restricte
 		        	<local:RightDetailCell Text="User Id" x:Name="UserId" />
 		        	<local:RightDetailCell Text="Channel Id" x:Name="ChannelId" />
 		        	<local:RightDetailCell Text="App Key" x:Name="AppKey" />
+                    <local:RightDetailCell Text="Registration" x:Name="Registration" />
 		        </TableSection>
 		    </TableRoot>
 		</TableView>

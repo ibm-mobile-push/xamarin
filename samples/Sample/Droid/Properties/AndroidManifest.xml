@@ -7,15 +7,15 @@ Licensed Materials - Property of IBM
 © Copyright IBM Corp. 2016, 2016
 US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
 -->
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="3310" android:versionName="3.3.1.0" package="com.ibm.mce.samples.gcm">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="3320" android:versionName="3.3.2.0" package="com.ibm.mce.samples.gcm">
 	<!-- C2D_MESSAGE is required for receiving GCM messages -->
 	<permission android:name="com.ibm.mce.samples.gcm.permission.C2D_MESSAGE" android:protectionLevel="signature" />
 	<!-- C2D_MESSAGE is required for receiving GCM messages -->
 	<uses-permission android:name="com.ibm.mce.samples.gcm.permission.C2D_MESSAGE" />
 	<!-- c2dm.permission.RECEIVE is required for receiving GCM messages -->
-    <uses-permission android:name="android.permission.GET_TASKS" />
-    <uses-permission android:name="android.permission.WRITE_CALENDAR" />
-    <uses-permission android:name="android.permission.READ_CALENDAR" />
+	<uses-permission android:name="android.permission.GET_TASKS" />
+	<uses-permission android:name="android.permission.WRITE_CALENDAR" />
+	<uses-permission android:name="android.permission.READ_CALENDAR" />
 	<uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
 	<!-- INTERNET is required for calling the MCE server -->
 	<uses-permission android:name="android.permission.INTERNET" />
@@ -35,6 +35,8 @@ US Government Users Restricted Rights - Use, duplication or disclosure restricte
 	<uses-permission android:name="android.permission.BLUETOOTH" />
 	<!-- BLUETOOTH_ADMIN is optional. It is only required if iBeacons are supported -->
 	<uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+	<uses-permission android:name="android.permission.MEDIA_CONTENT_CONTROL" />
+	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 	<uses-sdk android:minSdkVersion="15" />
 	<application android:label="Sample" android:name="com.ibm.mce.sdk.api.MceApplication">
 		<meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyA_sxbBOJzn5tQosvR0puwHtCdNne56vMU" />
@@ -66,23 +68,18 @@ US Government Users Restricted Rights - Use, duplication or disclosure restricte
 				<action android:name="android.intent.action.LOCALE_CHANGED" />
 			</intent-filter>
 		</receiver>
-
-        <!-- FCM Registration -->
-        <service
-            android:name="com.ibm.mce.sdk.fcm.FcmInstanceIdService">
-            <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT"/>
-            </intent-filter>
-        </service>
-
-        <!-- FCM Messages -->
-        <service
-            android:name="com.ibm.mce.sdk.fcm.FcmMessagingService">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
-            </intent-filter>
-        </service>
-        
+		<!-- FCM Registration -->
+		<service android:name="com.ibm.mce.sdk.fcm.FcmInstanceIdService">
+			<intent-filter>
+				<action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+			</intent-filter>
+		</service>
+		<!-- FCM Messages -->
+		<service android:name="com.ibm.mce.sdk.fcm.FcmMessagingService">
+			<intent-filter>
+				<action android:name="com.google.firebase.MESSAGING_EVENT" />
+			</intent-filter>
+		</service>
 		<service android:name="com.ibm.mce.sdk.gcm.GcmIntentService" />
 		<service android:name="com.ibm.mce.sdk.events.EventsAlarmListener" />
 		<service android:name="com.ibm.mce.sdk.registration.PhoneHomeIntentService" />

@@ -34,6 +34,7 @@ using SQLite.Net.Async;
 using SQLite.Net.Platform.XamarinAndroid;
 using Android.Locations;
 using Android.Support.V4.App;
+using IBMMobilePush.Droid.Plugin.InApp;
 
 [assembly: Dependency(typeof(IBMMobilePush.Forms.Droid.IBMMobilePushImpl))]
 namespace IBMMobilePush.Forms.Droid
@@ -71,7 +72,7 @@ namespace IBMMobilePush.Forms.Droid
 
         public IBMMobilePushImpl()
         {
-            ApplicationContext = Xamarin.Forms.Forms.Context;
+            ApplicationContext = Android.App.Application.Context;
 
             if (LocationAutoInitialize())
             {
@@ -111,17 +112,16 @@ namespace IBMMobilePush.Forms.Droid
             }
             else
             {
-                ActivityCompat.RequestPermissions((Activity)Xamarin.Forms.Forms.Context, new string[] { Android.Manifest.Permission.AccessFineLocation, Android.Manifest.Permission.Bluetooth, Android.Manifest.Permission.BluetoothAdmin }, 0);
+                ActivityCompat.RequestPermissions((Activity)Android.App.Application.Context, new string[] { Android.Manifest.Permission.AccessFineLocation, Android.Manifest.Permission.Bluetooth, Android.Manifest.Permission.BluetoothAdmin }, 0);
             }
 
             if (LocationAuthorizationChanged != null)
                 LocationAuthorizationChanged();
         }
 
-        // iOS Support only
         public void ManualSdkInitialization()
         {
-
+            MceApplication.Reinitialize(ApplicationContext);
         }
 
         public bool LocationAutoInitialize()
@@ -498,7 +498,7 @@ namespace IBMMobilePush.Forms.Droid
 
             public void OnSuccess(Java.Lang.Object p0, OperationResult p1)
             {
-                var message = InboxMessagesClient.GetInboxMessageByContentId(Xamarin.Forms.Forms.Context, RichContentId);
+                var message = InboxMessagesClient.GetInboxMessageByContentId(Android.App.Application.Context, RichContentId);
                 if (message != null)
                 {
                     Callback(Push.ConvertToInboxMessage(message));
@@ -744,6 +744,85 @@ namespace IBMMobilePush.Forms.Droid
             return null;
         }
 
+        public void DeleteInAppMessage(InAppMessage inAppMessage)
+        {
+            InAppManager.Delete(ApplicationContext, inAppMessage.Id);
+        }
+
+        public void ExecuteInAppRule(string[] rules)
+        {
+            var messages = InAppStorage.Find(ApplicationContext, InAppStorage.Condition.Any, InAppStorage.KeyName.Rule, rules, false);
+            foreach(var message in messages) {
+                var jsonObject = new JObject();
+
+                if(message.Id != null) {
+                    jsonObject.Add("inAppMessageId", message.Id);
+                }
+
+                if (message.TemplateName != null)
+                {
+                    jsonObject.Add("template", message.TemplateName);
+                }
+
+                jsonObject.Add("maxViews", message.MaxViews);
+                jsonObject.Add("numViews", message.Views);
+
+
+                Java.Util.TimeZone timeZone = Java.Util.TimeZone.GetTimeZone("UTC");
+                Java.Text.DateFormat dateFormat = new Java.Text.SimpleDateFormat("yyyy-MM-dd'T'HH:mm'Z'");
+                dateFormat.TimeZone = timeZone;
+
+                jsonObject.Add("expirationDate", dateFormat.Format(message.ExpirationDate));
+                jsonObject.Add("triggerDate", dateFormat.Format(message.TriggerDate));
+
+                var mceObject = new JObject();
+
+                if (message.Attribution != null)
+                {
+                    mceObject.Add("attribution", message.Attribution);
+                }
+
+                if (message.MailingId != null)
+                {
+                    mceObject.Add("mailingId", message.MailingId);
+                }
+
+                jsonObject.Add("mce", mceObject);
+
+                jsonObject.Add("content", JObject.Parse(message.TemplateContent.ToString()));
+                jsonObject.Add("rules", new JArray(message.Rules));
+
+                var inAppMessage = new InAppMessage(jsonObject);
+                if (inAppMessage.Execute())
+                {
+                    InAppEvents.SendInAppMessageOpenedEvent(ApplicationContext, message);
+                    InAppStorage.UpdateMaxViews(ApplicationContext, message);
+                    if (message.IsFromPull)
+                    {
+                        InAppPlugin.UpdateInAppMessage(ApplicationContext, message);
+                    }
+                    return;
+                }
+            }
+        }
+
+        public void InsertInAppAsync(InAppMessage message)
+        {
+            var msgExtras = new Bundle();
+            msgExtras.PutString("inApp", message.JsonObject().ToString());
+            InAppManager.HandleNotification(ApplicationContext, msgExtras, null, null);
+        }
+
+        public Thickness SafeAreaInsets()
+        {
+            return new Thickness();
+        }
+
+        public bool UserInvalidated()
+        {
+            return IBMMobilePush.Droid.Registration.RegistrationPreferences.IsSdkStopped(ApplicationContext);
+        }
+
         class InboxCallback : Java.Lang.Object, IOperationCallback
         {
             GenericDelegate Callback;
@@ -918,12 +997,14 @@ namespace IBMMobilePush.Forms.Droid
 
 		public override void OnMessage (Context context, INotificationDetails notificationDetails, Bundle bundle)
 		{
-			if (!bundle.ContainsKey("inApp")) {
-				return;
-			}
-			var json = new JObject ();
-			json["inApp"] = JObject.Parse(bundle.GetString("inApp"));
-			InAppManager.Instance.InsertInAppAsync(json);
+            if (!bundle.ContainsKey("inApp"))
+            {
+                return;
+            }
+
+            var msgExtras = new Bundle();
+            msgExtras.PutString("inApp", bundle.GetString("inApp"));
+            InAppManager.HandleNotification(Android.App.Application.Context, msgExtras, null, null);
 		}
 		public override void OnNonMceBroadcast (Context p0, Intent p1)
 		{

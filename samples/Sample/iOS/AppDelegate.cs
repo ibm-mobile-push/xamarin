@@ -98,28 +98,27 @@ namespace Sample.iOS
 		// IBMMobilePush Integration
 		public override void ReceivedRemoteNotification (UIApplication application, NSDictionary userInfo)
 		{
-			Utility.ProcessInApp (userInfo);
+            MCEInAppManager.SharedInstance().ProcessPayload(userInfo);
 			MCESdk.SharedInstance().PresentOrPerformNotification(userInfo);
 		}
 
 		// IBMMobilePush Integration
 		public override void ReceivedLocalNotification (UIApplication application, UILocalNotification notification)
 		{
-			Utility.ProcessInApp (notification.UserInfo);
+            MCEInAppManager.SharedInstance().ProcessPayload(notification.UserInfo);
 			MCESdk.SharedInstance ().PresentOrPerformNotification (notification.UserInfo);
 		}
 
 		// IBMMobilePush Integration
 		public override void DidReceiveRemoteNotification (UIApplication application, NSDictionary userInfo, Action<UIBackgroundFetchResult> completionHandler)
 		{
-			Utility.ProcessInApp (userInfo);
+            MCEInAppManager.SharedInstance().ProcessPayload(userInfo);
 			MCESdk.SharedInstance().PresentDynamicCategoryNotification(userInfo);
 		}
 
 		// IBMMobilePush Integration
 		public override void HandleAction (UIApplication application, String actionIdentifier, NSDictionary remoteNotificationInfo, Action completionHandler)
 		{
-			Utility.ProcessInApp (remoteNotificationInfo);
 			MCESdk.SharedInstance ().ProcessCategoryNotification (remoteNotificationInfo, actionIdentifier);
 		}
 
@@ -131,13 +130,11 @@ namespace Sample.iOS
 
 		public override void HandleAction(UIApplication application, string actionIdentifier, NSDictionary remoteNotificationInfo, NSDictionary responseInfo, Action completionHandler)
 		{
-			Utility.ProcessInApp(remoteNotificationInfo);
 			
 		}
 
 		public override void HandleAction(UIApplication application, string actionIdentifier, UILocalNotification localNotification, NSDictionary responseInfo, Action completionHandler)
 		{
-			Utility.ProcessInApp(localNotification.UserInfo);
 			NSString response = null;
 			if(responseInfo.ContainsKey(UIUserNotificationAction.ResponseTypedTextKey))
 				response = (NSString)responseInfo.ObjectForKey(UIUserNotificationAction.ResponseTypedTextKey);

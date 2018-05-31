@@ -28,12 +28,15 @@ using Android.Locations;
 using Android.Support.V4.App;
 using IBMMobilePush.Droid.Location;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Sample.Droid
 {
 	[Activity(Label = "Sample.Droid", Icon = "@drawable/icon", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
 	public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsApplicationActivity, ActivityCompat.IOnRequestPermissionsResultCallback
 	{
+		public static MainActivity Current { private set; get; }
+
 		public override void OnRequestPermissionsResult(int requestCode, string[] permissions, Permission[] grantResults)
 		{
 			if (requestCode == 0)
@@ -55,8 +58,33 @@ namespace Sample.Droid
 			}
 		}
 
+
+		public static readonly int PickImageId = 1000;
+
+        public TaskCompletionSource<string> PickImageTaskCompletionSource { set; get; }
+
+        protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
+        {
+            base.OnActivityResult(requestCode, resultCode, data);
+
+            if (requestCode == PickImageId)
+            {
+                if ((resultCode == Result.Ok) && (data != null))
+                {
+                    // Set the filename as the completion of the Task
+                    PickImageTaskCompletionSource.SetResult(data.DataString);
+                }
+                else
+                {
+                    PickImageTaskCompletionSource.SetResult(null);
+                }
+            }
+        }
+
 		protected override void OnCreate(Bundle bundle)
 		{
+			Current = this;
+
 			CachedImageRenderer.Init(true);
 			base.OnCreate(bundle);
 			global::Xamarin.Forms.Forms.Init(this, bundle);

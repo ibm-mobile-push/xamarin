@@ -31,6 +31,83 @@ namespace IBMMobilePush.Forms.iOS
 {
 	public class IBMMobilePushImpl : IIBMMobilePush
 	{
+        public void InsertInAppAsync(InAppMessage message)
+        {
+            var inAppJsonString = message.JsonObject().ToString();
+            var inAppJsonData = NSData.FromString(inAppJsonString);
+
+            var payload = new NSMutableDictionary();
+
+            NSError error = null;
+            payload["inApp"] = (NSDictionary)NSJsonSerialization.Deserialize(inAppJsonData, NSJsonReadingOptions.AllowFragments, out error);
+
+            if(error != null) {
+                return;
+            }
+
+            MCEInAppManager.SharedInstance().ProcessPayload(payload);
+        }
+
+        public void DeleteInAppMessage(InAppMessage inAppMessage)
+        {
+            var mceInAppMessage = MCEInAppManager.SharedInstance().InAppMessageById(inAppMessage.Id);
+            MCEInAppManager.SharedInstance().Disable(mceInAppMessage);
+        }
+
+        public void ExecuteInAppRule(string[] rules)
+        {
+            MCEInAppManager.SharedInstance().FetchInAppMessagesForRules(rules, (messages, error) =>
+            {
+                if(error != null) {
+                    return;
+                }
+
+                foreach(var message in messages) {
+                    NSError jsonError = null;
+
+                    var jsonDictionary = new NSMutableDictionary();
+                    if(message.InAppMessageId != null) {
+                        jsonDictionary.Add(new NSString("inAppMessageId"), new NSString(message.InAppMessageId));
+                    }
+
+                    if (message.TemplateName != null)
+                    {
+                        jsonDictionary.Add(new NSString("template"), new NSString(message.TemplateName));
+                    }
+                    jsonDictionary.Add(new NSString("maxViews"), new NSNumber(message.MaxViews));
+                    jsonDictionary.Add(new NSString("numViews"), new NSNumber(message.NumViews));
+                    jsonDictionary.Add(new NSString("expirationDate"), new NSString(MCEApiUtil.DateToIso8601Format(message.ExpirationDate)));
+                    jsonDictionary.Add(new NSString("triggerDate"), new NSString(MCEApiUtil.DateToIso8601Format(message.TriggerDate)));
+
+                    var mceDictionary = new NSMutableDictionary();
+
+                    if (message.Attribution != null)
+                    {
+                        mceDictionary.Add(new NSString("attribution"), new NSString(message.Attribution));
+                    }
+
+                    if (message.MailingId != null)
+                    {
+                        mceDictionary.Add(new NSString("mailingId"), new NSString(message.MailingId));
+                    }
+                    jsonDictionary.Add(new NSString("mce"), mceDictionary);
+
+                    jsonDictionary.Add(new NSString("content"), message.Content);
+                    jsonDictionary.Add(new NSString("rules"), message.Rules);
+
+                    var jsonData = NSJsonSerialization.Serialize(jsonDictionary, NSJsonWritingOptions.PrettyPrinted, out jsonError);
+                    var jsonString = NSString.FromData(jsonData, NSStringEncoding.UTF8);
+                    var jsonObject = JObject.Parse(jsonString);
+
+                    var inAppMessage = new InAppMessage(jsonObject);
+                    if(inAppMessage.Execute()) {
+                        MCEInAppManager.SharedInstance().IncrementView(message);
+                        return;
+                    }
+                }
+            });
+        }
+
         CLLocationManager LocationManager;
 
         public String XamarinPluginVersion() {
@@ -82,8 +159,8 @@ namespace IBMMobilePush.Forms.iOS
 				}
 			});
 
-			NSNotificationCenter.DefaultCenter.AddObserver (new NSString("RegistrationChangedNotification"), RegistrationUpdatedNotification);
-			NSNotificationCenter.DefaultCenter.AddObserver (new NSString("RegisteredNotification"), RegistrationUpdatedNotification);
+			NSNotificationCenter.DefaultCenter.AddObserver (new NSString("MCERegistrationChangedNotification"), RegistrationUpdatedNotification);
+            NSNotificationCenter.DefaultCenter.AddObserver (new NSString("MCERegisteredNotification"), RegistrationUpdatedNotification);
 		
 			NSNotificationCenter.DefaultCenter.AddObserver(new NSString("LocationDatabaseUpdated"), (note) =>
 			{
@@ -389,7 +466,7 @@ namespace IBMMobilePush.Forms.iOS
 		public void AddEvent(string name, string type, DateTimeOffset timestamp, string attribution, string mailingId, Dictionary<string,object> attributes, EventResultsDelegate callback)
 		{
 			var apiEvent = GenerateEvent (name, type, timestamp, attribution, mailingId, attributes);
-			EventClient.SendEvents (new NSObject[] { apiEvent }, delegate(NSError error) {
+			EventClient.SendEvents (new MCEEvent[] { apiEvent }, delegate(NSError error) {
 				callback(error == null, name, type, timestamp, attribution, mailingId, attributes);
 			});
 		}
@@ -513,10 +590,7 @@ namespace IBMMobilePush.Forms.iOS
 
 		public void PhoneHome()
 		{
-			var defaults = NSUserDefaults.StandardUserDefaults;
-			defaults ["MCELastPhoneHome"] = NSDate.DistantPast;
-			defaults.Synchronize();
-			MCEPhoneHomeManager.PhoneHome ();
+			MCEPhoneHomeManager.ForcePhoneHome ();
 		}
 
 		public void SyncInboxMessages()
@@ -685,7 +759,7 @@ namespace IBMMobilePush.Forms.iOS
 
 		public bool GeofenceEnabled()
 		{
-			return MCESdk.SharedInstance().Config.GeofenceEnabled();
+			return MCESdk.SharedInstance().Config.GeofenceEnabled;
 		}
 		
 		public ISet<Geofence> GeofencesNear(double latitude, double longitude)
@@ -721,20 +795,29 @@ namespace IBMMobilePush.Forms.iOS
 
 		public bool BeaconEnabled()
 		{
-			return MCESdk.SharedInstance().Config.BeaconEnabled();
+			return MCESdk.SharedInstance().Config.BeaconEnabled;
 		}
 
 		public Guid? BeaconUUID()
 		{
-			var uuid = MCESdk.SharedInstance().Config.BeaconUUID();
+			var uuid = MCESdk.SharedInstance().Config.BeaconUUID;
 			if (uuid != null)
 			{
-				return new Guid(MCESdk.SharedInstance().Config.BeaconUUID().AsString());
+				return new Guid(MCESdk.SharedInstance().Config.BeaconUUID.AsString());
 			}
 			return null;
 		}
 
-	}
+        public Thickness SafeAreaInsets() {
+            var insets = UIApplication.SharedApplication.KeyWindow.SafeAreaInsets;
+            return new Thickness(insets.Left, insets.Top, insets.Right, insets.Bottom);
+        }
+
+        public bool UserInvalidated()
+        {
+            return MCERegistrationDetails.SharedInstance().UserInvalidated;
+        }
+    }
 
 	static class Utility
 	{
@@ -761,14 +844,6 @@ namespace IBMMobilePush.Forms.iOS
 			}
 		}
 
-		public static void ProcessInApp(NSDictionary userInfo)
-		{
-			NSError error = null;
-			var jsonData = NSJsonSerialization.Serialize (userInfo, NSJsonWritingOptions.PrettyPrinted, out error);
-			var jsonString = NSString.FromData (jsonData, NSStringEncoding.UTF8);
-			var json = JObject.Parse(jsonString);
-			InAppManager.Instance.InsertInAppAsync(json);
-		}
 	}
 }
 
