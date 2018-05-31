@@ -809,8 +809,13 @@ namespace IBMMobilePush.Forms.iOS
 		}
 
         public Thickness SafeAreaInsets() {
-            var insets = UIApplication.SharedApplication.KeyWindow.SafeAreaInsets;
-            return new Thickness(insets.Left, insets.Top, insets.Right, insets.Bottom);
+            if (UIDevice.CurrentDevice.CheckSystemVersion(11, 0)) {
+                var insets = UIApplication.SharedApplication.KeyWindow.SafeAreaInsets;
+                return new Thickness(insets.Left, insets.Top, insets.Right, insets.Bottom);
+            }
+            else {
+                return new Thickness(0, 10, 0, 0);
+            }
         }
 
         public bool UserInvalidated()
