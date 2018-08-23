@@ -132,7 +132,11 @@ namespace IBMMobilePush.Forms.Droid
                 var configHandle = ApplicationContext.Assets.Open("MceConfig.json");
                 var configStream = new StreamReader(configHandle);
                 string response = configStream.ReadToEnd();
-                return JObject.Parse(response)["location"]["autoInitialize"].Value<bool>();
+                var config = JObject.Parse(response);
+                if(config["location"] != null) {
+                    return config["location"]["autoInitialize"].Value<bool>();
+                }
+                return false;
             }
             catch (Java.Lang.Exception ex)
             {
