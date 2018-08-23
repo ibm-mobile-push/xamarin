@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Licensed Materials - Property of IBM
+
+5725E28, 5725I03
+
+© Copyright IBM Corp. 2016, 2017
+US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+-->
+
+<ContentPage 
+	xmlns="http://xamarin.com/schemas/2014/forms" 
+	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+	x:Class="Sample.EventsPage"
+	xmlns:local="clr-namespace:Sample;assembly=Sample"
+	Title="Send Test Events">
+	<StackLayout>
+		<StackLayout.BackgroundColor>
+			<OnPlatform x:TypeArguments="Color" iOS="#EFEFF4" />
+		</StackLayout.BackgroundColor>
+		<TableView Intent="Settings">
+		    <TableRoot>
+		        <TableSection Title="Events">
+		        	<local:RightStatusCell Text="Send Event Via Queue" x:Name="SendQueue" />
+		        	<local:RightStatusCell Text="Queue an Event" x:Name="QueueEvent" />
+		        </TableSection>
+		    </TableRoot>
+		</TableView>
+		<StackLayout Padding="15">
+			<StackLayout.BackgroundColor>
+				<OnPlatform x:TypeArguments="Color" iOS="#EFEFF4" />
+			</StackLayout.BackgroundColor>
+
+			<Label FontSize="Micro">
+			<Label.BackgroundColor>
+				<OnPlatform x:TypeArguments="Color" iOS="#EFEFF4" />
+			</Label.BackgroundColor>
+			Click to send a test event, you should see the send status to the right of the click event.
+			</Label>
+		</StackLayout>
+	</StackLayout>
+</ContentPage>

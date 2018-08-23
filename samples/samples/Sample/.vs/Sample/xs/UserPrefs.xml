@@ -1,0 +1,37 @@
+﻿<Properties StartupConfiguration="{1371CCB2-A9D7-4860-A8C7-DA86F3867797}|Default">
+  <MonoDevelop.Ide.ItemProperties.Sample.iOS PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneSimulatorTarget.61FC528F-3BCC-4A43-9C00-ABEBABF0A63A" automaticSigning="False" />
+  <MonoDevelop.Ide.ItemProperties.Notification.Sample.iOS>
+    <MonoDevelop.MacDev.AppleDevelopmentTeam />
+  </MonoDevelop.Ide.ItemProperties.Notification.Sample.iOS>
+  <MonoDevelop.Ide.Workbench ActiveDocument="iOS/Info.plist">
+    <Files>
+      <File FileName="Droid/Properties/AndroidManifest.xml" Line="22" Column="29" />
+      <File FileName="Droid/Assets/MceConfig.json" Line="1" Column="1" />
+      <File FileName="Sample/Sample.cs" Line="30" Column="30" />
+      <File FileName="Droid/MainActivity.cs" Line="88" Column="49" />
+      <File FileName="../../sdk/IBMMobilePush.Forms.Droid.cs" Line="840" Column="1" />
+      <File FileName="Droid/Assets/mce/plugins/openInboxMessage.json" Line="4" Column="12" />
+      <File FileName="Droid/Custom Controls/CustomMapRenderer.cs" Line="17" Column="34" />
+      <File FileName="iOS/Resources/MceConfig.json" Line="1" Column="1" />
+      <File FileName="Droid/google-services.json" Line="1" Column="1" />
+      <File FileName="iOS/AppDelegate.cs" Line="37" Column="48" />
+      <File FileName="iOS/Info.plist" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.ItemProperties.Sample.Droid PreferredExecutionTarget="Android.android_k_api_19" />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.ItemProperties.Sample.iOS.Sample.iOS.Watch PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneSimulatorTarget.A8F72431-9B1D-4BE8-975F-ABE981EACD5E">
+    <MonoDevelop.MacDev.AppleDevelopmentTeam />
+  </MonoDevelop.Ide.ItemProperties.Sample.iOS.Sample.iOS.Watch>
+  <MultiItemStartupConfigurations />
+  <DisabledProjects>
+    <String>IBMMobilePush.Forms/IBMMobilePush.Forms.csproj</String>
+  </DisabledProjects>
+  <MonoDevelop.Ide.ItemProperties.Sample.iOS.Sample.iOS.WatchExtension>
+    <MonoDevelop.MacDev.AppleDevelopmentTeam />
+  </MonoDevelop.Ide.ItemProperties.Sample.iOS.Sample.iOS.WatchExtension>
+</Properties>

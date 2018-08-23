@@ -1,0 +1,8 @@
+﻿{
+  "notification-actions": [
+    {
+      "type": "displayWebView",
+      "class": "com.ibm.mce.sdk.xamarin.XamarinNotificationAction"
+    }
+  ]
+}

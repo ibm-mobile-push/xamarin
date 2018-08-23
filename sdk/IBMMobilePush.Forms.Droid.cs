@@ -35,6 +35,7 @@ using SQLite.Net.Platform.XamarinAndroid;
 using Android.Locations;
 using Android.Support.V4.App;
 using IBMMobilePush.Droid.Plugin.InApp;
+using System.Threading.Tasks;
 
 [assembly: Dependency(typeof(IBMMobilePush.Forms.Droid.IBMMobilePushImpl))]
 namespace IBMMobilePush.Forms.Droid
@@ -419,10 +420,14 @@ namespace IBMMobilePush.Forms.Droid
         public void ExecuteAction(JObject action, JObject payload, string attribution, string mailingId, int id)
         {
             var name = action["type"].ToString();
-            PushAction handler = actionRegistry[name];
-            if (handler != null)
+            if (actionRegistry.ContainsKey(name))
             {
+                PushAction handler = actionRegistry[name];
                 handler.HandleAction(action, payload, attribution, mailingId, id);
+            }
+            else
+            {
+                Task.Delay(1000).ContinueWith(t => ExecuteAction(action, payload, attribution, mailingId, id) );
             }
         }
 
