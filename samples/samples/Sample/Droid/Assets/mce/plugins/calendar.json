@@ -1,8 +1,0 @@
-﻿{
-  "notification-actions": [
-    {
-      "type": "calendar",
-      "class": "com.ibm.mce.sdk.xamarin.XamarinNotificationAction"
-    }
-  ]
-}

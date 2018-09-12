@@ -1,8 +1,0 @@
-﻿{
-  "notification-actions": [
-    {
-      "type": "sendEmail",
-      "class": "com.ibm.mce.sdk.xamarin.XamarinNotificationAction"
-    }
-  ]
-}

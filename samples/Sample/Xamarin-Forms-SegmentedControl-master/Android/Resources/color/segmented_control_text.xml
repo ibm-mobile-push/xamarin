@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+Licensed Materials - Property of IBM
+
+5725E28, 5725I03
+
+© Copyright IBM Corp. 2016, 2016
+US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+-->
+
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_checked="true" android:color="@color/light"/>
+    <item android:color="@color/normal" />
+</selector>	

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" x:Class="Sample.BeaconPage">
+	<ContentPage.Content>
+		<StackLayout>
+			<TableView Intent="Settings" HasUnevenRows="true">
+		    <TableRoot>
+		        <TableSection Title="iBeacon Feature">
+		      		<TextCell Text="UUID" x:Name="UUID" />
+                    <ViewCell>
+                        <StackLayout Orientation="Horizontal" Margin="20, 10" HorizontalOptions="FillAndExpand" BackgroundColor="White">
+                            <Label HorizontalOptions="FillAndExpand" Margin="0">Status</Label>
+                            <Button x:Name="Status" Margin="0">Status</Button>
+                        </StackLayout>
+                    </ViewCell>
+		        </TableSection>
+		        <TableSection Title="iBeacon Major Regions" x:Name="Regions" />
+		    </TableRoot>
+		</TableView>
+
+		</StackLayout>
+	</ContentPage.Content>
+</ContentPage>

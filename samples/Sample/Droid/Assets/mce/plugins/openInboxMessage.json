@@ -1,0 +1,8 @@
+﻿{
+  "notification-actions": [
+    {
+      "type": "openInboxMessage",
+      "class": "com.ibm.mce.sdk.xamarin.XamarinNotificationAction"
+    }
+  ]
+}
