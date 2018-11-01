@@ -20,6 +20,7 @@ using IBMMobilePush.Droid.API.Event;
 using IBMMobilePush.Droid.Plugin.Inbox;
 using IBMMobilePush.Droid.Location;
 using IBMMobilePush.Droid.Beacons;
+using IBMMobilePush.Droid.Attributes;
 using Java.Util;
 using Android.App;
 using Android.Content;
@@ -86,6 +87,9 @@ namespace IBMMobilePush.Forms.Droid
                     ManualLocationInitialization();
                 }
             }
+            if(IsRegistered()) {
+                IBMMobilePushImpl.UpdateSdkChannelAttribute(ApplicationContext);
+            }
         }
 
         public GenericDelegate LocationAuthorizationChanged { set; get; }
@@ -113,7 +117,13 @@ namespace IBMMobilePush.Forms.Droid
             }
             else
             {
-                ActivityCompat.RequestPermissions((Activity)Android.App.Application.Context, new string[] { Android.Manifest.Permission.AccessFineLocation, Android.Manifest.Permission.Bluetooth, Android.Manifest.Permission.BluetoothAdmin }, 0);
+                Activity activity = (Activity) Xamarin.Forms.Forms.Context;
+                string[] permissions = new string[] {
+                    Android.Manifest.Permission.AccessFineLocation, 
+                    Android.Manifest.Permission.Bluetooth, 
+                    Android.Manifest.Permission.BluetoothAdmin
+                };
+                ActivityCompat.RequestPermissions(activity, permissions, 0);
             }
 
             if (LocationAuthorizationChanged != null)
@@ -186,64 +196,46 @@ namespace IBMMobilePush.Forms.Droid
 
         IBMMobilePush.Droid.API.Attribute.Attribute AttributeConverter(string key, object value)
         {
-            var stringValue = value as string;
-            if (stringValue != null)
+            if (value is string)
             {
+                var stringValue = (string) value;
                 return new StringAttribute(key, stringValue);
             }
 
-            var dateValue = value as Java.Util.Date;
-            if (dateValue != null)
+            if (value is DateTime)
             {
-                return new DateAttribute(key, dateValue);
+                var dateValue = (DateTime)value;
+                Int64 unixTimestamp = (Int64)(dateValue.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+                return new DateAttribute(key, new Date(unixTimestamp * 1000));
             }
 
-            try
-            {
-                var intValue = (int)Convert.ChangeType(value, typeof(int));
+            if(value is int) {
+                var intValue = (int)value;
                 return new NumberAttribute(key, new Java.Lang.Integer(intValue));
             }
-            catch (InvalidCastException ex)
-            {
-            }
 
-
-            try
+            if(value is float)
             {
-                var floatValue = (int)Convert.ChangeType(value, typeof(float));
+                var floatValue = (float)value;
                 return new NumberAttribute(key, new Java.Lang.Float(floatValue));
             }
-            catch (InvalidCastException ex)
-            {
-            }
 
-
-            try
+            if(value is double)
             {
-                var doubleValue = (double)Convert.ChangeType(value, typeof(double));
+                var doubleValue = (double)value;
                 return new NumberAttribute(key, new Java.Lang.Double(doubleValue));
             }
-            catch (InvalidCastException ex)
-            {
-            }
 
-
-            try
+            if(value is long)
             {
-                var longValue = (long)Convert.ChangeType(value, typeof(long));
+                var longValue = (long)value;
                 return new NumberAttribute(key, new Java.Lang.Long(longValue));
             }
-            catch (InvalidCastException ex)
-            {
-            }
 
-            try
+            if(value is bool)
             {
-                var boolValue = (bool)Convert.ChangeType(value, typeof(bool));
+                var boolValue = (bool)value;
                 return new BooleanAttribute(key, new Java.Lang.Boolean(boolValue));
-            }
-            catch (InvalidCastException ex)
-            {
             }
 
             return null;
@@ -287,63 +279,20 @@ namespace IBMMobilePush.Forms.Droid
             }
         }
 
-        [System.Obsolete("SetUserAttribute is deprecated")]
-        public void SetUserAttribute<T>(string key, T value, AttributeResultsDelegate callback)
-        {
-            IBMMobilePush.Droid.API.Attribute.Attribute attribute = AttributeConverter(key, value);
-            if (attribute != null)
-            {
-                var attributeCallback = new AttributeCallback(attribute, AttributeOperation.SetUserAttributes, callback);
-                var attributes = new List<IBMMobilePush.Droid.API.Attribute.Attribute>() { attribute };
-                MceSdk.GetAttributesClient(false).SetUserAttributes(ApplicationContext, attributes, attributeCallback);
-            }
-            else
-            {
-                Logging.Error("Could not set user attribute because could not convert value type.");
-            }
-        }
-
-        [System.Obsolete("UpdateUserAttribute is deprecated, please use QueueUpdateUserAttribute instead.")]
-        public void UpdateUserAttribute<T>(string key, T value, AttributeResultsDelegate callback)
-        {
-            IBMMobilePush.Droid.API.Attribute.Attribute attribute = AttributeConverter(key, value);
-            if (attribute != null)
-            {
-                var attributeCallback = new AttributeCallback(attribute, AttributeOperation.SetUserAttributes, callback);
-                var attributes = new List<IBMMobilePush.Droid.API.Attribute.Attribute>() { attribute };
-                MceSdk.GetAttributesClient(false).UpdateUserAttributes(ApplicationContext, attributes, attributeCallback);
-            }
-            else
-            {
-                Logging.Error("Could not update user attribute because could not convert value type.");
-            }
-        }
-
-        [System.Obsolete("DeleteUserAttribute is deprecated, please use QueueDeleteUserAttribute instead.")]
-        public void DeleteUserAttribute(string key, AttributeResultsDelegate callback)
-        {
-            var attributeCallback = new AttributeCallback(key, AttributeOperation.SetUserAttributes, callback);
-            MceSdk.GetAttributesClient(false).DeleteUserAttributes(ApplicationContext, new List<string>() { key }, attributeCallback);
-        }
-
-        [System.Obsolete("QueueSetUserAttribute is deprecated")]
-        public void QueueSetUserAttribute<T>(string key, T value)
-        {
-            IBMMobilePush.Droid.API.Attribute.Attribute attribute = AttributeConverter(key, value);
-            if (attribute != null)
-            {
-                var attributes = new List<IBMMobilePush.Droid.API.Attribute.Attribute>() { attribute };
-                MceSdk.QueuedAttributesClient.SetUserAttributes(ApplicationContext, attributes);
-            }
-            else
-            {
-                Logging.Error("Could not set user attribute because could not convert value type.");
-            }
+        public static void UpdateSdkChannelAttribute(Context context) {
+            IBMMobilePush.Droid.Xamarin.XamarinNotificationAction.SetSdkChannelAttribute(context);
         }
 
         public void QueueUpdateUserAttribute<T>(string key, T value)
         {
             IBMMobilePush.Droid.API.Attribute.Attribute attribute = AttributeConverter(key, value);
+
+            var helper = StoredAttributeDatabase.GetHelper(ApplicationContext);
+            if (!helper.IsUpdated(attribute)) {
+                SDK.Instance.AttributeQueueResults(false, attribute.Key, attribute.Value, AttributeOperation.UpdateUserAttributes);
+                return;
+            }
+
             if (attribute != null)
             {
                 var attributes = new List<IBMMobilePush.Droid.API.Attribute.Attribute>() { attribute };
@@ -369,13 +318,6 @@ namespace IBMMobilePush.Forms.Droid
             }
 
             return new Event(type, name, Utilities.ConvertDate(timestamp, new Java.Util.Date()), apiAttributes, attribution, mailingId);
-        }
-
-        [System.Obsolete("AddEvent is deprecated, use QueueAddEvent instead")]
-        public void AddEvent(string name, string type, DateTimeOffset timestamp, string attribution, string mailingId, Dictionary<string, object> attributes, EventResultsDelegate callback)
-        {
-            var sdkEvent = GenerateEvent(name, type, timestamp, attribution, mailingId, attributes);
-            MceSdk.GetEventsClient(false).SendEvent(ApplicationContext, sdkEvent, new EventCallback(name, type, timestamp, attribution, mailingId, attributes, callback));
         }
 
         public void QueueAddEvent(string name, string type, DateTimeOffset timestamp, string attribution, string mailingId, Dictionary<string, object> attributes, bool flush)
@@ -918,7 +860,12 @@ namespace IBMMobilePush.Forms.Droid
     [IntentFilter(new[] { "com.ibm.mce.sdk.NOTIFIER" })]
 	class IBMMobilePushBroadcastReceiver : MceBroadcastReceiver
 	{
-		public override void OnLocationEvent(Context context, MceLocation location, EventBroadcastHandlerLocationType locationType, EventBroadcastHandlerLocationEventType eventType)
+        public override void OnSdkRegistrationUpdated(Context p0)
+        {
+            IBMMobilePushImpl.UpdateSdkChannelAttribute(p0);
+        }
+
+        public override void OnLocationEvent(Context context, MceLocation location, EventBroadcastHandlerLocationType locationType, EventBroadcastHandlerLocationEventType eventType)
 		{
 			if (locationType == EventBroadcastHandlerLocationType.Ibeacon)
 			{
@@ -950,6 +897,7 @@ namespace IBMMobilePush.Forms.Droid
 
 		public override void OnSdkRegistered (Context p0)
 		{
+            IBMMobilePushImpl.UpdateSdkChannelAttribute(p0);
             SDK.Instance.RegistrationUpdated?.Invoke();
 		}
 		public override void OnAttributesOperation (Context p0, IAttributesOperation p1)

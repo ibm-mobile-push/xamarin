@@ -159,7 +159,12 @@ namespace IBMMobilePush.Forms.iOS
 				}
 			});
 
-			NSNotificationCenter.DefaultCenter.AddObserver (new NSString("MCERegistrationChangedNotification"), RegistrationUpdatedNotification);
+            if (IsRegistered())
+            {
+                MCEAttributesQueueManager.SharedInstance().UpdateChannelAttributes(new NSDictionary("sdk", "xamarin"));
+            }
+
+            NSNotificationCenter.DefaultCenter.AddObserver (new NSString("MCERegistrationChangedNotification"), RegistrationUpdatedNotification);
             NSNotificationCenter.DefaultCenter.AddObserver (new NSString("MCERegisteredNotification"), RegistrationUpdatedNotification);
 		
 			NSNotificationCenter.DefaultCenter.AddObserver(new NSString("LocationDatabaseUpdated"), (note) =>
@@ -167,10 +172,6 @@ namespace IBMMobilePush.Forms.iOS
                 LocationsUpdated?.Invoke();
             });
 
-			NSNotificationCenter.DefaultCenter.AddObserver (new NSString("SetUserAttributesSuccess"), (note) => {
-				AttributeQueueResultNotification(AttributeOperation.SetUserAttributes, true, note);
-			});
-		
 			NSNotificationCenter.DefaultCenter.AddObserver (new NSString("UpdateUserAttributesSuccess"), (note) => {
 				AttributeQueueResultNotification(AttributeOperation.UpdateUserAttributes, true, note);
 			});
@@ -179,40 +180,12 @@ namespace IBMMobilePush.Forms.iOS
 				AttributeQueueResultNotification(AttributeOperation.DeleteUserAttributes, true, note);
 			});
 
-			NSNotificationCenter.DefaultCenter.AddObserver (new NSString("SetChannelAttributesSuccess"), (note) => {
-				AttributeQueueResultNotification(AttributeOperation.SetChannelAttributes, true, note);
-			});
-
-			NSNotificationCenter.DefaultCenter.AddObserver (new NSString("UpdateChannelAttributesSuccess"), (note) => {
-				AttributeQueueResultNotification(AttributeOperation.UpdateChannelAttributes, true, note);
-			});
-
-			NSNotificationCenter.DefaultCenter.AddObserver (new NSString("DeleteChannelAttributesSuccess"), (note) => {
-				AttributeQueueResultNotification(AttributeOperation.DeleteChannelAttributes, true, note);
-			});
-
-			NSNotificationCenter.DefaultCenter.AddObserver (new NSString("SetUserAttributesError"), (note) => {
-				AttributeQueueResultNotification(AttributeOperation.SetUserAttributes, false, note);
-			});
-
 			NSNotificationCenter.DefaultCenter.AddObserver (new NSString("UpdateUserAttributesError"), (note) => {
 				AttributeQueueResultNotification(AttributeOperation.UpdateUserAttributes, false, note);
 			});
 
 			NSNotificationCenter.DefaultCenter.AddObserver (new NSString("DeleteUserAttributesError"), (note) => {
 				AttributeQueueResultNotification(AttributeOperation.DeleteUserAttributes, false, note);
-			});
-
-			NSNotificationCenter.DefaultCenter.AddObserver (new NSString("SetChannelAttributesError"), (note) => {
-				AttributeQueueResultNotification(AttributeOperation.SetChannelAttributes, false, note);
-			});
-
-			NSNotificationCenter.DefaultCenter.AddObserver (new NSString("UpdateChannelAttributesError"), (note) => {
-				AttributeQueueResultNotification(AttributeOperation.UpdateChannelAttributes, false, note);
-			});
-
-			NSNotificationCenter.DefaultCenter.AddObserver (new NSString("DeleteChannelAttributesError"), (note) => {
-				AttributeQueueResultNotification(AttributeOperation.DeleteChannelAttributes, false, note);
 			});
 
 			NSNotificationCenter.DefaultCenter.AddObserver (new NSString("MCEEventFailure"), (note) => {
@@ -232,8 +205,7 @@ namespace IBMMobilePush.Forms.iOS
                 if (LocationAuthorizationChanged != null)
                     LocationAuthorizationChanged();
             };
-
-		}
+        }
 
 		public bool LocationInitialized()
 		{
@@ -283,6 +255,7 @@ namespace IBMMobilePush.Forms.iOS
 
 		public void RegistrationUpdatedNotification(NSNotification note)
 		{
+            MCEAttributesQueueManager.SharedInstance().UpdateChannelAttributes(new NSDictionary("sdk", "xamarin"));
             RegistrationUpdated?.Invoke();
         }
 
@@ -306,98 +279,68 @@ namespace IBMMobilePush.Forms.iOS
 			return MCESdk.SharedInstance().Config.AppKey;
 		}
 
+        public void QueueUpdateUserAttribute<T>(string key, T value) {
+            var attribute = AttributeConverter(key, value);
+            if (attribute != null)
+            {
+                MCEAttributesQueueManager.SharedInstance().UpdateUserAttributes(attribute);
+            }
+        }
 
-		MCEAttributesClient _AttributeClient;
-        [System.Obsolete("MCEAttributesClient is deprecated")]
-		MCEAttributesClient AttributeClient { 
-			get {
-				if (_AttributeClient == null) {
-					_AttributeClient = new MCEAttributesClient ();
-				}
-				return _AttributeClient;
-			} 
-		}
+        NSDictionary AttributeConverter(string key, object value)
+        {
+            if (value is string)
+            {
+                var stringValue = value as string;
+                if (stringValue != null)
+                {
+                    return new NSDictionary(key, (NSString)stringValue);
+                }
+            }
 
-        [System.Obsolete("SetUserAttribute is deprecated")]
-		public void SetUserAttribute<T> (String key, T value, AttributeResultsDelegate callback)
-		{
-			AttributeClient.SetUserAttributes(new NSDictionary(key, value), (error) => {
-				callback(error == null, key, value, AttributeOperation.SetUserAttributes);
-			});
-		}
+            if(value is DateTime) {
+                var date = (DateTime)value;
+                if (date.Kind == DateTimeKind.Unspecified)
+                    date = DateTime.SpecifyKind(date, DateTimeKind.Local);
+                return new NSDictionary(key, (NSDate)date);
+            }
 
-        [System.Obsolete("UpdateUserAttribute is deprecated, please use QueueUpdateUserAttribute instead.")]
-		public void UpdateUserAttribute<T> (string key, T value, AttributeResultsDelegate callback)
-		{
-			AttributeClient.UpdateUserAttributes(new NSDictionary(key, value), (error) => {
-				callback(error == null, key, value, AttributeOperation.UpdateUserAttributes);
-			});
-		}
+            if(value is bool) {
+                var boolValue = (bool)value;
+                return new NSDictionary(key, NSNumber.FromBoolean(boolValue));
+            }
 
-        [System.Obsolete("DeleteUserAttribute is deprecated, please use QueueDeleteUserAttribute instead.")]
-		public void DeleteUserAttribute (string key, AttributeResultsDelegate callback)
-		{
-			AttributeClient.DeleteUserAttributes(new NSObject[] { (NSString) key }, (error) => {
-				callback(error == null, key, null, AttributeOperation.DeleteUserAttributes);
-			});
-		}
 
-        [System.Obsolete("SetChannelAttribute is deprecated")]
-		public void SetChannelAttribute<T> (string key, T value, AttributeResultsDelegate callback)
-		{
-			AttributeClient.SetChannelAttributes(new NSDictionary(key, value), (error) => {
-				callback(error == null, key, value, AttributeOperation.SetChannelAttributes);
-			});
-		}
+            if (value is float)
+            {
+                var floatValue = (float)value;
+                return new NSDictionary(key, NSNumber.FromFloat(floatValue));
+            }
 
-        [System.Obsolete("UpdateChannelAttribute is deprecated")]
-		public void UpdateChannelAttribute<T> (string key, T value, AttributeResultsDelegate callback)
-		{
-			AttributeClient.UpdateChannelAttributes(new NSDictionary(key, value), (error) => {
-				callback(error == null, key, value, AttributeOperation.UpdateChannelAttributes);
-			});
-		}
+            if (value is double)
+            {
+                var doubleValue = (double)value;
+                return new NSDictionary(key, NSNumber.FromDouble(doubleValue));
+            }
 
-        [System.Obsolete("DeleteChannelAttribute is deprecated")]
-		public void DeleteChannelAttribute (string key, AttributeResultsDelegate callback)
-		{
-			AttributeClient.DeleteChannelAttributes(new NSObject[] { (NSString) key }, (error) => {
-				callback(error == null, key, null, AttributeOperation.DeleteChannelAttributes);
-			});
-		}
+            if (value is long)
+            {
+                var longValue = (long)value;
+                return new NSDictionary(key, NSNumber.FromInt64(longValue));
+            }
 
-        [System.Obsolete("QueueSetUserAttribute is deprecated")]
-		public void QueueSetUserAttribute<T> (string key, T value)
-		{
-			MCEAttributesQueueManager.SharedInstance ().SetUserAttributes (new NSDictionary (key, value));
-		}
+            if (value is int)
+            {
+                var intValue = (int)value;
+                return new NSDictionary(key, NSNumber.FromInt32(intValue));
+            }
 
-		public void QueueUpdateUserAttribute<T> (string key, T value)
-		{
-			MCEAttributesQueueManager.SharedInstance ().UpdateUserAttributes (new NSDictionary (key, value));
-		}
+            return null;
+        }
 
-		public void QueueDeleteUserAttribute (string key)
+        public void QueueDeleteUserAttribute (string key)
 		{
 			MCEAttributesQueueManager.SharedInstance ().DeleteUserAttributes (new NSObject[] { (NSString) key } );
-		}
-
-        [System.Obsolete("QueueSetChannelAttribute is deprecated")]
-		public void QueueSetChannelAttribute<T> (string key, T value)
-		{	
-			MCEAttributesQueueManager.SharedInstance ().SetChannelAttributes (new NSDictionary (key, value));
-		}
-
-        [System.Obsolete("QueueUpdateChannelAttribute is deprecated")]
-		public void QueueUpdateChannelAttribute<T> (string key, T value)
-		{
-			MCEAttributesQueueManager.SharedInstance ().UpdateChannelAttributes (new NSDictionary (key, value));
-		}
-
-        [System.Obsolete("QueueDeleteChannelAttribute is deprecated")]
-		public void QueueDeleteChannelAttribute (string key)
-		{
-			MCEAttributesQueueManager.SharedInstance ().DeleteChannelAttributes (new NSObject[] { (NSString) key } );
 		}
 
 		public void QueueAddEvent (string name, string type, DateTimeOffset timestamp, string attribution, string mailingId, Dictionary<string,object> attributes, bool flush)

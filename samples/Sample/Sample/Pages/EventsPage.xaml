@@ -12,32 +12,135 @@ US Government Users Restricted Rights - Use, duplication or disclosure restricte
 <ContentPage 
 	xmlns="http://xamarin.com/schemas/2014/forms" 
 	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+    xmlns:fe="clr-namespace:FreshEssentials;assembly=FreshEssentials"
 	x:Class="Sample.EventsPage"
-	xmlns:local="clr-namespace:Sample;assembly=Sample"
 	Title="Send Test Events">
-	<StackLayout>
-		<StackLayout.BackgroundColor>
-			<OnPlatform x:TypeArguments="Color" iOS="#EFEFF4" />
-		</StackLayout.BackgroundColor>
-		<TableView Intent="Settings">
-		    <TableRoot>
-		        <TableSection Title="Events">
-		        	<local:RightStatusCell Text="Send Event Via Queue" x:Name="SendQueue" />
-		        	<local:RightStatusCell Text="Queue an Event" x:Name="QueueEvent" />
-		        </TableSection>
-		    </TableRoot>
-		</TableView>
-		<StackLayout Padding="15">
-			<StackLayout.BackgroundColor>
-				<OnPlatform x:TypeArguments="Color" iOS="#EFEFF4" />
-			</StackLayout.BackgroundColor>
-
-			<Label FontSize="Micro">
-			<Label.BackgroundColor>
-				<OnPlatform x:TypeArguments="Color" iOS="#EFEFF4" />
-			</Label.BackgroundColor>
-			Click to send a test event, you should see the send status to the right of the click event.
-			</Label>
-		</StackLayout>
-	</StackLayout>
+    <ContentPage.Content>
+        <ScrollView>
+        	<StackLayout Padding="15">
+                <fe:SegmentedButtonGroup OnColor="Blue" OffColor="White" x:Name="CustomEvent" CornerRadius="5" HeightRequest="20">
+                    <fe:SegmentedButtonGroup.LabelStyle>
+                        <Style TargetType="Label">
+                            <Setter Property="FontSize" Value="12" />
+                        </Style>
+                    </fe:SegmentedButtonGroup.LabelStyle>
+                    <fe:SegmentedButtonGroup.SegmentedButtons>
+                        <fe:SegmentedButton Title="Simulate SDK Event"/>
+                        <fe:SegmentedButton Title="Send Custom Event"/>
+                    </fe:SegmentedButtonGroup.SegmentedButtons>
+                </fe:SegmentedButtonGroup>
+                <fe:SegmentedButtonGroup OnColor="Blue" OffColor="White" x:Name="SimulatedEvent" CornerRadius="5" HeightRequest="20">
+                    <fe:SegmentedButtonGroup.LabelStyle>
+                        <Style TargetType="Label">
+                            <Setter Property="FontSize" Value="12" />
+                        </Style>
+                    </fe:SegmentedButtonGroup.LabelStyle>
+                    <fe:SegmentedButtonGroup.SegmentedButtons>
+                        <fe:SegmentedButton Title="App"/>
+                        <fe:SegmentedButton Title="Action"/>
+                        <fe:SegmentedButton Title="Inbox"/>
+                        <fe:SegmentedButton Title="Geofence"/>
+                        <fe:SegmentedButton Title="iBeacon"/>
+                    </fe:SegmentedButtonGroup.SegmentedButtons>
+                </fe:SegmentedButtonGroup>
+                <StackLayout Padding="0,15,0,0">
+                    <Label Text="Event Details" FontAttributes="Bold" />
+                </StackLayout>
+                
+                <StackLayout Orientation="Horizontal" HorizontalOptions="Fill">
+                    <Label Text="Type" HorizontalOptions="Start" />                
+                    <fe:SegmentedButtonGroup OnColor="Blue" OffColor="White" HorizontalOptions="FillAndExpand" x:Name="EventType" CornerRadius="5" HeightRequest="20">
+                    <fe:SegmentedButtonGroup.LabelStyle>
+                        <Style TargetType="Label">
+                            <Setter Property="FontSize" Value="12" />
+                        </Style>
+                    </fe:SegmentedButtonGroup.LabelStyle>
+                        <fe:SegmentedButtonGroup.SegmentedButtons>
+                            <fe:SegmentedButton Title="first"/>
+                            <fe:SegmentedButton Title="second"/>
+                        </fe:SegmentedButtonGroup.SegmentedButtons>
+                    </fe:SegmentedButtonGroup>
+                </StackLayout>
+                
+                <StackLayout Orientation="Horizontal" HorizontalOptions="Fill">
+                    <Label Text="Name" HorizontalOptions="Start" />
+                    <StackLayout HorizontalOptions="FillAndExpand">
+                        <fe:SegmentedButtonGroup OnColor="Blue" OffColor="White" HorizontalOptions="Fill" x:Name="EventNameSwitch" CornerRadius="5" HeightRequest="20">
+                            <fe:SegmentedButtonGroup.LabelStyle>
+                                <Style TargetType="Label">
+                                    <Setter Property="FontSize" Value="12" />
+                                </Style>
+                            </fe:SegmentedButtonGroup.LabelStyle>
+                            <fe:SegmentedButtonGroup.SegmentedButtons>
+                                <fe:SegmentedButton Title="first"/>
+                                <fe:SegmentedButton Title="second"/>
+                            </fe:SegmentedButtonGroup.SegmentedButtons>
+                        </fe:SegmentedButtonGroup>
+                        <Entry x:Name="EventName" HorizontalOptions="Fill" />
+                    </StackLayout>
+                </StackLayout>
+                
+                <StackLayout Orientation="Horizontal">
+                    <Label Text="Attribution" HorizontalOptions="Start" />
+                    <Entry Text="" x:Name="Attribution" HorizontalOptions="FillAndExpand" />
+                </StackLayout>
+                
+                <StackLayout Orientation="Horizontal">
+                    <Label Text="Mailing Id" HorizontalOptions="Start" />
+                    <Entry Text="" x:Name="MailingId" HorizontalOptions="FillAndExpand" />
+                </StackLayout>
+                
+                <StackLayout Padding="0,15,0,0">
+                    <Label Text="Event Attributes" FontAttributes="Bold" />
+                </StackLayout>
+                
+                <StackLayout Orientation="Horizontal">
+                    <Label Text="Name" HorizontalOptions="Start" />
+                    <Entry Text="" x:Name="AttributeName" HorizontalOptions="FillAndExpand" />
+                </StackLayout>
+                
+                <StackLayout Orientation="Horizontal" HorizontalOptions="Fill">
+                    <Label Text="Value" HorizontalOptions="Start" />
+                    <StackLayout Orientation="Vertical" HorizontalOptions="FillAndExpand">
+                        <fe:SegmentedButtonGroup OnColor="Blue" OffColor="White" HorizontalOptions="Fill" x:Name="AttributeType" CornerRadius="5" HeightRequest="20">
+                            <fe:SegmentedButtonGroup.LabelStyle>
+                                <Style TargetType="Label">
+                                    <Setter Property="FontSize" Value="12" />
+                                </Style>
+                            </fe:SegmentedButtonGroup.LabelStyle>
+                            <fe:SegmentedButtonGroup.SegmentedButtons>
+                                <fe:SegmentedButton Title="Date"/>
+                                <fe:SegmentedButton Title="String"/>
+                                <fe:SegmentedButton Title="Bool"/>
+                                <fe:SegmentedButton Title="Number"/>
+                            </fe:SegmentedButtonGroup.SegmentedButtons>
+                        </fe:SegmentedButtonGroup>
+                        <StackLayout Orientation="Horizontal" x:Name="DateTime">
+                            <DatePicker x:Name="DateValue" />
+                            <TimePicker x:Name="TimeValue" />
+                        </StackLayout>
+                        <fe:SegmentedButtonGroup OnColor="Blue" OffColor="White" HorizontalOptions="Fill" x:Name="AttributeBooleanValue" CornerRadius="5" HeightRequest="20">
+                            <fe:SegmentedButtonGroup.LabelStyle>
+                                <Style TargetType="Label">
+                                    <Setter Property="FontSize" Value="12" />
+                                </Style>
+                            </fe:SegmentedButtonGroup.LabelStyle>
+                            <fe:SegmentedButtonGroup.SegmentedButtons>
+                                <fe:SegmentedButton Title="False"/>
+                                <fe:SegmentedButton Title="True"/>
+                            </fe:SegmentedButtonGroup.SegmentedButtons>
+                        </fe:SegmentedButtonGroup>
+                        <Entry Text="" x:Name="AttributeValue" HorizontalOptions="Fill" />
+                    </StackLayout>
+                </StackLayout>
+                
+                <Button Text="Send Event" HorizontalOptions="Start" x:Name="SendEventButton" />
+                
+                <StackLayout Padding="0,15,0,0">
+                    <Label Text="Status" FontAttributes="Bold" />
+                    <Label Text="No status yet." x:Name="Status" TextColor="Gray" />
+                </StackLayout>
+            </StackLayout>
+        </ScrollView>
+    </ContentPage.Content>
 </ContentPage>

@@ -23,7 +23,7 @@
     <AndroidManifest>Properties\AndroidManifest.xml</AndroidManifest>
     <TargetFrameworkVersion>v8.1</TargetFrameworkVersion>
     <XamarinInsightsApiKey>5a419c98c13662528dd48480a6dc1fbd19b06398</XamarinInsightsApiKey>
-    <ReleaseVersion>3.3.2.2</ReleaseVersion>
+    <ReleaseVersion>3.3.2.3</ReleaseVersion>
     <AndroidTlsProvider></AndroidTlsProvider>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -262,6 +262,12 @@
       <HintPath>..\packages\Xamarin.Forms.Maps.3.1.0.697729\lib\MonoAndroid10\Xamarin.Forms.Maps.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="FreshEssentials">
+      <HintPath>..\packages\FreshEssentials.2.1.3\lib\MonoAndroid10\FreshEssentials.dll</HintPath>
+    </Reference>
+    <Reference Include="FreshEssentials.Droid">
+      <HintPath>..\packages\FreshEssentials.2.1.3\lib\MonoAndroid10\FreshEssentials.Droid.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sample\Sample.csproj">
@@ -273,9 +279,6 @@
     <Compile Include="MainActivity.cs" />
     <Compile Include="Resources\Resource.designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="..\Xamarin-Forms-SegmentedControl-master\Android\SegmentedControlRenderer.cs">
-      <Link>Custom Controls\SegmentedControlRenderer.cs</Link>
-    </Compile>
     <Compile Include="..\..\..\sdk\IBMMobilePush.Forms.Droid.cs">
       <Link>IBMMobilePush.Forms Droid Binding\IBMMobilePush.Forms.Droid.cs</Link>
     </Compile>

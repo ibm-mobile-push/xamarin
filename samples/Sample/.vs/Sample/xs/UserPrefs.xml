@@ -1,21 +1,16 @@
 ﻿<Properties StartupConfiguration="{1371CCB2-A9D7-4860-A8C7-DA86F3867797}|Default">
-  <MonoDevelop.Ide.ItemProperties.Sample.iOS PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneSimulatorTarget.61FC528F-3BCC-4A43-9C00-ABEBABF0A63A" automaticSigning="False" />
+  <MonoDevelop.Ide.ItemProperties.Sample.iOS PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneSimulatorTarget.E07D4716-96F1-40EB-BE33-B7D883F85BC4" automaticSigning="False" />
   <MonoDevelop.Ide.ItemProperties.Notification.Sample.iOS>
     <MonoDevelop.MacDev.AppleDevelopmentTeam />
   </MonoDevelop.Ide.ItemProperties.Notification.Sample.iOS>
-  <MonoDevelop.Ide.Workbench ActiveDocument="Droid/Properties/AndroidManifest.xml">
-    <Files>
-      <File FileName="Droid/Assets/MceConfig.json" Line="32" Column="3" />
-      <File FileName="iOS/Info.plist" />
-      <File FileName="iOS/Resources/MceConfig.json" Line="49" Column="3" />
-      <File FileName="Droid/Properties/AndroidManifest.xml" Line="1" Column="1" />
-    </Files>
-  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workbench />
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore />
+    <BreakpointStore>
+      <Breakpoint file="/Users/buchmanj/Projects/Development/Xamarin/package/ibm-mobile-push-xamarin-sdk/samples/Sample/Xamarin-Forms-SegmentedControl-master/iOS/SegmentedControlRenderer.cs" relfile="Xamarin-Forms-SegmentedControl-master/iOS/SegmentedControlRenderer.cs" line="46" column="34" />
+    </BreakpointStore>
   </MonoDevelop.Ide.DebuggingService.Breakpoints>
-  <MonoDevelop.Ide.ItemProperties.Sample.Droid PreferredExecutionTarget="Android.android_o_api_27" />
+  <MonoDevelop.Ide.ItemProperties.Sample.Droid PreferredExecutionTarget="Android.android_k_api_19" AndroidDesignerPreferredTheme="Theme.DeviceDefault.NoActionBar.Fullscreen" />
   <MonoDevelop.Ide.DebuggingService.PinnedWatches />
   <MonoDevelop.Ide.ItemProperties.Sample.iOS.Sample.iOS.Watch PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneSimulatorTarget.A8F72431-9B1D-4BE8-975F-ABE981EACD5E">
     <MonoDevelop.MacDev.AppleDevelopmentTeam />

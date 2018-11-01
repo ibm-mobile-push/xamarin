@@ -88,8 +88,9 @@ namespace Sample.Droid
             FFImageLoading.Forms.Platform.CachedImageRenderer.Init(true);
 			base.OnCreate(bundle);
 			global::Xamarin.Forms.Forms.Init(this, bundle);
+            new FreshEssentials.Droid.AdvancedFrameRendererDroid();
 
-			var jsonActionString = this.Intent.GetStringExtra("action");
+            var jsonActionString = this.Intent.GetStringExtra("action");
 			if (jsonActionString != null)
 			{
 				var jsonAction = JObject.Parse(jsonActionString);

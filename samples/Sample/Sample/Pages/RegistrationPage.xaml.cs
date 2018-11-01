@@ -19,7 +19,8 @@ namespace Sample
 	{
 		public RegistrationPage ()
 		{
-			InitializeComponent ();
+            InitializeComponent();
+            SDK.Instance.RegistrationUpdated += UpdateRegistration;
 			UpdateRegistration ();
             Registration.Tapped += (object sender, EventArgs e) => {
                 if (SDK.Instance.UserId() == null && SDK.Instance.ChannelId() == null)
@@ -30,11 +31,6 @@ namespace Sample
             };
 		}
 
-		protected override void OnAppearing()
-		{
-			SDK.Instance.RegistrationUpdated += UpdateRegistration;
-
-		}
 		protected override void OnDisappearing ()
 		{
 			SDK.Instance.RegistrationUpdated -= UpdateRegistration;

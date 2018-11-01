@@ -8,31 +8,70 @@ Licensed Materials - Property of IBM
 US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
 -->
 <ContentPage 
-	xmlns:local="clr-namespace:Sample;assembly=Sample"
 	xmlns="http://xamarin.com/schemas/2014/forms" 
 	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+    xmlns:fe="clr-namespace:FreshEssentials;assembly=FreshEssentials"
 	x:Class="Sample.AttributesPage"
 	Title="User Attributes">
-	<StackLayout>
-		<TableView Intent="Settings" HasUnevenRows="true">
-		    <TableRoot>
-		        <TableSection Title="Send User Attributes">
-		      		<local:NormalEntryCell Label="Enter your attribute" x:Name="Name" />
-		      		<local:NormalEntryCell Label="Enter your value" x:Name="Value" />
-		      		<ViewCell Height="90">
-						<StackLayout Orientation="Vertical" Padding="15,15">
-							<Label Text="Choose an Action" />
-							<local:SegmentedControl HorizontalOptions="End" x:Name="Action">
-								<local:SegmentedControl.Children>
-									<local:SegmentedControlOption Text="Update" />
-									<local:SegmentedControlOption Text="Delete" />
-								</local:SegmentedControl.Children>
-							</local:SegmentedControl>
-						</StackLayout>
-		      		</ViewCell>
-		      		<local:RightStatusCell Text="Send via Queue" x:Name="SendQueue" />
-		        </TableSection>
-		    </TableRoot>
-		</TableView>
-	</StackLayout>
+    <ContentPage.Content>
+        <ScrollView>
+
+            <StackLayout Orientation="Vertical" Padding="15,15">
+                <StackLayout Orientation="Vertical" Padding="0,15,0,0">
+                    <Label Text="Name" FontAttributes="Bold"/>
+                    <Entry Text="attribute" x:Name="Name" />
+                </StackLayout>
+                <StackLayout Orientation="Vertical" x:Name="ValueContainer" Padding="0,15,0,0" HorizontalOptions="Fill">
+                    <Label Text="Value" FontAttributes="Bold"/>
+                    <fe:SegmentedButtonGroup OnColor="Blue" OffColor="White" HorizontalOptions="Fill" x:Name="Type" CornerRadius="5" HeightRequest="20">
+                        <fe:SegmentedButtonGroup.LabelStyle>
+                            <Style TargetType="Label">
+                                <Setter Property="FontSize" Value="12" />
+                            </Style>
+                        </fe:SegmentedButtonGroup.LabelStyle>
+                        <fe:SegmentedButtonGroup.SegmentedButtons>
+                            <fe:SegmentedButton Title="Date"/>
+                            <fe:SegmentedButton Title="String"/>
+                            <fe:SegmentedButton Title="Bool"/>
+                            <fe:SegmentedButton Title="Number"/>
+                        </fe:SegmentedButtonGroup.SegmentedButtons>
+                    </fe:SegmentedButtonGroup>
+                    <Entry Text="value" x:Name="Value" />
+                    <StackLayout Orientation="Horizontal" x:Name="DateTime">
+                        <DatePicker x:Name="DateValue" />
+                        <TimePicker x:Name="TimeValue" />
+                    </StackLayout>
+                    <fe:SegmentedButtonGroup OnColor="Blue" OffColor="White" HorizontalOptions="Fill" x:Name="BooleanValue" CornerRadius="5" HeightRequest="20">
+                        <fe:SegmentedButtonGroup.LabelStyle>
+                            <Style TargetType="Label">
+                                <Setter Property="FontSize" Value="12" />
+                            </Style>
+                        </fe:SegmentedButtonGroup.LabelStyle>
+                        <fe:SegmentedButtonGroup.SegmentedButtons>
+                            <fe:SegmentedButton Title="False"/>
+                            <fe:SegmentedButton Title="True"/>
+                        </fe:SegmentedButtonGroup.SegmentedButtons>
+                    </fe:SegmentedButtonGroup>                </StackLayout>        
+                <StackLayout Orientation="Vertical" Padding="0,15,0,0" HorizontalOptions="Fill">
+                    <Label Text="Operation" FontAttributes="Bold"/>
+                    <fe:SegmentedButtonGroup OnColor="Blue" OffColor="White" HorizontalOptions="Fill" x:Name="Action" CornerRadius="5" HeightRequest="20">
+                        <fe:SegmentedButtonGroup.LabelStyle>
+                            <Style TargetType="Label">
+                                <Setter Property="FontSize" Value="12" />
+                            </Style>
+                        </fe:SegmentedButtonGroup.LabelStyle>
+                        <fe:SegmentedButtonGroup.SegmentedButtons>
+                            <fe:SegmentedButton Title="Update"/>
+                            <fe:SegmentedButton Title="Delete"/>
+                        </fe:SegmentedButtonGroup.SegmentedButtons>
+                    </fe:SegmentedButtonGroup>
+                </StackLayout>
+                <Button x:Name="SendQueue" Text="Add to Queue" HorizontalOptions="Start" />
+                <StackLayout Orientation="Vertical" Padding="0,15,0,0">
+                    <Label Text="Status" FontAttributes="Bold"/>
+                    <Label Text="No status yet" x:Name="Status" />
+                </StackLayout>
+            </StackLayout>
+        </ScrollView>
+    </ContentPage.Content>
 </ContentPage>

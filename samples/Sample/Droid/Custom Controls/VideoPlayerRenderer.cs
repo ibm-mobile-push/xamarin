@@ -114,22 +114,28 @@ namespace FormsVideoLibrary.Droid
 
         void SetAreTransportControlsEnabled()
         {
-            if (Element.AreTransportControlsEnabled)
-            {
-                mediaController = new MediaController(Context);
-                mediaController.SetMediaPlayer(videoView);
-                videoView.SetMediaController(mediaController);
-            }
-            else
-            {
-                videoView.SetMediaController(null);
+            try {
 
-                if (mediaController != null)
+                if (Element.AreTransportControlsEnabled)
                 {
-                    mediaController.SetMediaPlayer(null);
-                    mediaController = null;
+                    mediaController = new MediaController(Context);
+                    mediaController.SetMediaPlayer(videoView);
+                    videoView.SetMediaController(mediaController);
                 }
+                else
+                {
+                    videoView.SetMediaController(null);
+
+                    if (mediaController != null)
+                    {
+                        mediaController.SetMediaPlayer(null);
+                        mediaController = null;
+                    }
+                }
+            } catch {
+
             }
+
         }
 
         void SetSource()

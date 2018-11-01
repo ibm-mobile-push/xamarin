@@ -30,8 +30,9 @@ namespace Sample.iOS
 			// Avoid Some Mono Crashes
 			Environment.SetEnvironmentVariable("MONO_XMLSERIALIZER_THS", "no");
             FFImageLoading.Forms.Platform.CachedImageRenderer.Init();
+            new FreshEssentials.iOS.AdvancedFrameRendereriOS();
 
-			Forms.Init ();
+            Forms.Init ();
 			FormsMaps.Init();
 
 			App.ScreenWidth = UIScreen.MainScreen.Bounds.Width;

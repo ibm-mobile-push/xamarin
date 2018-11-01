@@ -15,50 +15,166 @@ using Xamarin.Forms;
 using Newtonsoft.Json.Linq;
 
 using IBMMobilePush.Forms;
+using FreshEssentials;
 
 namespace Sample
 {
 	public partial class AttributesPage : ContentPage
 	{
 		AttributesStorage storage = new AttributesStorage();
-		public AttributesPage ()
-		{
-			InitializeComponent ();
+        public AttributesPage()
+        {
+            InitializeComponent();
+            DateValue.Date = storage.DateTime.Date;
+            TimeValue.Time = storage.DateTime.TimeOfDay;
+            BooleanValue.SelectedIndex = storage.BoolValue;
 
-			Name.Text = storage.Name;
-			Name.TextChanged += (object sender, EventArgs e) => {
+            BooleanValue.PropertyChanged += (object sender, System.ComponentModel.PropertyChangedEventArgs e) => {
+                if (e.PropertyName != SegmentedButtonGroup.SelectedIndexProperty.PropertyName)
+                {
+                    return;
+                }
+                storage.BoolValue = BooleanValue.SelectedIndex;
+            };
+
+            DateValue.DateSelected += (object sender, DateChangedEventArgs e) =>
+            {
+                storage.DateTime = new DateTime(DateValue.Date.Year, DateValue.Date.Month, DateValue.Date.Day, TimeValue.Time.Hours, TimeValue.Time.Minutes, TimeValue.Time.Seconds, TimeValue.Time.Milliseconds);
+            };
+
+            TimeValue.PropertyChanged += (sender, e) =>
+            {
+                if (e.PropertyName == TimePicker.TimeProperty.PropertyName)
+                {
+                    storage.DateTime = new DateTime(DateValue.Date.Year, DateValue.Date.Month, DateValue.Date.Day, TimeValue.Time.Hours, TimeValue.Time.Minutes, TimeValue.Time.Seconds, TimeValue.Time.Milliseconds);
+                }
+            };
+            Name.Text = storage.Name;
+            Value.Text = storage.Value;
+            Type.PropertyChanged += (object sender, System.ComponentModel.PropertyChangedEventArgs e) => {
+                if (e.PropertyName != SegmentedButtonGroup.SelectedIndexProperty.PropertyName)
+                {
+                    return;
+                }
+
+                UpdateType();
+            };
+            UpdateType();
+            Type.SelectedIndex = storage.Type;
+
+            Name.TextChanged += (object sender, TextChangedEventArgs e) => {
 				storage.Name = Name.Text;
 			};
 			Value.Text = storage.Value;
-			Value.TextChanged += (object sender, EventArgs e) => {
-				storage.Value = Value.Text;
+            Value.TextChanged += (object sender, TextChangedEventArgs e) => {
+                var current = Type.SegmentedButtons[Type.SelectedIndex];
+                switch (current.Title)
+                {
+                    case "String":
+                        storage.Value = Value.Text;
+                        break;
+                    case "Number":
+                        try
+                        {
+                            storage.NumberValue = Convert.ToDouble(Value.Text);
+                        } catch {
+
+                        }
+                        break;
+                }
 			};
-			Action.SelectedValue = storage.Action;
-			Action.Change += (object sender, EventArgs e) => {
-				storage.Action = Action.SelectedValue;
+			Action.SelectedIndex = storage.Action;
+            Action.PropertyChanged += (object sender, System.ComponentModel.PropertyChangedEventArgs e) => {
+                if (e.PropertyName != SegmentedButtonGroup.SelectedIndexProperty.PropertyName)
+                {
+                    return;
+                }
+
+                storage.Action = Action.SelectedIndex;
 			};
 
-			SendQueue.Tapped += (object sender, EventArgs e) => {
-				SendQueue.Status = RightStatus.Sending;
-
-				switch(Action.SelectedValue)
+            SendQueue.Pressed += (object sender, EventArgs e) => {
+                Status.TextColor = Color.Gray;
+                var name = storage.Name;
+                var currentAction = Action.SegmentedButtons[Action.SelectedIndex];
+                switch (currentAction.Title)
 				{
 				case "Update":
-					SDK.Instance.QueueUpdateUserAttribute(Name.Text, Value.Text);
+                        var currentType = Type.SegmentedButtons[Type.SelectedIndex];
+                        switch (currentType.Title)
+                        {
+                            case "Date":
+                                var dateValue = storage.DateTime;
+                                Status.Text = "Queued User Attribute Update\n" + name + " = " + dateValue;
+                                SDK.Instance.QueueUpdateUserAttribute(name, dateValue);
+                                break;
+                            case "String":
+                                var stringValue = storage.Value;
+                                Status.Text = "Queued User Attribute Update\n" + name + " = " + stringValue;
+                                SDK.Instance.QueueUpdateUserAttribute(name, stringValue);
+                                break;
+                            case "Bool":
+                                var boolValue = storage.BoolValue == 1;
+                                Status.Text = "Queued User Attribute Update\n" + name + " = " + boolValue;
+                                SDK.Instance.QueueUpdateUserAttribute(name, boolValue);
+                                break;
+                            case "Number":
+                                var numberValue = Convert.ToDouble(Value.Text);
+                                Status.Text = "Queued User Attribute Update\n" + name + " = " + numberValue;
+                                SDK.Instance.QueueUpdateUserAttribute(name, numberValue);
+                                break;
+                        }
+
 					break;
 				case "Delete":
-					SDK.Instance.QueueDeleteUserAttribute(Name.Text);
+                        Status.Text = "Queued User Attribute Removal\nName " + name;
+                        SDK.Instance.QueueDeleteUserAttribute(name);
 					break;
 				}
 			};
-		}
 
-		protected override void OnDisappearing ()
+        }
+
+        void UpdateType()
+        {
+            var current = Type.SegmentedButtons[Type.SelectedIndex];
+            storage.Type = Type.SelectedIndex;
+            switch (current.Title)
+            {
+                case "Date":
+                    Value.IsVisible = false;
+                    DateTime.IsVisible = true;
+                    BooleanValue.IsVisible = false;
+                    break;
+                case "String":
+                    Value.IsVisible = true;
+                    DateTime.IsVisible = false;
+                    BooleanValue.IsVisible = false;
+                    Value.Keyboard = Keyboard.Default;
+                    break;
+                case "Bool":
+                    Value.IsVisible = false;
+                    BooleanValue.IsVisible = true;
+                    DateTime.IsVisible = false;
+                    break;
+                case "Number":
+                    Value.IsVisible = true;
+                    DateTime.IsVisible = false;
+                    BooleanValue.IsVisible = false;
+                    Value.Keyboard = Keyboard.Numeric;
+                    Value.Text = Convert.ToString(storage.NumberValue);
+                    break;
+            }
+        }
+        protected override void OnDisappearing ()
 		{
 			base.OnDisappearing ();
 			storage.Name = Name.Text;
-			storage.Value = Value.Text;
-			storage.Action = Action.SelectedValue;
+            storage.DateTime = new DateTime(DateValue.Date.Year, DateValue.Date.Month, DateValue.Date.Day, TimeValue.Time.Hours, TimeValue.Time.Minutes, TimeValue.Time.Seconds, TimeValue.Time.Milliseconds);
+            storage.BoolValue = BooleanValue.SelectedIndex;
+            storage.Value = Value.Text;
+			storage.Action = Action.SelectedIndex;
+            storage.Type = Type.SelectedIndex;
 			SDK.Instance.AttributeQueueResults -= QueueCallback;
 		}
 		protected override void OnAppearing()
@@ -67,10 +183,30 @@ namespace Sample
 		}
 
 		void QueueCallback(bool success, string key, object value, AttributeOperation operation) {
-			if(success)
-				SendQueue.Status = RightStatus.Received;
-			else
-				SendQueue.Status = RightStatus.Failed;
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                if (success)
+                {
+                    Status.TextColor = Color.Green;
+                    if(operation == AttributeOperation.DeleteUserAttributes) {
+                        Status.Text = "Deleted User attribute " + key;
+                    }
+                    else if (operation == AttributeOperation.UpdateUserAttributes)
+                    {
+                        Status.Text = "Updated User attribute " + key + " = " + value;
+                    }
+                }
+                else
+                {
+                    Status.TextColor = Color.Red;
+                    if (operation == AttributeOperation.DeleteUserAttributes) {
+                        Status.Text = "Couldn't delete user attribute " + key;
+                    }
+                    else if (operation == AttributeOperation.UpdateUserAttributes) {
+                        Status.Text = "Couldn't update user attribute " + key + " = " + value;
+                    }
+                }
+            });
 		}
 
 	}

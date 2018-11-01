@@ -18,12 +18,12 @@ namespace Sample
 		}
 
 		private string ActionKey = "AttributesAction";
-		public string Action { 
+		public int Action { 
 			get {
-				return GetValue<string> (ActionKey, "Update");
+				return GetValue<int> (ActionKey, 0);
 			}
 			set {
-				SetValue<string> (ActionKey, value);
+				SetValue<int> (ActionKey, value);
 			}
 		}
 
@@ -47,6 +47,59 @@ namespace Sample
 			}
 		}
 
-	}
+        private string TypeKey = "AttributesType";
+        public int Type
+        {
+            get
+            {
+                return GetValue<int>(TypeKey, 0);
+            }
+            set
+            {
+                SetValue<int>(TypeKey, value);
+            }
+        }
+
+        private String DateKey = "AttributesDate";
+        public DateTime DateTime
+        {
+            get
+            {
+                return GetValue<DateTime>(DateKey, DateTime.Now);
+            }
+            set
+            {
+                SetValue<DateTime>(DateKey, value);
+            }
+        }
+
+        private String BoolKey = "AttributesBoolValue";
+        public int BoolValue
+        {
+            get
+            {
+                return GetValue<int>(BoolKey, 0);
+            }
+            set
+            {
+                SetValue<int>(BoolKey, value);
+            }
+        }
+
+
+        private String NumberKey = "AttributesNumberValue";
+        public Double NumberValue
+        {
+            get
+            {
+                return GetValue<Double>(NumberKey, 0);
+            }
+            set
+            {
+                SetValue<Double>(NumberKey, value);
+            }
+        }
+
+    }
 }
 

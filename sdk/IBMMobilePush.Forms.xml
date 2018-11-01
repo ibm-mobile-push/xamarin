@@ -481,88 +481,13 @@
             </summary>
             <value>The attribute queue results.</value>
         </member>
-        <member name="M:IBMMobilePush.Forms.SDK.SetUserAttribute``1(System.String,``0,IBMMobilePush.Forms.AttributeResultsDelegate)">
-            <summary>
-            Replaces the current user attributes with the specified attribute.
-            
-            Please note, this method is deprecated.
-            </summary>
-            <param name="key">Key.</param>
-            <param name="value">Value.</param>
-            <param name="callback">Callback.</param>
-            <typeparam name="T">The 1st type parameter.</typeparam>
-        </member>
-        <member name="M:IBMMobilePush.Forms.SDK.UpdateUserAttribute``1(System.String,``0,IBMMobilePush.Forms.AttributeResultsDelegate)">
-            <summary>
-            Adds or replaces the specified user attribute.
-            
-            Please note, this method is deprecated, please use QueueUpdateUserAttribute instead.
-            </summary>
-            <param name="key">Key.</param>
-            <param name="value">Value.</param>
-            <param name="callback">Callback.</param>
-            <typeparam name="T">The 1st type parameter.</typeparam>
-        </member>
-        <member name="M:IBMMobilePush.Forms.SDK.DeleteUserAttribute(System.String,IBMMobilePush.Forms.AttributeResultsDelegate)">
-            <summary>
-            Deletes the specified user attribute.
-            
-            Please note, this method is deprecated, please use QueueDeleteUserAttribute instead
-            </summary>
-            <param name="key">Key.</param>
-            <param name="callback">Callback.</param>
-        </member>
-        <member name="M:IBMMobilePush.Forms.SDK.QueueSetUserAttribute``1(System.String,``0)">
-            <summary>
-            Queues a replacement of the current user attributes with the specified attribute.
-            
-            Please note, this method is deprecated.
-            </summary>
-            <param name="key">Key.</param>
-            <param name="value">Value.</param>
-            <typeparam name="T">The 1st type parameter.</typeparam>
-        </member>
         <member name="M:IBMMobilePush.Forms.SDK.QueueUpdateUserAttribute``1(System.String,``0)">
             <summary>
             Queues adding or replacing the specified user attribute.
             </summary>
             <param name="key">Key.</param>
-            <param name="value">Value.</param>
-            <typeparam name="T">The 1st type parameter.</typeparam>
-        </member>
-        <member name="M:IBMMobilePush.Forms.SDK.QueueDeleteUserAttribute(System.String)">
-            <summary>
-            Queues the removal of the specified user attribute.
-            </summary>
-            <param name="key">Key.</param>
-        </member>
-        <member name="M:IBMMobilePush.Forms.SDK.QueueSetChannelAttribute``1(System.String,``0)">
-            <summary>
-            Queues the replacement of the current channel attributes with the specified attribute.
-            
-            Please note, this method is deprecated.
-            </summary>
-            <param name="key">Key.</param>
-            <param name="value">Value.</param>
-            <typeparam name="T">The 1st type parameter.</typeparam>
-        </member>
-        <member name="M:IBMMobilePush.Forms.SDK.QueueUpdateChannelAttribute``1(System.String,``0)">
-            <summary>
-            Queues adding or replacing the specified channel attribute.
-            
-            Please note, this method is deprecated.
-            </summary>
-            <param name="key">Key.</param>
-            <param name="value">Value.</param>
-            <typeparam name="T">The 1st type parameter.</typeparam>
-        </member>
-        <member name="M:IBMMobilePush.Forms.SDK.QueueDeleteChannelAttribute(System.String)">
-            <summary>
-            Queues the removal of the specified channel attribute.
-            
-            Please note, this method is deprecated.
-            </summary>
-            <param name="key">Key.</param>
+            <param name="date">Value.</param>
+            <typeparam name="T">Value type</typeparam>
         </member>
         <member name="P:IBMMobilePush.Forms.SDK.EventQueueResults">
             <summary>
@@ -581,20 +506,6 @@
             <param name="mailingId">MailingId.</param>
             <param name="attributes">Attributes.</param>
             <param name="flush">If set to <c>true</c> flush.</param>
-        </member>
-        <member name="M:IBMMobilePush.Forms.SDK.AddEvent(System.String,System.String,System.DateTimeOffset,System.String,System.String,System.Collections.Generic.Dictionary{System.String,System.Object},IBMMobilePush.Forms.EventResultsDelegate)">
-            <summary>
-            Sends an event to the server.
-            
-            Please note, this method is deprecated, please use QueueAddEvent instead.
-            </summary>
-            <param name="name">Name.</param>
-            <param name="type">Type.</param>
-            <param name="timestamp">Timestamp.</param>
-            <param name="attribution">Attribution.</param>
-            <param name="mailingId">MailingId.</param>
-            <param name="attributes">Attributes.</param>
-            <param name="callback">Callback.</param>
         </member>
         <member name="P:IBMMobilePush.Forms.SDK.Badge">
             <summary>
