@@ -47,15 +47,20 @@ namespace Sample.iOS
 			if (UIDevice.CurrentDevice.CheckSystemVersion(10, 0))
 			{
 				Logging.Verbose("iOS > 10");
+                UIApplication.SharedApplication.RegisterForRemoteNotifications();
 
-				UNUserNotificationCenter.Current.Delegate = MCENotificationDelegate.SharedInstance();
+                UNUserNotificationCenter.Current.Delegate = MCENotificationDelegate.SharedInstance();
 				UNUserNotificationCenter.Current.RequestAuthorization(UNAuthorizationOptions.Alert | UNAuthorizationOptions.Badge | UNAuthorizationOptions.CarPlay | UNAuthorizationOptions.Sound, (approved, err) =>
 				{
-					InvokeOnMainThread(() =>
-					{
-						UIApplication.SharedApplication.RegisterForRemoteNotifications();
-					});
-				});
+                    if(approved)
+                    {
+                        Logging.Verbose("Push Notifications approved");
+                    }
+                    else
+                    {
+                        Logging.Verbose("Push Notifications denied");
+                    }
+                });
 			}
 			else if (UIDevice.CurrentDevice.CheckSystemVersion(8,0))
 			{

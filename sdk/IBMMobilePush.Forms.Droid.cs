@@ -132,7 +132,7 @@ namespace IBMMobilePush.Forms.Droid
 
         public void ManualSdkInitialization()
         {
-            MceApplication.Reinitialize(ApplicationContext);
+            MceApplication.FirstInit(MceApplication.Current(), null, null);
         }
 
         public bool LocationAutoInitialize()

@@ -1,25 +1,69 @@
 ﻿<Properties StartupConfiguration="{1371CCB2-A9D7-4860-A8C7-DA86F3867797}|Default">
-  <MonoDevelop.Ide.ItemProperties.Sample.iOS PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneSimulatorTarget.E07D4716-96F1-40EB-BE33-B7D883F85BC4" automaticSigning="False" />
-  <MonoDevelop.Ide.ItemProperties.Notification.Sample.iOS>
-    <MonoDevelop.MacDev.AppleDevelopmentTeam />
-  </MonoDevelop.Ide.ItemProperties.Notification.Sample.iOS>
-  <MonoDevelop.Ide.Workbench />
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.DebuggingService.Breakpoints>
-    <BreakpointStore>
-      <Breakpoint file="/Users/buchmanj/Projects/Development/Xamarin/package/ibm-mobile-push-xamarin-sdk/samples/Sample/Xamarin-Forms-SegmentedControl-master/iOS/SegmentedControlRenderer.cs" relfile="Xamarin-Forms-SegmentedControl-master/iOS/SegmentedControlRenderer.cs" line="46" column="34" />
-    </BreakpointStore>
-  </MonoDevelop.Ide.DebuggingService.Breakpoints>
-  <MonoDevelop.Ide.ItemProperties.Sample.Droid PreferredExecutionTarget="Android.android_k_api_19" AndroidDesignerPreferredTheme="Theme.DeviceDefault.NoActionBar.Fullscreen" />
-  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
-  <MonoDevelop.Ide.ItemProperties.Sample.iOS.Sample.iOS.Watch PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneSimulatorTarget.A8F72431-9B1D-4BE8-975F-ABE981EACD5E">
-    <MonoDevelop.MacDev.AppleDevelopmentTeam />
-  </MonoDevelop.Ide.ItemProperties.Sample.iOS.Sample.iOS.Watch>
-  <MultiItemStartupConfigurations />
-  <DisabledProjects>
-    <String>IBMMobilePush.Forms/IBMMobilePush.Forms.csproj</String>
-  </DisabledProjects>
   <MonoDevelop.Ide.ItemProperties.Sample.iOS.Sample.iOS.WatchExtension>
     <MonoDevelop.MacDev.AppleDevelopmentTeam />
   </MonoDevelop.Ide.ItemProperties.Sample.iOS.Sample.iOS.WatchExtension>
+  <MonoDevelop.Ide.ItemProperties.Sample.iOS.Sample.iOS.Watch PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneSimulatorTarget.A8F72431-9B1D-4BE8-975F-ABE981EACD5E">
+    <MonoDevelop.MacDev.AppleDevelopmentTeam />
+  </MonoDevelop.Ide.ItemProperties.Sample.iOS.Sample.iOS.Watch>
+  <MonoDevelop.Ide.ItemProperties.Notification.Sample.iOS>
+    <MonoDevelop.MacDev.AppleDevelopmentTeam />
+  </MonoDevelop.Ide.ItemProperties.Notification.Sample.iOS>
+  <MonoDevelop.Ide.Workbench ActiveDocument="Droid/Properties/AndroidManifest.xml">
+    <Files>
+      <File FileName="../../sdk/IBMMobilePush.Forms.iOS.cs" Line="31" Column="2" />
+      <File FileName="Droid/Assets/MceConfig.json" Line="5" Column="24" />
+      <File FileName="Droid/google-services.json" Line="13" Column="23" />
+      <File FileName="../../plugins/Inbox Plugins/Default Inbox Template/DefaultInboxTemplate.cs" Line="16" Column="47" />
+      <File FileName="../../plugins/Inbox Plugins/Default Inbox Template/DefaultInboxTemplateCell.xaml.cs" Line="1" Column="1" />
+      <File FileName="../../plugins/Inbox Plugins/Default Inbox Template/DefaultInboxTemplatePage.xaml.cs" Line="33" Column="6" />
+      <File FileName="Sample/Pages/ActionsPage.xaml.cs" Line="79" Column="66" />
+      <File FileName="../../sdk/IBMMobilePush.Forms.Droid.cs" Line="1" Column="1" />
+      <File FileName="Droid/Properties/AndroidManifest.xml" Line="43" Column="1" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="Sample" expanded="True">
+            <Node name="Sample" expanded="True">
+              <Node name="References" expanded="True" />
+              <Node name="Packages" expanded="True" />
+              <Node name="Pages" expanded="True">
+                <Node name="ActionsPage.xaml" expanded="True" />
+              </Node>
+            </Node>
+            <Node name="Sample.Droid" expanded="True">
+              <Node name="Assets" expanded="True">
+                <Node name="mce" expanded="True">
+                  <Node name="plugins" expanded="True" />
+                </Node>
+              </Node>
+              <Node name="Custom Actions" expanded="True" />
+              <Node name="Custom Controls" expanded="True" />
+              <Node name="IBMMobilePush.Forms Droid Binding" expanded="True" />
+              <Node name="Properties" expanded="True">
+                <Node name="AndroidManifest.xml" selected="True" />
+              </Node>
+            </Node>
+            <Node name="Sample.iOS" expanded="True">
+              <Node name="IBMMobilePush.Forms iOS Binding" expanded="True" />
+              <Node name="Resources" expanded="True" />
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.ItemProperties.Sample.iOS automaticSigning="False" PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneSimulatorTarget.86F7C443-8D44-4775-8B1B-623A8464A0A2" />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <DisabledProjects>
+    <String>IBMMobilePush.Forms/IBMMobilePush.Forms.csproj</String>
+  </DisabledProjects>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore>
+      <Catchpoint enabled="false" exceptionName="System.Exception" includeSubclasses="True" />
+    </BreakpointStore>
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.ItemProperties.Sample.Droid AndroidDesignerPreferredTheme="Theme.DeviceDefault.NoActionBar.Fullscreen" PreferredExecutionTarget="Android.andorid_l_api_21" />
 </Properties>

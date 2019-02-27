@@ -54,6 +54,9 @@
   "The size of the inbox images file based cache in MB": "",
   "fileImageCacheCapacityInMB": 100,
 
+  "When the autoInitialize value is set to true it will start user registration immediately, if you want to trigger user registration later at a specific point in your app, set this value to": false,
+  "autoInitialize": true,
+  
   "location is only required if location support is needed. Please note that unlike iOS, location support is not enabled automatically. Enabling location support is done in the application code (see documentation).": "",
   "location": {
     "The location autoInitialize flag can be set to false to delay turning on the location services until desired.": "",
