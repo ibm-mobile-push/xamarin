@@ -7,13 +7,7 @@ Licensed Materials - Property of IBM
 © Copyright IBM Corp. 2016, 2016
 US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
 -->
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="3324" android:versionName="3.3.2.4" package="com.ibm.mce.samples.gcm">
-	<!-- C2D_MESSAGE is required for receiving GCM messages -->
-	<permission android:name="com.ibm.mce.samples.gcm.permission.C2D_MESSAGE" android:protectionLevel="signature" />
-	<!-- C2D_MESSAGE is required for receiving GCM messages -->
-	<uses-permission android:name="com.ibm.mce.samples.gcm.permission.C2D_MESSAGE" />
-	<!-- c2dm.permission.RECEIVE is required for receiving GCM messages -->
-	<uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:versionCode="3325" android:versionName="3.3.2.5" package="com.ibm.mce.samples">
 	<uses-permission android:name="android.permission.GET_TASKS" />
 	<!-- INTERNET is required for calling the MCE server -->
 	<uses-permission android:name="android.permission.INTERNET" />
@@ -44,7 +38,7 @@ US Government Users Restricted Rights - Use, duplication or disclosure restricte
 		<!-- This is required for google play services -->
 		<meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />
 		<!-- The provider is needed for the SDK database -->
-		<provider android:name="com.ibm.mce.sdk.db.Provider" android:authorities="com.ibm.mce.samples.gcm.MCE_PROVIDER" android:exported="false" />
+		<provider android:name="com.ibm.mce.sdk.db.Provider" android:authorities="${applicationId}.MCE_PROVIDER" android:exported="false" />
 		<!-- NotifActionReceiver is required for notification handling -->
 		<receiver android:name="com.ibm.mce.sdk.notification.NotifActionReceiver" />
 		<!-- AlarmReceiver is required for SDK scheduled tasks and device status updates -->

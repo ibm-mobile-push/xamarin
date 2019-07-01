@@ -34,6 +34,11 @@
             Event queue results delegate. 
             </summary>
         </member>
+        <member name="T:IBMMobilePush.Forms.StringDelegate">
+            <summary>
+            Generic results delegate.
+            </summary>
+        </member>
         <member name="T:IBMMobilePush.Forms.GenericDelegate">
             <summary>
             Generic results delegate.
@@ -452,6 +457,18 @@
             </summary>
             <value>The beacon entered.</value>
         </member>
+        <member name="P:IBMMobilePush.Forms.SDK.ActionNotRegistered">
+            <summary>
+            Gets or sets the action not registered callback.
+            </summary>
+            <value>The action callback not registered.</value>
+        </member>
+        <member name="P:IBMMobilePush.Forms.SDK.ActionNotYetRegistered">
+            <summary>
+            Gets or sets the action not yet registered callback.
+            </summary>
+            <value>The action callback not yet registered.</value>
+        </member>
         <member name="M:IBMMobilePush.Forms.SDK.UserId">
             <summary>
             The user ID for the current user.
@@ -559,6 +576,12 @@
             <param name="name">Name.</param>
             <param name="handler">Handler.</param>
         </member>
+        <member name="M:IBMMobilePush.Forms.SDK.UnregisterAction(System.String)">
+            <summary>
+            Unregisters a custom action handler.
+            </summary>
+            <param name="name">Name.</param>
+        </member>
         <member name="M:IBMMobilePush.Forms.SDK.PhoneHome">
             <summary>
             Runs the SDK phone home immediately. This is useful after a login or user merge.
@@ -655,16 +678,6 @@
             <param name="mailingId">MailingId.</param>
             <param name="source">Source.</param>
             <param name="attributes">Attributes for event</param>
-        </member>
-        <member name="M:IBMMobilePush.Forms.SDK.ExecuteAction(Newtonsoft.Json.Linq.JObject,Newtonsoft.Json.Linq.JObject,System.String,System.String,System.Int32)">
-            <summary>
-            Executes the action.
-            </summary>
-            <param name="action">Action.</param>
-            <param name="payload">Payload.</param>
-            <param name="attribution">Attribution.</param>
-            <param name="mailingId">Mailing identifier.</param>
-            <param name="id">Identifier.</param>
         </member>
         <member name="M:IBMMobilePush.Forms.SDK.ExecuteInboxAction(Newtonsoft.Json.Linq.JToken,System.String,System.String,System.Collections.Generic.Dictionary{System.String,System.String})">
             <summary>

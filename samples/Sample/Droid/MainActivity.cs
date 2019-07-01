@@ -19,7 +19,6 @@ using Android.OS;
 using IBMMobilePush.Droid.API;
 using IBMMobilePush.Forms;
 
-using FFImageLoading.Forms.Droid;
 using Newtonsoft.Json.Linq;
 
 using Org.Json;
@@ -29,6 +28,7 @@ using Android.Support.V4.App;
 using IBMMobilePush.Droid.Location;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using IBMMobilePush.Forms.Droid;
 
 namespace Sample.Droid
 {
@@ -90,36 +90,23 @@ namespace Sample.Droid
 			global::Xamarin.Forms.Forms.Init(this, bundle);
             new FreshEssentials.Droid.AdvancedFrameRendererDroid();
 
-            var jsonActionString = this.Intent.GetStringExtra("action");
-			if (jsonActionString != null)
-			{
-				var jsonAction = JObject.Parse(jsonActionString);
-				JObject jsonPayload = null;
-				if (this.Intent.HasExtra("payload"))
-				{
-					jsonPayload = JObject.Parse(this.Intent.GetStringExtra("payload"));
-				}
-				var attribution = this.Intent.GetStringExtra("attribution");
-				int id=0;
-				try
-				{
-					id = Int32.Parse(this.Intent.GetStringExtra("id"));
-				}
-				catch { }
-
-				var mailingId = this.Intent.GetStringExtra("mailingId");
-				LoadApplication(new App(jsonAction, jsonPayload, attribution, mailingId, id));
-			}
-			else
-			{
-				LoadApplication(new App());
-			}
+			LoadApplication(new App());
 
             if (Android.OS.Build.VERSION.SdkInt >= Android.OS.BuildVersionCodes.O)
             {
                 createNotificationChannel();
             }
 		}
+        protected override void OnStop()
+        {
+            base.OnStop();
+            IBMMobilePushImpl.OnStop();
+        }
+        protected override void OnStart()
+        {
+            base.OnStart();
+            IBMMobilePushImpl.OnStart();
+        }
 
         void createNotificationChannel()
         {

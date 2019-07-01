@@ -15,7 +15,7 @@ using UIKit;
 using IBMMobilePush.iOS;
 using IBMMobilePush.Forms;
 using IBMMobilePush.Forms.iOS;
-using FFImageLoading.Forms.Touch;
+//using FFImageLoading.Forms.Touch;
 using UserNotifications;
 using Xamarin.Forms;
 using Xamarin;

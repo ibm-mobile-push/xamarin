@@ -161,7 +161,10 @@ namespace IBMMobilePush.Forms.iOS
 
             if (IsRegistered())
             {
-                MCEAttributesQueueManager.SharedInstance().UpdateChannelAttributes(new NSDictionary("sdk", "xamarin"));
+                NSMutableDictionary attributes = new NSMutableDictionary();
+                attributes["xamarin"] = (NSString)MCESdk.SharedInstance().SdkVersion;
+                attributes["sdk"] = (NSString)"xamarin";
+                MCEAttributesQueueManager.SharedInstance().UpdateChannelAttributes(attributes);
             }
 
             NSNotificationCenter.DefaultCenter.AddObserver (new NSString("MCERegistrationChangedNotification"), RegistrationUpdatedNotification);
@@ -200,6 +203,28 @@ namespace IBMMobilePush.Forms.iOS
                 InboxMessagesUpdate?.Invoke();
             });
 
+            NSNotificationCenter.DefaultCenter.AddObserver(new NSString("MCECustomPushNotYetRegistered"), (note) => {
+                NSDictionary action = (NSDictionary) note.UserInfo["action"];
+                if (ActionNotYetRegistered != null && action != null) {
+                    string type = (NSString) action["type"];
+                    if(type != null) {
+                        ActionNotYetRegistered?.Invoke(type);
+                    }
+                }
+            });
+
+            NSNotificationCenter.DefaultCenter.AddObserver(new NSString("MCECustomPushNotRegistered"), (note) => {
+                NSDictionary action = (NSDictionary) note.UserInfo["action"];
+                if (ActionNotRegistered != null && action != null)
+                {
+                    string type = (NSString) action["type"];
+                    if (type != null)
+                    {
+                        ActionNotRegistered?.Invoke(type);
+                    }
+                }
+            });
+
             LocationManager = new CLLocationManager();
             LocationManager.AuthorizationChanged += (sender, e) => {
                 if (LocationAuthorizationChanged != null)
@@ -218,9 +243,11 @@ namespace IBMMobilePush.Forms.iOS
 		public GeofenceDelegate GeofenceExited { set; get; }
 		public BeaconDelegate BeaconExited { set; get; }
 		public BeaconDelegate BeaconEntered { set; get; }
-		
 
-		public RegistrationUpdatedDelegate RegistrationUpdated { set; get; }
+        public StringDelegate ActionNotYetRegistered { set; get; }
+        public StringDelegate ActionNotRegistered { set; get; }
+
+        public RegistrationUpdatedDelegate RegistrationUpdated { set; get; }
 		public AttributeResultsDelegate AttributeQueueResults { set; get; }
 		public EventResultsDelegate EventQueueResults { set; get; }
 		public GenericDelegate InboxMessagesUpdate { set; get; }
@@ -255,7 +282,10 @@ namespace IBMMobilePush.Forms.iOS
 
 		public void RegistrationUpdatedNotification(NSNotification note)
 		{
-            MCEAttributesQueueManager.SharedInstance().UpdateChannelAttributes(new NSDictionary("sdk", "xamarin"));
+            NSMutableDictionary attributes = new NSMutableDictionary();
+            attributes["xamarin"] = (NSString) MCESdk.SharedInstance().SdkVersion;
+            attributes["sdk"] = (NSString) "xamarin";
+            MCEAttributesQueueManager.SharedInstance().UpdateChannelAttributes(attributes);
             RegistrationUpdated?.Invoke();
         }
 
@@ -349,16 +379,6 @@ namespace IBMMobilePush.Forms.iOS
 			MCEEventService.SharedInstance ().AddEvent (apiEvent, flush);
 		}
 
-		MCEEventClient _EventClient;
-		MCEEventClient EventClient { 
-			get {
-				if (_EventClient == null) {
-					_EventClient = new MCEEventClient ();
-				}
-				return _EventClient;
-			} 
-		}
-
 		public static DateTimeOffset ConvertDate(NSDate date, DateTimeOffset defaultValue)
 		{					
 			if(date != null)
@@ -403,15 +423,6 @@ namespace IBMMobilePush.Forms.iOS
 			}
 
 			return apiEvent;
-		}
-
-        [System.Obsolete("AddEvent is deprecated, use QueueAddEvent instead")]
-		public void AddEvent(string name, string type, DateTimeOffset timestamp, string attribution, string mailingId, Dictionary<string,object> attributes, EventResultsDelegate callback)
-		{
-			var apiEvent = GenerateEvent (name, type, timestamp, attribution, mailingId, attributes);
-			EventClient.SendEvents (new MCEEvent[] { apiEvent }, delegate(NSError error) {
-				callback(error == null, name, type, timestamp, attribution, mailingId, attributes);
-			});
 		}
 
 		void EventQueueResultNotification(bool success, NSNotification note)
@@ -485,7 +496,12 @@ namespace IBMMobilePush.Forms.iOS
 			MCEActionRegistry.SharedInstance ().RegisterTarget (new ActionHandler (handler), new Selector("handleAction:payload:"), name);
 		}
 
-		public class ActionHandler : NSObject
+        public void UnregisterAction(string name)
+        {
+            MCEActionRegistry.SharedInstance().UnregisterAction(name);
+        }
+
+        public class ActionHandler : NSObject
 		{
 			PushAction Handler;
 
@@ -614,7 +630,6 @@ namespace IBMMobilePush.Forms.iOS
 			}
 			MCEActionRegistry.SharedInstance ().PerformAction (actionDict, payload, source, attributesDict);
 		}
-
 		public void DeleteInboxMessage(InboxMessage message)
 		{
 			message.IsDeleted = true;
@@ -693,11 +708,6 @@ namespace IBMMobilePush.Forms.iOS
 			var param = new SQLiteConnectionString(path, false);
 			var connection = new SQLiteAsyncConnection(() => new SQLiteConnectionWithLock(platform, param));
 			return connection;
-		}
-
-		public void ExecuteAction(JObject action, JObject payload, string attribution, string mailingId, int id)
-		{
-			// only used in Android
 		}
 
 		public bool GeofenceEnabled()

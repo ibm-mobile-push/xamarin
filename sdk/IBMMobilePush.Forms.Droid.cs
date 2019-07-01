@@ -1,11 +1,11 @@
-﻿﻿/*
- * Licensed Materials - Property of IBM
- *
- * 5725E28, 5725I03
- *
- * © Copyright IBM Corp. 2016, 2016
- * US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
- */
+﻿/*
+* Licensed Materials - Property of IBM
+*
+* 5725E28, 5725I03
+*
+* © Copyright IBM Corp. 2016, 2016
+* US Government Users Restricted Rights - Use, duplication or disclosure restricted by GSA ADP Schedule Contract with IBM Corp.
+*/
 using System;
 using System.IO;
 using System.Collections.Generic;
@@ -37,6 +37,7 @@ using Android.Locations;
 using Android.Support.V4.App;
 using IBMMobilePush.Droid.Plugin.InApp;
 using System.Threading.Tasks;
+using Org.Json;
 
 [assembly: Dependency(typeof(IBMMobilePush.Forms.Droid.IBMMobilePushImpl))]
 namespace IBMMobilePush.Forms.Droid
@@ -67,6 +68,23 @@ namespace IBMMobilePush.Forms.Droid
 
     public class IBMMobilePushImpl : IIBMMobilePush
     {
+        public static Context ApplicationContext;
+        static Dictionary<String, NotificationAction> internalActionRegistry = new Dictionary<String, NotificationAction>();
+        public static void OnStop()
+        {
+            foreach (String type in internalActionRegistry.Keys)
+            {
+                MceNotificationActionRegistry.RegisterNotificationAction(ApplicationContext, type, new DelayedNotificationAction());
+            }
+        }
+        public static void OnStart()
+        {
+            foreach(String type in internalActionRegistry.Keys)
+            {
+                var notificationAction = internalActionRegistry[type];
+                MceNotificationActionRegistry.RegisterNotificationAction(ApplicationContext, type, notificationAction);
+            }
+        }
         public String XamarinPluginVersion()
         {
             return null;
@@ -86,9 +104,6 @@ namespace IBMMobilePush.Forms.Droid
                 {
                     ManualLocationInitialization();
                 }
-            }
-            if(IsRegistered()) {
-                IBMMobilePushImpl.UpdateSdkChannelAttribute(ApplicationContext);
             }
         }
 
@@ -132,7 +147,7 @@ namespace IBMMobilePush.Forms.Droid
 
         public void ManualSdkInitialization()
         {
-            MceApplication.FirstInit(MceApplication.Current(), null, null);
+            MceApplication.FirstInit(null, null);
         }
 
         public bool LocationAutoInitialize()
@@ -158,8 +173,6 @@ namespace IBMMobilePush.Forms.Droid
             }
         }
         delegate void InboxCallbackDelegate();
-
-        Context ApplicationContext;
 
         public RegistrationUpdatedDelegate RegistrationUpdated { set; get; }
         public AttributeResultsDelegate AttributeQueueResults { set; get; }
@@ -196,6 +209,39 @@ namespace IBMMobilePush.Forms.Droid
 
         IBMMobilePush.Droid.API.Attribute.Attribute AttributeConverter(string key, object value)
         {
+            if(value is JToken)
+            {
+                JToken jvalue = value as JToken;
+                if (jvalue.Type == JTokenType.String)
+                {
+                    return new StringAttribute(key, jvalue.Value<String>());
+                }
+
+                if (jvalue.Type == JTokenType.Date)
+                {
+                    var dateValue = jvalue.Value<DateTime>();
+                    Int64 unixTimestamp = (Int64)(dateValue.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+                    return new DateAttribute(key, new Date(unixTimestamp * 1000));
+                }
+
+                if (jvalue.Type == JTokenType.Integer)
+                {
+                    var intValue = jvalue.Value<int>();
+                    return new NumberAttribute(key, new Java.Lang.Integer(intValue));
+                }
+
+                if (jvalue.Type == JTokenType.Float)
+                {
+                    var floatValue = jvalue.Value<float>();
+                    return new NumberAttribute(key, new Java.Lang.Float(floatValue));
+                }
+
+                if (jvalue.Type == JTokenType.Boolean)
+                {
+                    var boolValue = jvalue.Value<bool>();
+                    return new BooleanAttribute(key, new Java.Lang.Boolean(boolValue));
+                }
+            }
             if (value is string)
             {
                 var stringValue = (string) value;
@@ -280,7 +326,7 @@ namespace IBMMobilePush.Forms.Droid
         }
 
         public static void UpdateSdkChannelAttribute(Context context) {
-            IBMMobilePush.Droid.Xamarin.XamarinNotificationAction.SetSdkChannelAttribute(context);
+            IBMMobilePush.Droid.Xamarin.XamarinNotificationAction.SetSdkChannelAttribute(context, SDK.Instance.XamarinPluginVersion());
         }
 
         public void QueueUpdateUserAttribute<T>(string key, T value)
@@ -314,7 +360,11 @@ namespace IBMMobilePush.Forms.Droid
             var apiAttributes = new List<IBMMobilePush.Droid.API.Attribute.Attribute>();
             foreach (KeyValuePair<string, object> attribute in attributes)
             {
-                apiAttributes.Add(AttributeConverter(attribute.Key, attribute.Value));
+                var attr = AttributeConverter(attribute.Key, attribute.Value);
+                if (attr != null)
+                {
+                    apiAttributes.Add(attr);
+                }
             }
 
             return new Event(type, name, Utilities.ConvertDate(timestamp, new Java.Util.Date()), apiAttributes, attribution, mailingId);
@@ -341,6 +391,9 @@ namespace IBMMobilePush.Forms.Droid
             }
         }
 
+        public StringDelegate ActionNotRegistered { get; set; }
+        public StringDelegate ActionNotYetRegistered { get; set; }
+
         public bool IsProviderRegistered()
         {
             return MceSdk.RegistrationClient.GetRegistrationDetails(ApplicationContext).PushToken != null;
@@ -356,25 +409,73 @@ namespace IBMMobilePush.Forms.Droid
             return IsProviderRegistered() && IsMceRegistered();
         }
 
-        Dictionary<string, PushAction> actionRegistry = new Dictionary<string, PushAction>();
+        private class NotificationAction : Java.Lang.Object, IMceNotificationAction
+        {
+            public Context ApplicationContext;
+            public PushAction handler;
+            public void HandleAction(Context context, string type, string name, string attribution, string mailingId, IDictionary<string, string> payload, bool fromNotification)
+            {
+                //Logging.Error("HandleAction in C#.");
+                //if (MceApplication.CurrentForegroundActivity == null)
+                //{
+                //    Logging.Error("Open App in C#");
+                //    Intent intent = context.PackageManager.GetLaunchIntentForPackage(ApplicationContext.PackageName);
+                //    ApplicationContext.StartActivity(intent);
+                //    return;
+                //}
 
+                var action = new JObject();
+                action["type"] = type;
+                action["name"] = name;
+                foreach (var key in payload.Keys) {
+                    var value = payload[key];
+                    action[key] = value;
+                    if (value != null) {
+                        try {
+                            action[key] = JObject.Parse(value);
+                        } catch (Exception e) {
+
+                        }
+                    }
+                }
+
+                var mce = new JObject();
+                if(attribution != null)
+                {
+                    mce["attribution"] = attribution;
+                }
+                if(mailingId != null)
+                {
+                    mce["mailingId"] = mailingId;
+                }
+
+                var jpayload = new JObject();
+                jpayload["notification-action"] = action;
+                jpayload["mce"] = mce;
+                handler.HandleAction(action, jpayload, attribution, mailingId, 0);
+            }
+
+            public void Init(Context context, JSONObject initOptions)
+            {
+            }
+
+            public bool ShouldDisplayNotification(Context context, INotificationDetails notificationDetails, Bundle sourceBundle)
+            {
+                return true;
+            }
+
+            public void Update(Context context, JSONObject updateOptions)
+            {
+            }
+        }
+        
         public void RegisterAction(string name, PushAction handler)
         {
-            actionRegistry[name] = handler;
-        }
-
-        public void ExecuteAction(JObject action, JObject payload, string attribution, string mailingId, int id)
-        {
-            var name = action["type"].ToString();
-            if (actionRegistry.ContainsKey(name))
-            {
-                PushAction handler = actionRegistry[name];
-                handler.HandleAction(action, payload, attribution, mailingId, id);
-            }
-            else
-            {
-                Task.Delay(1000).ContinueWith(t => ExecuteAction(action, payload, attribution, mailingId, id) );
-            }
+            var notificationAction = new NotificationAction();
+            notificationAction.handler = handler;
+            notificationAction.ApplicationContext = ApplicationContext;
+            internalActionRegistry[name] = notificationAction;
+            MceNotificationActionRegistry.RegisterNotificationAction(ApplicationContext, name, notificationAction);
         }
 
         public void PhoneHome()
@@ -400,7 +501,7 @@ namespace IBMMobilePush.Forms.Droid
                 SendDate = Utilities.ConvertDate(message.SendDate, DateTimeOffset.MinValue),
                 TemplateName = message.Template,
                 Attribution = message.Attribution,
-                //MailingId = message.MailingId, // It seems like mailling id should be here, but it's missing in the SDK
+                MailingId = message.MessageId,
                 IsRead = (bool)message.IsRead,
                 IsDeleted = (bool)message.IsDeleted,
                 Content = content
@@ -506,100 +607,41 @@ namespace IBMMobilePush.Forms.Droid
 
         public void ExecuteAction(JToken action, string attribution, string mailingId, string source, Dictionary<string, string> attributes)
         {
-            var actionType = action["type"].ToString();
-            if (actionType == "url" || actionType == "dial" || actionType.ToLower() == "openapp")
+            if (action != null)
             {
-                var androidImpl = MceNotificationActionRegistry.GetNotificationAction(actionType);
-                if (androidImpl != null)
+                var actionType = action["type"].ToString();
+                if (actionType != null)
                 {
-                    var payload = new Dictionary<string, string>();
-
-                    JObject actionObject = action.Value<JObject>();
-
-                    List<string> keys = actionObject.Properties().Select(p => p.Name).ToList();
-
-                    foreach (string key in keys)
+                    var notificationAction = MceNotificationActionRegistry.GetNotificationAction(ApplicationContext, actionType);
+                    if(notificationAction != null)
                     {
-                        payload[key] = action[key].ToString();
-                    }
-
-                    androidImpl.HandleAction(ApplicationContext, actionType, null, null, mailingId, payload, false);
-
-                    var eventAttributes = new List<IBMMobilePush.Droid.API.Attribute.Attribute>();
-                    foreach (KeyValuePair<string, string> entry in attributes)
-                    {
-                        eventAttributes.Add(new StringAttribute(entry.Key, entry.Value));
-                    }
-
-                    eventAttributes.Add(new StringAttribute("actionTaken", actionType));
-                    var name = actionType;
-                    var clickEventDetails = MceNotificationActionImpl.GetClickEventDetails(actionType);
-                    if (clickEventDetails != null)
-                    {
-                        name = clickEventDetails.EventName;
-                        var value = action["value"].ToString();
-                        eventAttributes.Add(new StringAttribute(clickEventDetails.ValueName, value));
-                    }
-                    else
-                    {
-                        foreach (KeyValuePair<string, string> entry in payload)
+                        var payload = new Dictionary<String,String>();
+                        foreach(var item in (JObject) action)
                         {
-                            eventAttributes.Add(new StringAttribute(entry.Key, entry.Value));
+                            payload[item.Key] = item.Value.ToString();
                         }
-                    }
+                        notificationAction.HandleAction(ApplicationContext, actionType, actionType, null, null, payload, false);
 
-                    var sdkEvent = new Event(source, name, new Date(), eventAttributes, attribution, mailingId);
-                    MceSdk.QueuedEventsClient.SendEvent(ApplicationContext, sdkEvent, true);
-                }
-                return;
-            }
-            else if (!actionRegistry.ContainsKey(actionType))
-            {
-                return;
-            }
+                        var name = actionType;
+                        var eventAttributes = new Dictionary<string, object>();
+                        var clickEventDetails = MceNotificationActionImpl.GetClickEventDetails(actionType);
+                        if (clickEventDetails != null)
+                        {
+                            name = clickEventDetails.EventName;
+                            eventAttributes.Add(clickEventDetails.ValueName, action["value"]);
+                        }
+                        else
+                        {
+                            foreach (String key in payload.Keys)
+                            {
+                                eventAttributes.Add(key, payload[key]);
+                            }
+                        }
 
-            var actionImpl = actionRegistry[actionType];
-            if (actionImpl != null)
-            {
-                var payload = new Dictionary<string, string>();
-
-                JObject actionObject = action.Value<JObject>();
-
-                List<string> keys = actionObject.Properties().Select(p => p.Name).ToList();
-
-                foreach (string key in keys)
-                {
-                    payload[key] = action[key].ToString();
-                }
-
-                actionImpl.HandleAction(action as JObject, action as JObject, attribution, mailingId, 0);
-
-                var eventAttributes = new List<IBMMobilePush.Droid.API.Attribute.Attribute>();
-                foreach (KeyValuePair<string, string> entry in attributes)
-                {
-                    eventAttributes.Add(new StringAttribute(entry.Key, entry.Value));
-                }
-
-                eventAttributes.Add(new StringAttribute("actionTaken", actionType));
-                var name = actionType;
-                var clickEventDetails = MceNotificationActionImpl.GetClickEventDetails(actionType);
-                if (clickEventDetails != null)
-                {
-                    name = clickEventDetails.EventName;
-                    var value = action["value"].ToString();
-                    eventAttributes.Add(new StringAttribute(clickEventDetails.ValueName, value));
-                }
-                else
-                {
-                    foreach (KeyValuePair<string, string> entry in payload)
-                    {
-                        eventAttributes.Add(new StringAttribute(entry.Key, entry.Value));
+                        var sdkEvent = GenerateEvent(name, source, new DateTimeOffset(), attribution, mailingId, eventAttributes);
+                        MceSdk.QueuedEventsClient.SendEvent(ApplicationContext, sdkEvent, true);
                     }
                 }
-
-                var sdkEvent = new Event(source, name, new Date(), eventAttributes, attribution, mailingId);
-
-                MceSdk.QueuedEventsClient.SendEvent(ApplicationContext, sdkEvent, true);
             }
         }
 
@@ -774,6 +816,11 @@ namespace IBMMobilePush.Forms.Droid
             return IBMMobilePush.Droid.Registration.RegistrationPreferences.IsSdkStopped(ApplicationContext);
         }
 
+        public void UnregisterAction(string name)
+        {
+            MceNotificationActionRegistry.RegisterNotificationAction(ApplicationContext, name, null);
+        }
+
         class InboxCallback : Java.Lang.Object, IOperationCallback
         {
             GenericDelegate Callback;
@@ -821,37 +868,6 @@ namespace IBMMobilePush.Forms.Droid
             public void OnSuccess(Java.Lang.Object p0, OperationResult p1)
             {
                 Callback(true, Name, Type, Timestamp, Attribution, MailingId, Attributes);
-            }
-        }
-    }
-
-    [BroadcastReceiver(Enabled = true)]
-    [IntentFilter(new[] {"com.ibm.mce.sdk.EXECUTE_CUSTOM_ACTION"})]
-    class ActionBroadcastReceiver : BroadcastReceiver
-    {
-        public override void OnReceive(Context context, Intent intent)
-        {
-            var jsonActionString = intent.GetStringExtra("action");
-            if (jsonActionString != null)
-            {
-
-                var jsonAction = JObject.Parse(jsonActionString);
-                JObject jsonPayload = null;
-                if (intent.HasExtra("payload"))
-                {
-                    jsonPayload = JObject.Parse(intent.GetStringExtra("payload"));
-                }
-                var attribution = intent.GetStringExtra("attribution");
-                int id = 0;
-                try
-                {
-                    id = Int32.Parse(intent.GetStringExtra("id"));
-                }
-                catch { }
-
-                var mailingId = intent.GetStringExtra("mailingId");
-
-                SDK.Instance.ExecuteAction(jsonAction, jsonPayload, attribution, mailingId, id);
             }
         }
     }
@@ -980,7 +996,17 @@ namespace IBMMobilePush.Forms.Droid
 		public override void OnSessionStart(Context p0, Date p1)
 		{
 		}
-	}
+
+        public override void OnActionNotRegistered(Context context, string type)
+        {
+            SDK.Instance.ActionNotRegistered?.Invoke(type);
+        }
+
+        public override void OnActionNotYetRegistered(Context context, string type)
+        {
+            SDK.Instance.ActionNotYetRegistered?.Invoke(type);
+        }
+    }
 
 }
 

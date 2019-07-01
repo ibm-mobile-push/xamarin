@@ -1,8 +1,0 @@
-﻿{
-  "notification-actions": [
-    {
-      "type": "snooze",
-      "class": "com.ibm.mce.sdk.xamarin.XamarinNotificationAction"
-    }
-  ]
-}

@@ -55,7 +55,7 @@ Global
 		{CEBECA3A-76F2-4EB3-ADA4-D59650DA3321}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		version = 3.3.2.3
+		version = 3.3.2.5
 		Policies = $0
 		$0.DotNetNamingPolicy = $1
 		$0.StandardHeader = $2

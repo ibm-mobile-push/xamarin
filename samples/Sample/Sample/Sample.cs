@@ -19,7 +19,7 @@ namespace Sample
 		public static double ScreenHeight;
 		public static double ScreenWidth;
 		
-		public App (JObject jsonAction = null, JObject jsonPayload = null, String attribution = null, String mailingId = null, int id = 0)
+		public App ()
 		{
 			// The root page of your application
 			MainPage = new NavigationPage( new MainPage() );
@@ -46,11 +46,6 @@ namespace Sample
                 SDK.Instance.RegisterInAppTemplate("image", new ImageInAppTemplate());
                 SDK.Instance.RegisterInAppTemplate("default", new BannerInAppTemplate());
             });
-                               
-			if (jsonAction != null)
-			{
-				SDK.Instance.ExecuteAction(jsonAction, jsonPayload, attribution, mailingId, id);
-			}
 		}
 	}
 }

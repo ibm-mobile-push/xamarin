@@ -69,6 +69,13 @@ namespace Sample
 			followItem.Command = new Command(() =>
 			{
 				follow = !follow;
+                if(follow)
+                {
+                    followItem.Text = "Follow";
+                } else
+                {
+                    followItem.Text = "Don't Follow";
+                }
 			});
 			ToolbarItems.Add(followItem);
 

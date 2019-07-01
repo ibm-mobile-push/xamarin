@@ -38,6 +38,9 @@ namespace Sample
 
             switch (styleId)
             {
+                case "CustomAction":
+                    await Navigation.PushAsync(new CustomActionPage());
+                    break;
                 case "Registration":
                     await Navigation.PushAsync(new RegistrationPage());
                     break;
